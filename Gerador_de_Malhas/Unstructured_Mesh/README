@@ -1,0 +1,20 @@
+#Para gerar as malhas estruturadas oriundas do gmsh basta executar os passos
+
+- Passo 1:
+Descrever o arquivo de configuracao do gmsh (<problem>.geo)
+
+-Passo 2:
+Gerar a malha como gmsh assim:
+>> gmsh -2 <problem>.geo
+
+- Passo 3:
+O passo 2 vai ter como resultado um arquivo <problem>.msh. Utilize
+esse arquivo da seguinte forma:
+>> gmsh2mesh <problem>.msh <PROBLEM>
+
+
+
+
+
+
+

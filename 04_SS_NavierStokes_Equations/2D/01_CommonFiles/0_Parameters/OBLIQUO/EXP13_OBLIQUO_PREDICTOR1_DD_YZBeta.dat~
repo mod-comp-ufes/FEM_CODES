@@ -1,0 +1,25 @@
+Exp13	:Experiments
+OBLIQUO	:Problem title
+1e-1	:Solver tolerance
+1e-3	:correction tolerance
+1e-5	:time integration tolerance
+1e-7	:Stabilization coefficient tolerance
+10	:Maximum number of solver iterations
+5	:Number of vectors in krylov basis
+GMRES	:Solver
+PREDICTOR1	:Time integration method
+NOT	:Use or not precondicionators(YES or NOT)
+0.5	:Alpha
+1e-3	:step time
+3.0	:final time
+3	:number of multicorrection
+ITERATION	:stop multicorrection(NORM or ITERATION)
+EBE	:Matrix vector product scheme
+DD	:Stabilization form
+YZBeta	:Operator captures
+1.0	:invY[0]=1/U1
+1.015426612	:invY[1]=1/U2
+-5.758770505	:invY[2]=1/U3
+1.056607762	:invY[3]=1/U4
+441	:number of nodes
+800	:number of elements
