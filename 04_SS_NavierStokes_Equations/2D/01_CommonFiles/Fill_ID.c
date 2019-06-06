@@ -25,6 +25,8 @@ int Fill_ID(int *neq_out, NodeType *Node, int nnodes)
 		else
 			Node[I].id[2] = -1;
 
+	I = 10;
+
 	}
 
 	*neq_out = neq;
