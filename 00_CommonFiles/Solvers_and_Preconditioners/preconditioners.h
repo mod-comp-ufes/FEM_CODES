@@ -78,8 +78,10 @@
 int NO_precond (ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 int Diag_precond (ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 int ILUp_precond (ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
+int AMG_precond (ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 int NO_precond_setup (ParametersType *, MatrixDataType *, FemStructsType *, int, double *);
 int Diag_precond_EBE_setup (ParametersType *, MatrixDataType *, FemStructsType *, int, double *);
 int Diag_precond_EDE_setup (ParametersType *, MatrixDataType *, FemStructsType *, int, double *);
 int Diag_precond_CSR_setup (ParametersType *, MatrixDataType *, FemStructsType *, int, double *);
 int ILUp_precond_setup (ParametersType *, MatrixDataType *, FemStructsType *, int, double *);
+int AMG_precond_setup (ParametersType *, MatrixDataType *, FemStructsType *, int, double *);

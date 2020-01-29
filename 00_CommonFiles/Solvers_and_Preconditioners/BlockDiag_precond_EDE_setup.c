@@ -121,8 +121,8 @@ int BlockDiag_precond_EDE_setup(ParametersType *Parameters, MatrixDataType *Matr
 	/* Preconditioning of F */
 	BlockDiag_precond(Parameters, MatrixData, FemStructs, F, F);
 
-	free(EDGEAux);
-	free(EDGE);
+	myfree(EDGEAux);
+	myfree(EDGE);
 
 	return 0;
 }

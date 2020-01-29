@@ -108,8 +108,8 @@ int NOBlockDiag2_precond_EDE_setup(ParametersType *Parameters, MatrixDataType *M
 		}
 	}
 
-	free(EDGEAux);
-	free(EDGE);
+	myfree(EDGEAux);
+	myfree(EDGE);
 
 	return 0;
 }

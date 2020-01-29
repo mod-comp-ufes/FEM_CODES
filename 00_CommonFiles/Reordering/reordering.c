@@ -1,4 +1,5 @@
 #include "reordering.h"
+#include "../Allocation_Operations/allocations.h"
 
 void reordering(ParametersType *Parameters, int *JA, int *IA, int *perm, int *PermCSR)
 {
@@ -241,8 +242,8 @@ void MATRIX_COL_permutation (ParametersType * Parameters, int *JA, int *IA, int 
 	int n   = Parameters->neq;
 	int nz  = Parameters->nnzero;  
 
-	ARRAY* a = calloc (nz,sizeof(ARRAY));
-	int*   q = calloc (n ,sizeof(int));
+	ARRAY* a = mycalloc ("a in MATRIX_COL_permutation",nz,sizeof(ARRAY));
+	int*   q = mycalloc ("q in MATRIX_COL_permutation",n ,sizeof(int));
 	
 	for (i = 0; i < n; ++i) 
 		q[p[i]] = i; 
@@ -268,8 +269,8 @@ void MATRIX_COL_permutation (ParametersType * Parameters, int *JA, int *IA, int 
 		JA[i] = a[i].arr2;
 	}
 
-	free(a);
-	free(q);
+	myfree(a);
+	myfree(q);
 }
 
 /*----------------------------------------------------------------------------
@@ -281,9 +282,9 @@ void MATRIX_ROW_permutation (ParametersType * Parameters, int *JA, int *IA, int 
 	int n   = Parameters->neq;
 	int nz  = Parameters->nnzero;  
 
-	int* 	auxpT = malloc( nz  *sizeof(int));
-	int*    auxJA = malloc( nz  *sizeof(int));
-	int*    auxIA = malloc((n+1)*sizeof(int));
+	int* 	auxpT = mycalloc("auxpT in MATRIX_ROW_permutation", nz  ,sizeof(int));
+	int*    auxJA = mycalloc("auxJA in MATRIX_ROW_permutation", nz  ,sizeof(int));
+	int*    auxIA = mycalloc("auxIA in MATRIX_ROW_permutation",(n+1),sizeof(int));
   
 	auxIA[0] = 0;
 	k = 0;
@@ -302,9 +303,9 @@ void MATRIX_ROW_permutation (ParametersType * Parameters, int *JA, int *IA, int 
 	memcpy(&JA[0],&auxJA[0],nz*sizeof(int));
 	memcpy(&IA[0],&auxIA[0],(n+1)*sizeof(int));
 
-	free(auxpT);
-	free(auxJA);
-	free(auxIA);
+	myfree(auxpT);
+	myfree(auxJA);
+	myfree(auxIA);
 }
 
 int MATRIX_bandwidth (ParametersType *Parameters, int *JA, int *IA)

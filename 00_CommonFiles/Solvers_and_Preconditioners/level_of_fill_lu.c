@@ -106,7 +106,7 @@ int level_of_fill_lu (ParametersType *Parameters, MatrixDataType *MatrixData)
 		L->nzcount[i] = incl;
 		if(incl > 0 )
 		{
-			L->ja[i] = (int *) malloc(incl*sizeof(int));
+			L->ja[i] = (int *) mycalloc("L->ja[i] in level_of_fill_lu",incl,sizeof(int));
 			memcpy(L->ja[i], jbuf, incl*sizeof(int));
 		}
 		/*-------------------- copy U - part        */ 
@@ -114,23 +114,23 @@ int level_of_fill_lu (ParametersType *Parameters, MatrixDataType *MatrixData)
 		U->nzcount[i] = k; 
 		if( k > 0 )
 		{
-			U->ja[i] = (int *) malloc(k*sizeof(int));
+			U->ja[i] = (int *) mycalloc("U->ja[i] in level_of_fill_lu",k,sizeof(int));
 			memcpy(U->ja[i], jbuf+i, k*sizeof(int));
 			/*-------------------- update matrix of levels */
-			ulvl[i]  = (int *) malloc(k*sizeof(int)); 
+			ulvl[i]  = (int *) mycalloc("ulvl[i] in level_of_fill_lu",k,sizeof(int)); 
 			memcpy(ulvl[i], levls+i, k*sizeof(int));
 		}
 	}
   
 	/*-------------------- free temp space and leave --*/
-	free(levls);
-	free(jbuf);
+	myfree(levls);
+	myfree(jbuf);
 	for(i = 0; i < n-1; i++)
 	{
 		if (U->nzcount[i])
-			free(ulvl[i]) ; 
+			myfree(ulvl[i]) ; 
 	}
-	free(ulvl); 
+	myfree(ulvl); 
 
 
 	MatrixData->ILUp->work = iw;

@@ -15,6 +15,7 @@
 #endif
 #include "../BLAS_Operations/ourBLAS.h"
 #include "../Allocation_Operations/allocations.h"
+#include "amg_precond.h"
 
 int pgmres (ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *, double *, double *);
 

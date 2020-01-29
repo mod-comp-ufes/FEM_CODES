@@ -2,6 +2,7 @@
  * MATCHING REORDERING
  *--------------------------------------------------------------------------*/
 #include "../COMMON_FILES/protos.h"
+#include "../Allocation_Operations/allocations.h"
 
 /*----------------------------------------------------------------------------
  * MATCHING reordering
@@ -24,13 +25,13 @@ void REORDERING_MATCHING (MAT* A, double* b, int** Q, double** dw, int* msgs)
 	
 	int* IP = A->IA;
 	int* IRN = A->JA;
-	int* CPERM = calloc (N,sizeof(int));
-	int* IW = calloc (LIW,sizeof(int));
-	int* ICNTL = calloc (10,sizeof(int));
-	int* INFO = calloc (10,sizeof(int));
+	int* CPERM = mycalloc ("CPERM in REORDERING_MATCHING",N,sizeof(int));
+	int* IW = mycalloc ("IW in REORDERING_MATCHING",LIW,sizeof(int));
+	int* ICNTL = mycalloc ("ICNTL in REORDERING_MATCHING",10,sizeof(int));
+	int* INFO = mycalloc ("INFO in REORDERING_MATCHING",10,sizeof(int));
 	
 	double* AA = A->AA;
-	double* DW = calloc (LDW,sizeof(double));
+	double* DW = mycalloc ("DW in REORDERING_MATCHING",LDW,sizeof(double));
 	
 	ICNTL[0] = 0;
         ICNTL[1] = -1;
@@ -83,21 +84,21 @@ void REORDERING_MATCHING (MAT* A, double* b, int** Q, double** dw, int* msgs)
 		MATRIX_ROW_permutation (A,CPERM);
 		
 			/*---PERMUTE COEF. VECTOR------ */
-		double* bp = calloc(A->n,sizeof(double));		
+		double* bp = mycalloc("bp in REORDERING_MATCHING",A->n,sizeof(double));		
 		for (i = 0; i < A->n; ++i) 
 			bp[i] = b[CPERM[i]];
 		
 		memcpy(&b[0],&bp[0],A->n*sizeof(double));
-		free(bp);
+		myfree(bp);
 		
 	}
 	
 	(*Q)  = CPERM;
 	(*dw) = DW;
 	
-	free(INFO);
-	free(ICNTL);
-	free(IW);
+	myfree(INFO);
+	myfree(ICNTL);
+	myfree(IW);
 	
 	/*---FINAL TIME---------------> */ time = (get_TIME() - time)/100.0;
 	

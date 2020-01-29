@@ -85,10 +85,10 @@ int pcg(ParametersType *Parameters,
 
 	Parameters->iterations = iter;
 
-	free(P);
-	free(Q);
-	free(R);
-	free(Z);
+	myfree(P);
+	myfree(Q);
+	myfree(R);
+	myfree(Z);
 	return 0;
 }
 

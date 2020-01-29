@@ -202,21 +202,21 @@ int Predictor_New_TRBDF2(ParametersType *Parameters, MatrixDataType *MatrixData,
 	
 	}while(!FemFunctions->StopTimeIntegration(Parameters,u,u_old,t)); // end while time
 
-	free(a);
-	free(Da);
-	free(u_old);
-	free(auxVec);
-	free(uB);
-	free(uB_old);
-	free(DaB);
-	free(delta_old);
-	free(M2aux);
-	free(M2);
-	free(R2aux);
-	free(R2);
-	free(invN2);
-	free(delta_old_NMV);
-	free(AuxBuild);
+	myfree(a);
+	myfree(Da);
+	myfree(u_old);
+	myfree(auxVec);
+	myfree(uB);
+	myfree(uB_old);
+	myfree(DaB);
+	myfree(delta_old);
+	myfree(M2aux);
+	myfree(M2);
+	myfree(R2aux);
+	myfree(R2);
+	myfree(invN2);
+	myfree(delta_old_NMV);
+	myfree(AuxBuild);
 	
 	return 0;
 

@@ -174,19 +174,17 @@ int pgmres (ParametersType *Parameters,	MatrixDataType *MatrixData, FemStructsTy
 
 	FemFunctions->precondR (Parameters, MatrixData, FemStructs, X, X);
 
-	free(u_aux);
-	free(u);
-	free(h_aux);
-	free(h);
-	free(e); 
-	free(c); 
-	free(s);
-	free(y);
-	free(v);
-	free(z);
+	myfree(u_aux);
+	myfree(u);
+	myfree(h_aux);
+	myfree(h);
+	myfree(e); 
+	myfree(c); 
+	myfree(s);
+	myfree(y);
+	myfree(v);
+	myfree(z);
+	AMG_precond_data_destroy(MatrixData->amg_precond_data);
 
 	return 0;
 }
-
-
-
