@@ -2,6 +2,7 @@
 #include "../CAVITY/cavity.h"
 #include "../CHANNEL/channel.h"
 #include "../EXATA/exata.h"
+#include "../CYLINDER/cylinder.h"
 
 int setProblem(ParametersType *Parameters, FemFunctionsType *FemFunctions)
 {
@@ -26,9 +27,16 @@ int setProblem(ParametersType *Parameters, FemFunctionsType *FemFunctions)
 		FemFunctions->f1ext = EXATA_f1ext;
 		FemFunctions->f2ext = EXATA_f2ext;
 		//FemFunctions->InitialSolution = EXATA_InitialSolution;
+	}else if (strcasecmp(Parameters->ProblemTitle,"CYLINDER")==0){
+		FemFunctions->v1presc = CYLINDER_v1presc;
+		FemFunctions->v2presc = CYLINDER_v2presc;
+		FemFunctions->ppresc = CYLINDER_ppresc;
+		FemFunctions->f1ext = CYLINDER_f1ext;
+		FemFunctions->f2ext = CYLINDER_f2ext;
+		//FemFunctions->InitialSolution = EXATA_InitialSolution;
 	}
 	else{
-		printf("Problem not defined!\n");
+		printf("In setProblem.c: Problem not defined!\n");
 		exit(1);
 	}
 	return 0;

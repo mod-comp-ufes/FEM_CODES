@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 	calculateTime(Preprocess_Time, Process_Time, Postprocess_Time, Parameters);
 	/* ************************************************************************************************************************* */
 
-	free(Parameters);
+	myfree(Parameters);
 	
 	return 0;
 }

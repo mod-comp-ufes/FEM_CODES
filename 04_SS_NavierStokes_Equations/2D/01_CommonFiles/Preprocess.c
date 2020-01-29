@@ -10,7 +10,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	int size = NDOF*NNOEL;
 	int size2 = size*size;
 	double *F, *u;
-	char FileName[2000], label[2000];
+	char FileName[300], label[300];
 	FILE *InFile;
 	NodeType *Node;
 	ElementType *Element;
@@ -45,13 +45,14 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->Experiments, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->ProblemTitle, label);
 	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->ReynoldsNumber), label);
+	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->VelMax), label);
 	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->SolverTolerance), label);
+	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->SolverToleranceCase), label);
+	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->SolverToleranceNonLin), label);
 	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->LinearMaxIter), label);
-	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->NonLinearTolerance), label);
-	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->NonLinearMaxIter), label);
 	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->KrylovBasisVectorsQuantity), label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->Solver, label);
-	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->Preconditioner, label);
+	tag = fscanf(InFile, "%[^\t]%[^\n]\n", Parameters->Preconditioner, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->reordering, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->MatrixVectorProductScheme, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->StabilizationForm, label);

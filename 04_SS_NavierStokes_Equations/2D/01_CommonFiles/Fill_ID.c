@@ -2,7 +2,7 @@
 
 int Fill_ID(int *neq_out, NodeType *Node, int nnodes)
 {
-	int I, neq=0;
+	int I, neq = 0;
 	
 	for(I = 0; I < nnodes; I++){
 		if (Node[I].v1Type == 1){

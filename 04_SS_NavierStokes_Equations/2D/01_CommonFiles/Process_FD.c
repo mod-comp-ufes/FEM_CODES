@@ -12,7 +12,7 @@ int Process(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsTy
 	double *s, *Fold, *u, *F, *delta_old, *normres_old;//, *deltam_old;
 	
 
-	char FileName[2000], FileName2[2000];
+	char FileName[300], FileName2[300];
 	FILE *OutFile, *OutFile2;
 	
 	setProblem(Parameters, FemFunctions);
@@ -80,7 +80,7 @@ int Process(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsTy
 	double w_min=0.05, w_max=1.00, c1=1.001, c2=1.1, c3=1.001, c4=0.9, c5=0.5; 
 	// teste double w_min=0.05, w_max=1.00, c1=1.001, c2=1.1, c3=1.01, c4=0.9, c5=0.9; 
 	double w = w_max, w_old;
-	int fd, cont, qtcorr;
+	int fd, cont, qtcorr, cont2;
 
 	//================Parameters->SolverTolerance = eta_0 (0.1, 0.5, 0.9) 
 	eta0 = Parameters->SolverTolerance;
@@ -122,7 +122,7 @@ int Process(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsTy
 		cont = 1;
 		qtcorr = 0;
 		w_old = 0.0;
-//		printf("=====================???????==============================");			
+		printf("=====================???????==============================");			
 		//dcopy(neq, F, Fold);   //Fould = F
 		do{
 			w_old = w;		
@@ -155,7 +155,7 @@ int Process(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsTy
 				cont = 0;
 				//printf("\n AQUI 3\n");
 			}else{
-				//if(cont2==5){
+				//if(cont2==3){
 					w = (w_min > c5*w)? w_min : c5*w;
 					qtcorr ++;
 					if(fd == 1){
@@ -167,13 +167,14 @@ int Process(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsTy
 					printf("\n Soluccao NAO aceita!");
 					printf("\n Reduccao   no Fator de amortecimento para w = %f ", w);
 					printf("\n ----------------------------------------------------------");
-				//	cont2 = 1;				
+					cont2 = 1;				
 				//}else		
 				//	cont2 ++;	
 			}
 			//Fould = F
 			//qtcorr ++;			
 		}while(cont == 1);
+		cont2 = 1;
 		dcopy(neq, F, Fold);
 		//
 		//printf("\n AQUI 2\n");

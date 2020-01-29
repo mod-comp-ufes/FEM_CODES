@@ -125,8 +125,8 @@ void ede_Initialization(int nnodes, int neq, int nel, NodeType *Node, ElementTyp
 
 	}
 	
-	free(lm);
-	free(lmaux);
+	myfree(lm);
+	myfree(lmaux);
 
 	lm = (int**) mycalloc("lm of 'EDE_Inicialization'",nedge, sizeof(int*));
 	lmaux = (int*) mycalloc("lmaux of 'EDE_Inicialization'",2*NDOF*nedge, sizeof(int));
@@ -188,12 +188,12 @@ void ede_Initialization(int nnodes, int neq, int nel, NodeType *Node, ElementTyp
 		while (current != NULL){
 			temp = current;		
 			current	= current->next;
-			free(temp);
+			myfree(temp);
 		}
 
 	}
 
-	free(EDGE_List);
+	myfree(EDGE_List);
 	
 	*nedge_out = nedge;
 	*lm_out = lm;
@@ -231,7 +231,7 @@ void ede_List_insertA(NodeListType **EDGE_List, int I, int J, int *nedge_out)
 			previous->next = new;
 		else if (current->J == J){
 			nedge--;
-			free(new);
+			myfree(new);
 		}
 		else {
 			new->next = current;

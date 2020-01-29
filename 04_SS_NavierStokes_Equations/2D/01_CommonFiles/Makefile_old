@@ -1,7 +1,8 @@
 CC=gcc
 IDIR= 
 CFLAGS= -DSSNavierStokesEquations2D -c -lm -lrt -Wall -Ofast -march=native
-GCFLAGS= -DSSNavierStokesEquations2D -lm -lrt -Wall \
+GCFLAGS= -DSSNavierStokesEquations2D -lm -lrt -Wall ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
+../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
 -lrt -lm -lgfortran -Wall -lblas -llapack -lquadmath -Ofast -march=native
 LDFLAGS= 
 SOURCES= main.c \
@@ -19,11 +20,8 @@ ebe_assembly.c \
 csr_assembly.c \
 Build_K_F_SUPG.c \
 Build_K_F_MS.c \
-Build_K_F_MS_Time.c \
 eta_newton.c\
-Coef_Lift_Drag.c\
 eval_U.c \
-eval_U_dU.c \
 Postprocess.c \
 Paraview_Output.c \
 setzeros.c\
@@ -55,16 +53,6 @@ setzeros.c\
 ../../../00_CommonFiles/BLAS_Operations/dzero.c \
 ../../../00_CommonFiles/BLAS_Operations/izero.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/pgmres.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/amg_precond.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_dpa.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_dpa_counting.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_fib_heap.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_list.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_matrix.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_solvers.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_util.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/bcm_linmatch.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/ILUp_precond.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/ILUp_precond_setup.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/BlockDiagDOF3_precond_EBE_setup.c \
@@ -85,12 +73,14 @@ EXECUTABLE=SSNavierStokesEquations2D
 all: $(SOURCES) $(EXECUTABLE)
 
 debug: CFLAGS= -DSSNavierStokesEquations2D -g -Ddebug -c -lm -lrt -Wall
-debug: GCFLAGS= -DSSNavierStokesEquations2D -g -Ddebug -lm -lrt -Wall \
+debug: GCFLAGS= -DSSNavierStokesEquations2D -g -Ddebug -lm -lrt -Wall ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
+../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
 -lrt -lm -lgfortran -Wall -lblas -llapack -lquadmath 
 debug: all
 
 fast: CFLAGS= -DSSNavierStokesEquations2D -c -lm -lrt -Wall -Ofast -march=native
-fast: GCFLAGS= -DSSNavierStokesEquations2D -lm -lrt -Wall \
+fast: GCFLAGS= -DSSNavierStokesEquations2D -lm -lrt -Wall ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
+../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
 -lrt -lm -lgfortran -Wall -lblas -llapack -lquadmath -Ofast -march=native
 fast: all
 
