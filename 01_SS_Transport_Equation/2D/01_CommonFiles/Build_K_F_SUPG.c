@@ -153,7 +153,7 @@ int Build_K_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, FemSt
 
 	}
 
-	free(U);
+	myfree(U);
 
 	return 0;
 }

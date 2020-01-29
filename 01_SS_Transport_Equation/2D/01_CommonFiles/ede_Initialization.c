@@ -150,19 +150,19 @@ void ede_Initialization(ParametersType *Parameters, int **order, int ***lm_out, 
 		}
 	}
 		
-	free(Indicator);
+	myfree(Indicator);
 	
 	for (K = 0; K < neq + 1; K++){
 		current = EDGE_List[K];
 		while (current != NULL){
 			temp = current;		
 			current	= current->next;
-			free(temp);
+			myfree(temp);
 		}
 
 	}
 
-	free(EDGE_List);
+	myfree(EDGE_List);
 	
 	Parameters->nedge = nedge;
 	*lm_out = lm;
@@ -203,7 +203,7 @@ void ede_List_insertA(NodeListType **EDGE_List, int I, int J, int *nedge_out)
 			previous->next = new;
 		else if (current->J == J){
 			nedge--;
-			free(new);
+			myfree(new);
 		}
 		else {
 			new->next = current;

@@ -82,57 +82,57 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 	//				Memory deallocation
 	/**************************************************************************************/
 	if (strcasecmp(Parameters->MatrixVectorProductScheme,"EBE")==0){
-		free(MatrixData->A);
-		free(MatrixData->Aaux);
-		free(FemStructs->lm);
-		free(FemStructs->lmaux);
+		myfree(MatrixData->A);
+		myfree(MatrixData->Aaux);
+		myfree(FemStructs->lm);
+		myfree(FemStructs->lmaux);
 	}
 
 	else if (strcasecmp(Parameters->MatrixVectorProductScheme,"EDE")==0){
-		free(MatrixData->A);
-		free(MatrixData->Aaux);
+		myfree(MatrixData->A);
+		myfree(MatrixData->Aaux);
 		for (I = 0; I < nel; I++){
-			free(MatrixData->Scheme_by_Element[I]);
-			free(MatrixData->order[I]);
+			myfree(MatrixData->Scheme_by_Element[I]);
+			myfree(MatrixData->order[I]);
 		}
-		free(MatrixData->Scheme_by_Element);
-		free(MatrixData->order);
-		free(FemStructs->lm);
-		free(FemStructs->lmaux);
-		free(FemStructs->lm2);
-		free(FemStructs->lm2aux);
+		myfree(MatrixData->Scheme_by_Element);
+		myfree(MatrixData->order);
+		myfree(FemStructs->lm);
+		myfree(FemStructs->lmaux);
+		myfree(FemStructs->lm2);
+		myfree(FemStructs->lm2aux);
 
 	}
 
 	else if (strcasecmp(Parameters->MatrixVectorProductScheme,"CSR")==0){
-		free(MatrixData->AA);
-		free(MatrixData->IA);
-		free(MatrixData->JA);
+		myfree(MatrixData->AA);
+		myfree(MatrixData->IA);
+		myfree(MatrixData->JA);
 		for (I = 0; I < nel; I++)
-			free(MatrixData->Scheme_by_Element[I]);
-		free(MatrixData->Scheme_by_Element);
+			myfree(MatrixData->Scheme_by_Element[I]);
+		myfree(MatrixData->Scheme_by_Element);
 		if (strncmp(Parameters->Preconditioner,"ILU",3)==0){
 			SPARILU_clean(MatrixData->ILUp);
 			SPARMAT_clean(MatrixData->mat);
-			free(MatrixData->Ailu);
+			myfree(MatrixData->Ailu);
 		}
 	}
 
 	if ((strcasecmp(Parameters->Preconditioner,"Jacobi")==0)||(strncmp(Parameters->Preconditioner,"SOR",3)==0)){
-		free(MatrixData->invDe);
-		free(MatrixData->invDeaux);
+		myfree(MatrixData->invDe);
+		myfree(MatrixData->invDeaux);
 	}
 
-	free(MatrixData->Diag);
-	free(MatrixData->invDiag);
-	free(MatrixData);
-	free(FemStructs->Node);
-	free(FemStructs->Element);
-	free(FemStructs->F);
-	free(FemStructs->u);
-	free(FemStructs);
-	free(FemFunctions);
-	free(FemOtherFunctions);
+	myfree(MatrixData->Diag);
+	myfree(MatrixData->invDiag);
+	myfree(MatrixData);
+	myfree(FemStructs->Node);
+	myfree(FemStructs->Element);
+	myfree(FemStructs->F);
+	myfree(FemStructs->u);
+	myfree(FemStructs);
+	myfree(FemFunctions);
+	myfree(FemOtherFunctions);
 	/***************************************************************************************/
 
 	return 0;

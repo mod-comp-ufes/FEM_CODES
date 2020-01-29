@@ -46,7 +46,7 @@ int Process(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsTy
 		#endif
 	}
 
-	free(uold);
+	myfree(uold);
 
 	return 0;
 }

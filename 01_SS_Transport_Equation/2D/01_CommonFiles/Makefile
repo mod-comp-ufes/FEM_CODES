@@ -79,6 +79,17 @@ setzeros.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/pgmres.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/pcg.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/NO_precond_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/amg_precond.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_dpa.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_dpa_counting.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_fib_heap.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_list.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_matrix.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_solvers.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_util.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_pgmres.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/bcm_linmatch.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/ILUp_precond_setup.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/Diag_precond_CSR_setup.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/Diag_precond_EBE_setup.c \
@@ -108,8 +119,8 @@ EXECUTABLE=SSTranspEquation2D
 
 all: $(SOURCES) $(EXECUTABLE)
 
-debug: CFLAGS= -DSSTranspEquation2D -Ddebug -c -lm -lrt -Wall -O0 -g
-debug: GCFLAGS= -DSSTransEquation2D -Ddebug -lm -lrt -Wall -g
+debug: CFLAGS= -DSSTranspEquation2D -Ddebug -Dcheck_memory_leak -c -lm -lrt -Wall -O0 -g
+debug: GCFLAGS= -DSSTransEquation2D -Ddebug -Dcheck_memory_leak -lm -lrt -Wall -g
 debug: all
 
 fast: CFLAGS= -DSSTranspEquation2D -c -lm -lrt -Wall -Ofast -march=native

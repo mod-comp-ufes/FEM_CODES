@@ -7,6 +7,7 @@
 #include <math.h>
 #include <time.h>
 #include "../../../00_CommonFiles/Solvers_and_Preconditioners/ilup.h"
+#include "../../../00_CommonFiles/Solvers_and_Preconditioners/amg_precond.h"
 
 #define NDIM 2            // number related to the dimension of the problem (2: two-dimensional, 3: three-dimensional)
 #define NNOEL 3           // number of nodes per element
@@ -76,6 +77,7 @@ typedef struct
 	SparMAT *mat;
 	MAT *Ailu;
 	int *Perm;
+    AMG_precond_data *amg_precond_data;
 }MatrixDataType;
 
 
