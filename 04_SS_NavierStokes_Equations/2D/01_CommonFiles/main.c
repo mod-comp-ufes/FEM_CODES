@@ -39,6 +39,10 @@ int main(int argc, char **argv)
 	/* ************************************************************************************************************************* */
 
 	myfree(Parameters);
+
+	#ifdef check_memory_leak
+		list_leaks();
+	#endif
 	
 	return 0;
 }
