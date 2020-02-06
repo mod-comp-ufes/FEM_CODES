@@ -52,7 +52,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->LinearMaxIter), label);
 	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->KrylovBasisVectorsQuantity), label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->Solver, label);
-	tag = fscanf(InFile, "%[^\t]%[^\n]\n", Parameters->Preconditioner, label);
+	tag = fscanf(InFile, "\n%[^\t]%[^\n]\n", Parameters->Preconditioner, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->reordering, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->MatrixVectorProductScheme, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->StabilizationForm, label);
