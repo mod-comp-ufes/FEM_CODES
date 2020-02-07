@@ -25,6 +25,9 @@ void myfree(void *ptr);
 void list_leaks();
 
 alloc_list** hashArray = NULL;
+int allocs = 0;
+int frees = 0;
+int ind;
 
 unsigned long int hashCode(unsigned long int key) {
 
@@ -143,16 +146,53 @@ void remove_hash_table(void*address) {
 }
 
 void print_alloc_list(alloc_list* list) {
-	for(alloc* aux = list->head;aux;aux = aux->next)
-		printf("[Memory leak at %s]\n",aux->name);
+	for(alloc* aux = list->head;aux;aux = aux->next) {
+		//printf("[Memory leak at %s]\n",aux->name);
+		printf("│%-11d│%-49s│\n",ind,aux->name);
+		ind++;
+	}
 }
 
 void list_leaks() {
-	for(int i = 0; i < SIZE; i++) {
-		if(hashArray[i]) {
-			print_alloc_list(hashArray[i]);
+	#ifdef check_memory_leak
+		ind = 1;
+		printf("┌─────────────────────────────────────────────────────────────┐\n");
+		printf("│%11d allocations;                                     │\n",allocs);
+		printf("│%11d frees;                                           │\n",frees);
+		printf("│%11d leaks.                                           │\n",allocs-frees);
+		
+		if(allocs == frees) {
+			printf("└─────────────────────────────────────────────────────────────┘\n");
 		}
-	}
+		else {
+			printf("├───────────┬─────────────────────────────────────────────────┤\n");
+			printf("│   Index   │                      Label                      │\n");
+			printf("├───────────┼─────────────────────────────────────────────────┤\n");
+			for(int i = 0; i < SIZE; i++) {
+				if(hashArray[i]) {
+					print_alloc_list(hashArray[i]);
+				}
+			}
+			printf("└───────────┴─────────────────────────────────────────────────┘\n");
+		}
+	#endif
+}
+
+void free_leaks() {
+	#ifdef check_memory_leak
+		if (hashArray)
+			for(int i = 0; i < SIZE; i++)
+				if(hashArray[i])
+					free(hashArray[i]);
+		free(hashArray);
+	#endif
+}
+
+void list_leaks_and_free() {
+	#ifdef check_memory_leak
+		list_leaks();
+		free_leaks();
+	#endif
 }
 
 void *mycalloc(char *var_name, int n, int struct_size)
@@ -168,6 +208,7 @@ void *mycalloc(char *var_name, int n, int struct_size)
 
 	#ifdef check_memory_leak
 		insert_hash_table(ptr,var_name);
+		allocs++;
 	#endif
 	
 	return ptr;	
@@ -176,6 +217,7 @@ void *mycalloc(char *var_name, int n, int struct_size)
 void myfree(void *ptr) {
 	#ifdef check_memory_leak
 		remove_hash_table(ptr);
+		frees++;
 	#endif
 	free(ptr);
 }

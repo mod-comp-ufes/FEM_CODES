@@ -97,7 +97,6 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out,  Mat
 
 	// Some variable inicializations
 
-	MatrixData = (MatrixDataType *) mycalloc("MatrixData of 'Preprocess'",1, sizeof(MatrixDataType));
 	F = (double*) mycalloc("F of 'Preprocess'",neq+1, sizeof(double));
 	u = (double*) mycalloc("u of 'Preprocess'",neq+1, sizeof(double));
 	Diag = (double*) mycalloc("Diag of 'Preprocess'",neq+1, sizeof(double));

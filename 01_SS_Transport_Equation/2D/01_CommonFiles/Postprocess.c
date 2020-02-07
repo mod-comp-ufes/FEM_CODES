@@ -108,6 +108,8 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 		myfree(MatrixData->AA);
 		myfree(MatrixData->IA);
 		myfree(MatrixData->JA);
+		myfree(FemStructs->lm);
+		myfree(FemStructs->lmaux);
 		for (I = 0; I < nel; I++)
 			myfree(MatrixData->Scheme_by_Element[I]);
 		myfree(MatrixData->Scheme_by_Element);
