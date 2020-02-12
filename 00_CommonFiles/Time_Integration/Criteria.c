@@ -14,7 +14,7 @@ void setStopCriteria(ParametersType *Parameters, FemFunctionsType *FemFunctions)
 
 	if(strcasecmp(Parameters->StopAtSteadyState,"YES") == 0)
 		FemFunctions->StopTimeIntegration = StopBySteadyState;
-	else if(strcasecmp(Parameters->StopAtSteadyState,"NOT") == 0)
+	else if(strncasecmp(Parameters->StopAtSteadyState,"NO",2) == 0)
 		FemFunctions->StopTimeIntegration = StopByTime;
 	else{
 		printf("Stop time integration is not defined!\n");

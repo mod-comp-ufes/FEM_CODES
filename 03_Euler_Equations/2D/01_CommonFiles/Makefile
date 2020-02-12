@@ -186,7 +186,8 @@ EXECUTABLE=EulerEquations2D
 all: $(SOURCES) $(EXECUTABLE)
 
 debug: CFLAGS= -DEulerEquations2D -g -Ddebug -Dcheck_memory_leak -c -lm -lrt -Wall
-debug: GCFLAGS= -DEulerEquations2D -g -Ddebug -Dcheck_memory_leak -lm -lrt -Wall ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o 
+debug: GCFLAGS= -DEulerEquations2D -g -Ddebug -Dcheck_memory_leak -lm -lrt -Wall 
+#../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o 
 debug: all
 
 gprof: CFLAGS+=-pg
