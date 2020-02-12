@@ -39,9 +39,9 @@ int main(int argc, char **argv)
 	/* ******************************************************* Total Time ****************************************************** */
 	calculateTime(Preprocess_Time, Process_Time, Postprocess_Time, Parameters);
 	/* ************************************************************************************************************************* */
-	list_leaks_and_free();
-	
 	myfree(Parameters);
+
+	list_leaks_and_free();
 	
 	return 0;
 }

@@ -1,8 +1,8 @@
 CC=gcc
 #'CC=tau_cc.sh
 IDIR=
-CFLAGS= -DEulerEquations2D -Ddebug -c -lm -lrt -Wall -Ofast -march=native
-GCFLAGS= -DEulerEquations2D -Ddebug -lm -lrt -Wall -Ofast -march=native
+CFLAGS= -DEulerEquations2D -c -lm -lrt -Wall -Ofast -march=native
+GCFLAGS= -DEulerEquations2D -lm -lrt -Wall -Ofast -march=native
 LDFLAGS=
 SOURCES= main.c \
 Preprocess.c \

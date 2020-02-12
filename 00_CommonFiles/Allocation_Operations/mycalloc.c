@@ -89,6 +89,7 @@ void remove_alloc_list(alloc_list* list, void* address) {
 			free(list->head);
 			list->head = list->tail = NULL;
 			list->n = 0;
+			frees++;
 		}
 		//else
 			//printf("[Free in non-allocated memory!]\n");
@@ -100,7 +101,8 @@ void remove_alloc_list(alloc_list* list, void* address) {
 		//free(aux->address);
 		free(aux->name);
 		free(aux);
-		list->n--;
+		list->n--;		
+		frees++;
 	}
 	else if (list->tail->address == address) {
 		aux = list->tail;
@@ -109,7 +111,8 @@ void remove_alloc_list(alloc_list* list, void* address) {
 		//free(aux->address);
 		free(aux->name);
 		free(aux);
-		list->n--;
+		list->n--;		
+		frees++;
 	}
 	else {
 		for(aux = list->head; aux; aux=aux->next) {
@@ -120,6 +123,7 @@ void remove_alloc_list(alloc_list* list, void* address) {
 				free(aux->name);
 				free(aux);
 				list->n--;
+				frees++;
 				return;
 			}
 		}
@@ -217,7 +221,6 @@ void *mycalloc(char *var_name, int n, int struct_size)
 void myfree(void *ptr) {
 	#ifdef check_memory_leak
 		remove_hash_table(ptr);
-		frees++;
 	#endif
 	free(ptr);
 }
