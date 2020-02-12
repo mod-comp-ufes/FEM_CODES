@@ -100,9 +100,9 @@ double Delta_YZBeta(double tolerance, double *delta_old, double *gradUx, double 
 	delta_old[e] = delta;
 	
 	
-	free(AxgradUx);
-	free(AygradUy);
-	free(Z);
+	myfree(AxgradUx);
+	myfree(AygradUy);
+	myfree(Z);
 	
 	return delta;
 		

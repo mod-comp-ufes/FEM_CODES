@@ -922,13 +922,13 @@ int Build_M_F_DD_Transiente(ParametersType *Parameters, double *delta_old, doubl
 	//printf("\n\nMach min = %lf \t Mach max = %lf\n\n",Mmin,Mmax);
 	
 	// Liberacao dos espacos alocados
-	free(dUe);
-	free(dUb);
-	free(Ue);
-	free(gradUx);
-	free(gradUy);
-	free(Ub);
-	free(vet_bound);
+	myfree(dUe);
+	myfree(dUb);
+	myfree(Ue);
+	myfree(gradUx);
+	myfree(gradUy);
+	myfree(Ub);
+	myfree(vet_bound);
 	
 	return 0;
 }// end build

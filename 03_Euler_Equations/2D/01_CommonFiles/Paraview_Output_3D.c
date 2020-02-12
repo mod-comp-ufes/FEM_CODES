@@ -116,12 +116,12 @@ int Paraview_Output_3D(ParametersType *Parameters, FemStructsType *FemStructs, F
 
 	fclose(OutFile);
 
-	free(rho);
-	free(v1);
-	free(v2);
-	free(e);
-	free(temp);
-	free(pres);
+	myfree(rho);
+	myfree(v1);
+	myfree(v2);
+	myfree(e);
+	myfree(temp);
+	myfree(pres);
 
 	return 0;
 }

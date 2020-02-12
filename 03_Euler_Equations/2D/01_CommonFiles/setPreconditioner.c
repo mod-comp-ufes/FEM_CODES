@@ -127,6 +127,18 @@ int setPreconditioner(ParametersType *Parameters, FemFunctionsType *FemFunctions
 		}
 	}
 	/****************************************************************************/
+	else if (strncmp(Parameters->Preconditioner,"AMG",3)==0){
+		if (strcasecmp(Parameters->MatrixVectorProductScheme,"CSR")==0){
+			FemFunctions->precond = ILUp_precond;
+			FemFunctions->precondR = NO_precond;
+			FemFunctions->precond_setup = ILUp_precond_setup;
+		}
+		else{
+			printf("Preconditioner definied only to CSR scheme\n");
+			exit(1);
+		}
+	}
+	/****************************************************************************/
 	else if (strncmp(Parameters->Preconditioner,"SORBlock",8)==0){
 		if (strncmp(Parameters->MatrixVectorProductScheme,"EBE",3)==0){
     	FemFunctions->precond = SSORBlockDOF4_precond_EBE;

@@ -78,11 +78,11 @@ double Delta_DD(double tolerance, double *delta_old, double *gradUx, double *gra
 	delta_old[e] = delta;
 	delta = delta*sqrt(twoArea); 
 	
-	free(AxgradUx);
-	free(AygradUy);
-	free(gradksiUx);
-	free(gradksiUy);
-	free(LUh);
+	myfree(AxgradUx);
+	myfree(AygradUy);
+	myfree(gradksiUx);
+	myfree(gradksiUy);
+	myfree(LUh);
 	
 	return delta;
 	

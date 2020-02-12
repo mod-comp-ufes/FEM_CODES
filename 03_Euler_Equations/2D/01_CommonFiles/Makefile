@@ -104,6 +104,17 @@ rotation.c \
 ../BAROCLINIC/BAROCLINIC_v1presc.c \
 ../BAROCLINIC/BAROCLINIC_v2presc.c \
 ../BAROCLINIC/BAROCLINIC_epresc.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/amg_precond.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_dpa.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_dpa_counting.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_fib_heap.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_list.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_matrix.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_solvers.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_util.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_pgmres.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/bcm_linmatch.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/pgmres.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/NO_precond.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/Diag_precond_EBE_setup.c \
@@ -174,8 +185,8 @@ EXECUTABLE=EulerEquations2D
 
 all: $(SOURCES) $(EXECUTABLE)
 
-debug: CFLAGS= -DEulerEquations2D -g -Ddebug -c -lm -lrt -Wall
-debug: GCFLAGS= -DEulerEquations2D -g -Ddebug -lm -lrt -Wall ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o 
+debug: CFLAGS= -DEulerEquations2D -g -Ddebug -Dcheck_memory_leak -c -lm -lrt -Wall
+debug: GCFLAGS= -DEulerEquations2D -g -Ddebug -Dcheck_memory_leak -lm -lrt -Wall ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o 
 debug: all
 
 gprof: CFLAGS+=-pg

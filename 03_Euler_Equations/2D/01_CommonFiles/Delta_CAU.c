@@ -73,11 +73,11 @@ double Delta_CAU(double tolerance, double *delta_old, double *gradUx, double *gr
 	else
 		delta = 0.0;
 	
-	free(AxgradUx);
-	free(AygradUy);
-	free(gradksiUx);
-	free(gradksiUy);
-	free(LUh);
+	myfree(AxgradUx);
+	myfree(AygradUy);
+	myfree(gradksiUx);
+	myfree(gradksiUy);
+	myfree(LUh);
 	
 	return delta;
 		

@@ -825,8 +825,8 @@ int Build_M_F_DD_Transiente(ParametersType *Parameters, MatrixDataType *MatrixDa
 	
 		
 	// Liberacao dos espacos alocados
-	free(U);
-	free(dU);
+	myfree(U);
+	myfree(dU);
 	
 
 	return 0;

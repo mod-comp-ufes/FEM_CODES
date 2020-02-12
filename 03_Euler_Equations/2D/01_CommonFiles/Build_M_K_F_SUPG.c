@@ -1065,8 +1065,8 @@ int Build_M_K_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 	}//for elemento
 
 	// Liberacao dos espacos alocados
-	free(U);
-	free(dU);
+	myfree(U);
+	myfree(dU);
 
 	return 0;
 }// end build
