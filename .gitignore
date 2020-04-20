@@ -1,0 +1,125 @@
+# Prerequisites
+*.d
+*.dat
+*.msh
+*.geo
+*.txt
+*.sh
+*.vtu
+*.vts
+*.m
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+.tmp_versions/
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
+
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+
+# External tool builders
+.externalToolBuilders/
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+# PyDev specific (Python IDE for Eclipse)
+*.pydevproject
+
+# CDT-specific (C/C++ Development Tooling)
+.cproject
+.project
+
+# Java annotation processor (APT)
+.factorypath
+
+# PDT-specific (PHP Development Tools)
+.buildpath
+
+# sbteclipse plugin
+.target
+
+# Tern plugin
+.tern-project
+
+# TeXlipse plugin
+.texlipse
+
+# STS (Spring Tool Suite)
+.springBeans
+
+# Code Recommenders
+.recommenders/
+
+# Scala IDE specific (Scala & Java development for Eclipse)
+.cache-main
+.scala_dependencies
+.worksheet
+
+#executable files
+01_SS_Transport_Equation/2D/01_CommonFiles/SSTranspEquation2D
+02_Transport_Equation/2D/01_CommonFiles/TranspEquation2D
+03_Euler_Equations/2D/01_CommonFiles/EulerEquations2D
+04_SS_NavierStokes_Equations/2D/01_CommonFiles/SSNavierStokesEquations2D
+05_NavierStokes_Equations/2D/01_CommonFiles/NavierStokesEquations2D
+Gerador_de_Malhas/Unstructured_Mesh/gmsh2Mesh
+Gerador_de_Malhas/Structured_Mesh/geraMalha
+
+# Our files that should not be ignored
+!00_CommonFiles/Reordering/hsl_mc60/libmc60.a
+!00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a
+!00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o
