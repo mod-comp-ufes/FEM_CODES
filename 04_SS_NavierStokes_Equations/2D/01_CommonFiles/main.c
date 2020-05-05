@@ -1,5 +1,6 @@
 #include "SSNavierStokesEquations.h"
 #include "../../../00_CommonFiles/CPU_Time_Operations/CPU_time.h"
+#include "../../../00_CommonFiles/Allocation_Operations/allocations.h"
 
 int main(int argc, char **argv)
 {

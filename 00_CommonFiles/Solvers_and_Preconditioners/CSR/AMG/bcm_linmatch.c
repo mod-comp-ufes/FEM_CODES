@@ -62,12 +62,11 @@ int bcm_trymatch(int rowindex, int colindex, matrix *W, int *jrowindex,
         int ljrowindex, int *jcolindex, int ljcolindex, int *rmatch) {
 
     int tryrowmatch, trycolmatch;
-    int i, j, k, nzrow_W, startj, kindex;
+    int i, k, nzrow_W, startj, kindex;
     double cweight, nweight;
 
     int *W_i = W->row_ptr;
     int *W_j = W->col_ind;
-    int nrows_W = W->n;
     double *W_data = W->val;
 
     k = -1;
@@ -166,7 +165,7 @@ int bcm_trymatch(int rowindex, int colindex, matrix *W, int *jrowindex,
         }
     }
 
-    if (rmatch[rowindex] == -1 & rmatch[colindex] == -1) {
+    if ((rmatch[rowindex] == -1) & (rmatch[colindex] == -1)) {
         rmatch[rowindex] = colindex;
         rmatch[colindex] = rowindex;
         pairs++;
@@ -179,17 +178,14 @@ int * bcm_CSRMatrixHMatch(matrix *A) {
     matrix *B = A;
 
     int i, j, k, *rmatch;
-    double *c, alpha;
     int jbp, nzrows_B;
-    double tmp = 0.0;
-    int rno, cno, nzrows_cno, startj, ljrowindex, ljjrowindex;
+    int rno, cno, nzrows_cno, startj;
     int *jrowindex, *jjrowindex;
 
     int *B_i = B->row_ptr;
     int *B_j = B->col_ind;
     double *B_data = B->val;
     int nrows_B = B->n;
-    int ncols_B = B->m;
     int nnz_B = B->nnz;
 
     nzrows_B = B_i[1] - B_i[0];
@@ -197,7 +193,6 @@ int * bcm_CSRMatrixHMatch(matrix *A) {
     matrix * W = copy_m(B);
 
     int *W_i = W->row_ptr;
-    int *W_j = W->col_ind;
     int nrows_W = W->n;
     double *W_data = W->val;
 

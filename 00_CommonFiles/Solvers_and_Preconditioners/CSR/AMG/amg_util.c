@@ -8,7 +8,6 @@ void precond_sol(double *q, double *p, int precond, AMG_precond_data *data) { //
 
     precondAMG *amg_s = data->AMG_data;
     precondDPA *amg_d = data->DPA_data;
-    int i, j;
     switch (precond) { // preconditioning
         case 1: // AMG
             data->f[0] = q;

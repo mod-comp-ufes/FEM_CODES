@@ -12,7 +12,7 @@ matrix * new_standard_coarsening (matrix *A, int *CF_split, double *max_aik, int
 	int i, j, k, l, lambda, max_i, connect;
 	matrix *A_t = csr_transpose(A);
 	Node1 *aux, *prev;
-	list1 *fine_points;
+	list1 *fine_points = NULL;
 	node_fh *max, **fib_n = (node_fh **) mycalloc("fib_fh in new_standard_coarsening",A->m,sizeof(node_fh *));
 	fib_heap *fib = make_heap();
 	for (i=0; i<A->m; i++) {

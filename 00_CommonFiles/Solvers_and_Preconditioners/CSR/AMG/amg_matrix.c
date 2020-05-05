@@ -78,7 +78,8 @@ matrix * csr_transpose (matrix *A) {
 		A_t->diag[i] = A->diag[i];
 		A_t->row_ptr[i+1] = j;
 	}
-	for (i=0; i<n; i++) destroy_l(row_elem[i]); myfree(row_elem);
+	for (i=0; i<n; i++) destroy_l(row_elem[i]);
+	myfree(row_elem);
 	return A_t;
 };
 
@@ -125,7 +126,8 @@ matrix * sum(matrix *A, matrix *A_t) {
 		//A_s->diag[i] = 0; //nao precisa devido ao calloc
 		A_s->row_ptr[i+1] = j;
 	}
-	for (i=0; i<A->n; i++) destroy_l(row_elem[i]); myfree(row_elem);
+	for (i=0; i<A->n; i++) destroy_l(row_elem[i]);
+	myfree(row_elem);
 	return A_s;
 }
 
@@ -172,7 +174,8 @@ matrix * sum_abs(matrix *A, matrix *A_t) {
 		//A_s->diag[i] = 0; //nao precisa devido ao calloc
 		A_s->row_ptr[i+1] = j;
 	}
-	for (i=0; i<A->n; i++) destroy_l(row_elem[i]); myfree(row_elem);
+	for (i=0; i<A->n; i++) destroy_l(row_elem[i]);
+	myfree(row_elem);
 	return A_s;
 }
 
@@ -217,7 +220,8 @@ matrix * sum_upper(matrix *A, matrix *A_t) {
 		//A_s->diag[i] = 0; //nao precisa devido ao calloc
 		A_s->row_ptr[i+1] = j;
 	}
-	for (i=0; i<A->n; i++) destroy_l(row_elem[i]); myfree(row_elem);
+	for (i=0; i<A->n; i++) destroy_l(row_elem[i]);
+	myfree(row_elem);
 	return A_s;
 }
 
@@ -264,7 +268,8 @@ matrix * matmat_sparseproduct (matrix *A, matrix *B) {
 		}
 		C->row_ptr[i+1] = j;
 	}
-	for (i=0; i<p; i++) destroy_l(row_elem[i]); myfree(row_elem);
+	for (i=0; i<p; i++) destroy_l(row_elem[i]);
+	myfree(row_elem);
 	return C;
 };
 

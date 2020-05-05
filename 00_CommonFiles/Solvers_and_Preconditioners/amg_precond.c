@@ -37,17 +37,17 @@ int AMG_precond_setup (ParametersType *Parameters, MatrixDataType *MatrixData, F
     int     refinePass;
     int     truncq;
     double  trunc_fact;
-    precondAMG *AMG_data;
-    precondDPA *DPA_data;
+    precondAMG *AMG_data = NULL;
+    precondDPA *DPA_data = NULL;
 
     sscanf(Parameters->Preconditioner,"AMG %d %d %lf %lf %d",&precond,&NCL,&str_thr,&omega,&nr);
     if (precond == 1) {
     	sscanf(Parameters->Preconditioner,"AMG %*d %*d %*f %*f %*d %d %d %d %lf",&aggress, &refinePass, &truncq, &trunc_fact);
         data->AMG_data = AMG_data  = (precondAMG*)mycalloc("AMG_data in AMG_precond_setup",1,sizeof(precondAMG));
-	data->AMG_data->aggress    = aggress;
-	data->AMG_data->refinePass = refinePass;
-	data->AMG_data->truncq     = truncq;
-	data->AMG_data->trunc_fact = trunc_fact;
+		data->AMG_data->aggress    = aggress;
+		data->AMG_data->refinePass = refinePass;
+		data->AMG_data->truncq     = truncq;
+		data->AMG_data->trunc_fact = trunc_fact;
     }
     else if (precond == 2) {
         data->DPA_data = DPA_data = (precondDPA*)mycalloc("DPA_data in AMG_precond_setup",1,sizeof(precondDPA));
