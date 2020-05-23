@@ -171,6 +171,9 @@ int pgmres (ParametersType *Parameters,	MatrixDataType *MatrixData, FemStructsTy
 		printf(" Iteracoes GMRES: %d \n", cont);
 	#endif
 	Parameters->iterations += cont;
+	#ifdef SSNavierStokesEquations2D
+		Parameters->gmres++;
+	#endif
 
 	FemFunctions->precondR (Parameters, MatrixData, FemStructs, X, X);
 

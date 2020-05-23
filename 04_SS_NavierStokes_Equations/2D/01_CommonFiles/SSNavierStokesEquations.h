@@ -73,6 +73,7 @@ typedef struct
 	int nedge;
 	int nnzero;
 	int iterations;                        // iterations: total number of iteration 
+	int gmres;
 	int NLiterations;                        // NLiterations: total number of nonlinear iteration 
 	int LinearMaxIter;                           // itermax: maximum number of iteration
 	int NumberCorrection;                  // NumberCorrection: number of multicorrection
