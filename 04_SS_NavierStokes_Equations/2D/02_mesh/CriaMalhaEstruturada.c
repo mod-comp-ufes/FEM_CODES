@@ -35,7 +35,7 @@ return m;                                          				 //Retorna o Ponteiro par
 int *alocVetInt(int Comp){ 					//Recebe a quantidade de Linhas e Colunas como Parâmetro
 	int i; 													//Variáveis Auxiliares
 	int *vet;
-	vet = (int*)malloc(Comp*sizeof(int)); 	//Aloca um Vetor de Ponteiros
+	vet = (int*)malloc(Comp*sizeof(int*)); 	//Aloca um Vetor de Ponteiros
 	for (i = 0; i < Comp; i++) 								//Percorre as linhas do Vetor de Ponteiros
 		vet[i] = 0; 										//Inicializa com 0.
 return vet;                          		 //Retorna o Ponteiro para a Matriz Alocada
@@ -335,7 +335,7 @@ int main(int argc, char **argv)
 			fprintf(File, "%d \t %d \t %d \t -1\n", ien[i][0], ien[i][1], ien[i][2]);
 		}
 	}
-
+	
 	fclose(File);
 	
 	return 0;
