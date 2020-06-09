@@ -1,6 +1,6 @@
 CC=gcc
 IDIR= 
-CFLAGS= -DSSNavierStokesEquations2D -c -lm -lrt -Wall -Ofast -march=native
+CFLAGS= -DSSNavierStokesEquations2D -std=gnu99 -c -lm -lrt -Wall -Ofast -march=native
 GCFLAGS= -DSSNavierStokesEquations2D -std=gnu99 -lm -lrt -Wall \
 -lrt -lm -lgfortran -Wall -lblas -llapack -lquadmath -Ofast -march=native
 LDFLAGS= 
@@ -84,13 +84,13 @@ EXECUTABLE=SSNavierStokesEquations2D
 
 all: $(SOURCES) $(EXECUTABLE)
 
-debug: CFLAGS= -DSSNavierStokesEquations2D -g -Ddebug -c -lm -lrt -Wall
+debug: CFLAGS= -DSSNavierStokesEquations2D -g -std=gnu99 -Ddebug -c -lm -lrt -Wall
 debug: GCFLAGS= -DSSNavierStokesEquations2D -g -std=gnu99 -Ddebug -lm -lrt -Wall \
 -lrt -lm -lgfortran -Wall -lblas -llapack -lquadmath 
 debug: all
 
-fast: CFLAGS= -DSSNavierStokesEquations2D -c -std=gnu99 -lm -lrt -Wall -Ofast -march=native
-fast: GCFLAGS= -DSSNavierStokesEquations2D -lm -lrt -Wall \
+fast: CFLAGS= -DSSNavierStokesEquations2D -std=gnu99 -c -lm -lrt -Wall -Ofast -march=native
+fast: GCFLAGS= -DSSNavierStokesEquations2D -std=gnu99 -lm -lrt -Wall \
 -lrt -lm -lgfortran -Wall -lblas -llapack -lquadmath -Ofast -march=native
 fast: all
 
