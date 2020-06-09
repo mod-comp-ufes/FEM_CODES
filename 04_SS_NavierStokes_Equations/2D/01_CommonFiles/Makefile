@@ -2,7 +2,8 @@ CC=gcc
 IDIR= 
 CFLAGS= -DSSNavierStokesEquations2D -std=gnu99 -c -lm -lrt -Wall -Ofast -march=native
 GCFLAGS= -DSSNavierStokesEquations2D -std=gnu99 -lm -lrt -Wall \
--lrt -lm -lgfortran -Wall -lblas -llapack -lquadmath -Ofast -march=native
+-lrt -lm -lgfortran -Wall -lquadmath -Ofast -march=native
+#-lrt -lm -lgfortran -Wall -lblas -llapack -lquadmath -Ofast -march=native
 LDFLAGS= 
 SOURCES= main.c \
 Preprocess.c \
