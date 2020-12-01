@@ -9,5 +9,6 @@ void matvec_product (double *p, matrix *A, double *v, int precond, AMG_precond_d
 void residual (double *r, double *f, matrix *A, double *u, int precond, AMG_precond_data *data);
 double norm_inf (double *v, int n);
 double norm_euclid(double *v, int n);
+int GMRES(matrix *A, double *f, double *u, int k, double tol, int lmax);
 
 # endif

@@ -17,6 +17,11 @@ void calculateTime(double Preprocess_Time, double Process_Time, double Postproce
 	#ifdef SSTranspEquation2D
 		sprintf(FileName, "../03_output/%s_%s_%s_%s_%s_%s_%s_N%d_E%d.dat",Parameters->ProblemTitle,Parameters->StabilizationForm,Parameters->ShockCapture, Parameters->h_Shock, 
 		Parameters->MatrixVectorProductScheme,Parameters->Solver,Parameters->Preconditioner, Parameters->nnodes,Parameters->nel); 	
+		sprintf(CSVname,"../03_output/SSTranspEquation2D.csv");
+		sprintf(CSVcontent,"\n\"%lf\",\"%lf\",\"%lf\",\"%d\",\"%d\",\"%lf\",\"%lf\"", Preprocess_Time, Process_Time, Postprocess_Time, Parameters->gmres, Parameters->iterations, /*media iteracoes*/1.0*Parameters->iterations/Parameters->gmres, /*media tempo*/Process_Time/Parameters->gmres);
+		CSV = myfopen(CSVname,"a");
+		fprintf(CSV,"%s", CSVcontent);
+		fclose(CSV);
 	#endif
 
 	#ifdef TranspEquation2D

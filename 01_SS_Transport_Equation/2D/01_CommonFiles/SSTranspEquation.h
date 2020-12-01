@@ -54,6 +54,7 @@ typedef struct
 	int nedge;
 	int nnzero;
 	int iterations;
+	int gmres;
 	int LinearMaxIter;
 	int bandwidth_bef, bandwidth_aft;	// half bandwidth before and after reordering
 }ParametersType;

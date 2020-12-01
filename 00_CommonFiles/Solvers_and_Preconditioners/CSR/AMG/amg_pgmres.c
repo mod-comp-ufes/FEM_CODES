@@ -11,6 +11,10 @@ int AMG_GMRES(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructs
     int    lmax		= Parameters->LinearMaxIter;
     int    precond 	= MatrixData->amg_precond_data->precond;
 
+    #ifdef SSTranspEquation2D
+	Parameters->gmres++;
+    #endif
+
     int ind, i, j, l, n = A->m;
     double **U, **H, *e, *y, *c, *s, *f2, tol2, delta, aux, r;
     U = (double **) malloc((k + 1) * sizeof (double *));

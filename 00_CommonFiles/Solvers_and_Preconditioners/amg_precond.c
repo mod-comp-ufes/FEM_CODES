@@ -49,7 +49,7 @@ int AMG_precond_setup (ParametersType *Parameters, MatrixDataType *MatrixData, F
 		data->AMG_data->truncq     = truncq;
 		data->AMG_data->trunc_fact = trunc_fact;
     }
-    else if (precond == 2) {
+    else if ((precond == 2) || (precond == 3)) {
         data->DPA_data = DPA_data = (precondDPA*)mycalloc("DPA_data in AMG_precond_setup",1,sizeof(precondDPA));
     }
 
@@ -80,7 +80,7 @@ int AMG_precond_setup (ParametersType *Parameters, MatrixDataType *MatrixData, F
     if (precond == 1) {
         AMG_setup(A, F, NULL, NCL, str_thr, AMG_data->aggress, AMG_data->refinePass, AMG_data->truncq, AMG_data->trunc_fact, &(data->A), &(data->f), &(data->u), &(data->r), &(AMG_data->I_cf), &(AMG_data->I_cf_t));
     } else
-    if (precond == 2) {
+    if ((precond == 2) || (precond == 3)) {
         dpa_setup(A, F, NULL, NCL, &(data->A), &(data->f), &(data->u), &(data->r), &(DPA_data->match), str_thr);
     }
     if (precond) { // modify right-hand side
@@ -112,7 +112,7 @@ void AMG_precond_data_destroy(AMG_precond_data *data) {
 		myfree(data->AMG_data);
 		
 	}
-	else if(data->precond == 2) {
+	else if ((data->precond == 2) || (data->precond == 3)) {
 		dpa_destroy(data->NCL, data->A, data->f, data->u, data->r, data->DPA_data->match);
 		myfree(data->DPA_data);
 	}

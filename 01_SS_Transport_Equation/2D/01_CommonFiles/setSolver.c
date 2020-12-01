@@ -7,7 +7,7 @@ int setSolver(ParametersType *Parameters, FemOtherFunctionsType *FemOtherFunctio
 {
 	if (strcasecmp(Parameters->Solver,"GMRES")==0){
 		if (strncmp(Parameters->Preconditioner,"AMG",3)==0) {
-			FemOtherFunctions->solver = AMG_GMRES;
+			FemOtherFunctions->solver = pgmres;// AMG_GMRES;
 		}
 		else{
 			FemOtherFunctions->solver = pgmres;

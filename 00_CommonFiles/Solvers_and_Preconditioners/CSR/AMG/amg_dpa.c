@@ -505,6 +505,28 @@ void dpa_Vcycle_precond(int NCL, matrix **A, double **f, double **u, double *r, 
     }
 };
 
+void xdpa_precond(int NCL, matrix **A, double **f, double **u, double *r, double omega, int nr, int **match) {
+
+    int i, j;
+    NCL*=2;
+    
+    for (i=0; i<A[0]->m; i++) u[0][i] = 0.0;
+    for (i = 0; i < NCL; i+=2) {
+        SOR_relax(A[i], f[i], u[i], omega, nr);
+        residual(r, f[i], A[i], u[i], 0, 0);
+        dpa_fine2coarse(match[i],   r,      A[i]->n  , f[i+1]); // f[i+1] <- r
+        dpa_fine2coarse(match[i+1], f[i+1], A[i+1]->n, f[i+2]); // f[i+2] <- f[i+1]
+        for (j = 0; j < A[i+1]->n; j++) u[i+1][j] = 0.0;
+        for (j = 0; j < A[i+2]->n; j++) u[i+2][j] = 0.0;
+    }
+    GMRES(A[i], f[i], u[i], 100000, 1e-8, 1);
+    for (; i > 0; i-=2) {
+        dpa_coarse2fine_pure(match[i-1], u[i],   A[i-1]->n, u[i-1]); // u[i-1] <- u[i]
+        dpa_coarse2fine     (match[i-2], u[i-1], A[i-2]->n, u[i-2]); // u[i-2] <- u[i-1]
+	GMRES(A[i-2], f[i-2], u[i-2], 10, 1e-8, 1);
+    }
+};
+
 void dpa_destroy(int NCL, matrix **A, double **f, double **u, double *r, int **match) {
     int i;
     NCL*=2;
