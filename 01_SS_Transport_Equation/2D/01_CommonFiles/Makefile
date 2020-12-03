@@ -1,8 +1,8 @@
 CC=gcc
 #CC=tau_cc.sh
 IDIR=
-CFLAGS= -DSSTranspEquation2D -Ddebug -c -lm -lrt -Wall -Ofast -march=native
-GCFLAGS= -DSSTranspEquation2D -Ddebug -lm -lrt -Wall -lrt -lm -Wall -Ofast -march=native
+CFLAGS= -DSSTranspEquation2D -c -lm -lrt -Wall -Ofast -march=native
+GCFLAGS= -DSSTranspEquation2D -lm -lrt -Wall -lrt -lm -Wall -Ofast -march=native
 LDFLAGS=
 SOURCES= main.c \
 Preprocess.c \

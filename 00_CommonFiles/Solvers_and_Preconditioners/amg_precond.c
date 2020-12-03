@@ -49,8 +49,14 @@ int AMG_precond_setup (ParametersType *Parameters, MatrixDataType *MatrixData, F
 		data->AMG_data->truncq     = truncq;
 		data->AMG_data->trunc_fact = trunc_fact;
     }
-    else if ((precond == 2) || (precond == 3)) {
+    else if (precond == 2) {
         data->DPA_data = DPA_data = (precondDPA*)mycalloc("DPA_data in AMG_precond_setup",1,sizeof(precondDPA));
+    }
+    else if (precond == 3) {
+        data->DPA_data = DPA_data = (precondDPA*)mycalloc("DPA_data in AMG_precond_setup",1,sizeof(precondDPA));
+	NCL			     =  fmax(1,floor(log2(Parameters->neq)/2)-2);
+	if (Parameters->Preconditioner[strlen(Parameters->Preconditioner)-1]!=')')
+		sprintf(Parameters->Preconditioner,"%s (NCL=%d)",Parameters->Preconditioner,NCL);
     }
 
     data->precond    = precond;
