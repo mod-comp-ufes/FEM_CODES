@@ -48,7 +48,7 @@ typedef struct
 	char MatrixVectorProductScheme[200];   // the global matrix storage form
 	char StabilizationForm[200];           // type of stabilization method
 	char ShockCapture[200];            // type discontinuities capture Operator
-	char Preconditioner[200];           // preconditioners: yes - use or not - don't use
+	char Preconditioner[1000];           // preconditioners: yes - use or not - don't use
 	char Scaling[200];
 	char Experiments[200];
 	char StopMulticorrection[200];         // Fala se o loop espacial para pela norma ou por um numero fixo de iteracao - NORM: para pela norma; ITERATION: para pela iteracao

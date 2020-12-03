@@ -33,7 +33,7 @@ void calculateTime(double Preprocess_Time, double Process_Time, double Postproce
 		sprintf(FileName,"../03_output/%s_%s_%s_%s_%s_%s_N%d_E%d.txt", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, 
 		Parameters->TimeIntegration, Parameters->MatrixVectorProductScheme,Parameters->nnodes, Parameters->nel);
 		sprintf(CSVname,"../../../../OUTPUT_DATA/EulerEquations2D.csv");
-		sprintf(CSVcontent,"\n\"%lf\",\"%lf\",\"%lf\",\"%d\",\"%lf\",\"%lf\"", Preprocess_Time, Process_Time, Postprocess_Time, Parameters->iterations, /*media iteracoes*/Parameters->iterations*Parameters->DeltaT/(Parameters->NonLinearMaxIter*Parameters->FinalTime), /*media tempo*/Process_Time*Parameters->DeltaT/(Parameters->NonLinearMaxIter*Parameters->FinalTime);
+		sprintf(CSVcontent,"\n\"%lf\",\"%lf\",\"%lf\",\"%d\",\"%lf\",\"%lf\"", Preprocess_Time, Process_Time, Postprocess_Time, Parameters->iterations, /*media iteracoes*/Parameters->iterations*Parameters->DeltaT/(Parameters->NonLinearMaxIter*Parameters->FinalTime), /*media tempo*/Process_Time*Parameters->DeltaT/(Parameters->NonLinearMaxIter*Parameters->FinalTime));
 		CSV = myfopen(CSVname,"a");
 		fprintf(CSV,"%s", CSVcontent);
 		fclose(CSV);

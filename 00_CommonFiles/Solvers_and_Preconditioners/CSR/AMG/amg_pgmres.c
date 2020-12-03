@@ -16,7 +16,7 @@ int AMG_GMRES(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructs
     #endif
 
     int ind, i, j, l, n = A->m;
-    double **U, **H, *e, *y, *c, *s, *f2, tol2, delta, aux, r;
+    double **U, **H, *e, *y, *c, *s, tol2, delta, aux, r;
     U = (double **) malloc((k + 1) * sizeof (double *));
     for (ind = 0; ind < k + 1; ind++) U[ind] = (double *) calloc(n, sizeof (double));
     H = (double **) malloc((k + 1) * sizeof (double *));
