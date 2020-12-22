@@ -1,5 +1,6 @@
 #include "ourBLAS.h"
 
+// r = x dot y -> produto escalar
 double ddot(int n, double *x, double *y)
 {
 	long int i, m;

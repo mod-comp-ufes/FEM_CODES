@@ -42,7 +42,9 @@ int setStabilizationForm(ParametersType *Parameters, FemFunctionsType *FemFuncti
 	}
 
 	//Set h shock parameter
-	if (strcasecmp(Parameters->h_Shock,"2sqrtArea")==0){ 
+	if (strcasecmp(Parameters->h_Shock,"sqrtArea")==0){ 
+		FemFunctions->h_shock = h_shock_sqrtArea;
+	}else if (strcasecmp(Parameters->h_Shock,"2sqrtArea")==0){ 
 		FemFunctions->h_shock = h_shock_2sqrtArea;
 	}
 	else if (strcasecmp(Parameters->h_Shock,"Option1")==0){  

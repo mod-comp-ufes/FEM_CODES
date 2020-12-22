@@ -5,10 +5,24 @@
 #include "../HEMKER/hemker.h"
 #include "../CONVECTION/convection.h"
 #include "../REACTION/reaction.h"
+#include "../RAMPA/rampa.h"
+#include "../RAMPA2/rampa2.h"
 
 int setProblem(ParametersType *Parameters, FemFunctionsType *FemFunctions)
 {		
-	if (strcasecmp(Parameters->ProblemTitle,"PUDIM")==0){
+	if (strcasecmp(Parameters->ProblemTitle,"RAMPA")==0){
+		FemFunctions->Condutivity = RAMPA_Condutivity;	
+		FemFunctions->Font = RAMPA_Font;
+		FemFunctions->Reaction = RAMPA_Reaction;
+		FemFunctions->Velocity = RAMPA_Velocity;
+		FemFunctions->upresc = RAMPA_upresc;
+	}else if (strcasecmp(Parameters->ProblemTitle,"RAMPA2")==0){
+		FemFunctions->Condutivity = RAMPA2_Condutivity;	
+		FemFunctions->Font = RAMPA2_Font;
+		FemFunctions->Reaction = RAMPA2_Reaction;
+		FemFunctions->Velocity = RAMPA2_Velocity;
+		FemFunctions->upresc = RAMPA2_upresc;
+	}else if (strcasecmp(Parameters->ProblemTitle,"PUDIM")==0){
 		FemFunctions->Condutivity = PUDIM_Condutivity;	
 		FemFunctions->Font = PUDIM_Font;
 		FemFunctions->Reaction = PUDIM_Reaction;

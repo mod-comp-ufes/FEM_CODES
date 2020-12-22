@@ -1,5 +1,4 @@
 #include "time_integration.h"
-#include "../Allocation_Operations/allocations.h"
 
 void setStopCriteria(ParametersType *Parameters, FemFunctionsType *FemFunctions)
 {
@@ -14,7 +13,7 @@ void setStopCriteria(ParametersType *Parameters, FemFunctionsType *FemFunctions)
 
 	if(strcasecmp(Parameters->StopAtSteadyState,"YES") == 0)
 		FemFunctions->StopTimeIntegration = StopBySteadyState;
-	else if(strncasecmp(Parameters->StopAtSteadyState,"NO",2) == 0)
+	else if(strcasecmp(Parameters->StopAtSteadyState,"NOT") == 0)
 		FemFunctions->StopTimeIntegration = StopByTime;
 	else{
 		printf("Stop time integration is not defined!\n");
@@ -56,7 +55,7 @@ int StopBySteadyState(ParametersType *Parameters, double *u, double *u_old, doub
 	norm_diff = sqrt(ddot(neq, diff, diff)); 
 	norm_u = sqrt(ddot(neq,u,u));	
 
-	myfree(diff);
+	free(diff);
 
 	if ((Parameters->TimeIntegrationTolerance)*norm_u > norm_diff || fabs(Parameters->FinalTime-t) < Parameters->DeltaT){
 		Parameters->CurrentTime = t;	
@@ -69,7 +68,7 @@ int StopBySteadyState(ParametersType *Parameters, double *u, double *u_old, doub
 
 int StopByTime(ParametersType *Parameters, double *u, double *u_old, double t)
 {
-	if (Parameters->FinalTime-t < 1e-10){
+	if (fabs(Parameters->FinalTime-t) < 1e-15){
 		Parameters->CurrentTime = t;	
 		return 1;
 	}

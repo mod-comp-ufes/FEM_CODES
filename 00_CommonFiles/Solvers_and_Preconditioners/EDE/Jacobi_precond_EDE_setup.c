@@ -20,7 +20,7 @@ int Jacobi_precond_EDE_setup (ParametersType *Parameters, MatrixDataType *Matrix
 	}
 
 	/* F preconditioning */
-	double *faux = mycalloc("faux of Jacobi_precond_EDE_setup",(neq + 1), sizeof(double));
+	double *faux = calloc((neq + 1), sizeof(double));
 	for (I = 0; I < neq; I++){
 		faux[I] = F[I];
 	}
@@ -29,7 +29,7 @@ int Jacobi_precond_EDE_setup (ParametersType *Parameters, MatrixDataType *Matrix
 
 	Jacobi_precond_EDE (Parameters, MatrixData, FemStructs, faux, F);
 
-	myfree(faux);
+	free(faux);
 
 	return 0;
 }

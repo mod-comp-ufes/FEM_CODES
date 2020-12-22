@@ -15,14 +15,14 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 	//		Paraview output to file
 	/************************************************************/
 	Paraview_Output(Parameters, FemStructs, FemFunctions);
-
+	Data_Output(Parameters, FemStructs, FemFunctions);
 	/*************************************************************/
 
 
 	/****************************************************************************************/
 		// 			Printing final result
 	/****************************************************************************************/
-	sprintf(FileName, "../03_output/%s_%s_%s_%s_%s_%s_N%d_E%d.dat",Parameters->ProblemTitle,Parameters->StabilizationForm,Parameters->ShockCapture,
+	sprintf(FileName, "../03_output/%s_%s_%s_%s_%s_%s_%s_N%d_E%d.dat",Parameters->Experiments, Parameters->ProblemTitle,Parameters->StabilizationForm,Parameters->ShockCapture,
 	        Parameters->h_Shock, Parameters->MatrixVectorProductScheme, Parameters->Preconditioner, Parameters->nnodes,Parameters->nel);
 	OutFile = myfopen(FileName,"w");
 	fprintf(OutFile, "\n\n======================= PROBLEM CHARACTERISTICS ========================\n\n");
@@ -46,7 +46,7 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 	fprintf(OutFile, "Scaling used: %s\n", Parameters->Scaling);
 	fprintf(OutFile, "Solver tolerance used: %E\n", Parameters->SolverTolerance);
 	fprintf(OutFile, "Non linear tolerance used: %E\n", Parameters->NonLinearTolerance);
-	fprintf(OutFile, "Number of %s iterations: %d\n", Parameters->Solver, Parameters->iterations);
+	fprintf(OutFile, "Number of %s iterations: %d\n", Parameters->Solver, Parameters->SolverIterations);
 	fprintf(OutFile, "\n========================================================================\n\n");
 	fclose(OutFile);
 
@@ -71,7 +71,7 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 	printf("Scaling used: %s\n", Parameters->Scaling);
 	printf("Solver tolerance used: %E\n", Parameters->SolverTolerance);
 	printf("Non linear tolerance used: %E\n", Parameters->NonLinearTolerance);
-	printf("Number of %s iterations: %d\n", Parameters->Solver, Parameters->iterations);
+	printf("Number of %s iterations: %d\n", Parameters->Solver, Parameters->SolverIterations);
 	printf("\n========================================================================\n\n");
 
 	/****************************************************************************************/
@@ -82,59 +82,57 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 	//				Memory deallocation
 	/**************************************************************************************/
 	if (strcasecmp(Parameters->MatrixVectorProductScheme,"EBE")==0){
-		myfree(MatrixData->A);
-		myfree(MatrixData->Aaux);
-		myfree(FemStructs->lm);
-		myfree(FemStructs->lmaux);
+		free(MatrixData->A);
+		free(MatrixData->Aaux);
+		free(FemStructs->lm);
+		free(FemStructs->lmaux);
 	}
 
 	else if (strcasecmp(Parameters->MatrixVectorProductScheme,"EDE")==0){
-		myfree(MatrixData->A);
-		myfree(MatrixData->Aaux);
+		free(MatrixData->A);
+		free(MatrixData->Aaux);
 		for (I = 0; I < nel; I++){
-			myfree(MatrixData->Scheme_by_Element[I]);
-			myfree(MatrixData->order[I]);
+			free(MatrixData->Scheme_by_Element[I]);
+			free(MatrixData->order[I]);
 		}
-		myfree(MatrixData->Scheme_by_Element);
-		myfree(MatrixData->order);
-		myfree(FemStructs->lm);
-		myfree(FemStructs->lmaux);
-		myfree(FemStructs->lm2);
-		myfree(FemStructs->lm2aux);
+		free(MatrixData->Scheme_by_Element);
+		free(MatrixData->order);
+		free(FemStructs->lm);
+		free(FemStructs->lmaux);
+		free(FemStructs->lm2);
+		free(FemStructs->lm2aux);
 
 	}
 
 	else if (strcasecmp(Parameters->MatrixVectorProductScheme,"CSR")==0){
-		myfree(MatrixData->AA);
-		myfree(MatrixData->IA);
-		myfree(MatrixData->JA);
-		myfree(FemStructs->lm);
-		myfree(FemStructs->lmaux);
+		free(MatrixData->AA);
+		free(MatrixData->IA);
+		free(MatrixData->JA);
 		for (I = 0; I < nel; I++)
-			myfree(MatrixData->Scheme_by_Element[I]);
-		myfree(MatrixData->Scheme_by_Element);
+			free(MatrixData->Scheme_by_Element[I]);
+		free(MatrixData->Scheme_by_Element);
 		if (strncmp(Parameters->Preconditioner,"ILU",3)==0){
 			SPARILU_clean(MatrixData->ILUp);
 			SPARMAT_clean(MatrixData->mat);
-			myfree(MatrixData->Ailu);
+			free(MatrixData->Ailu);
 		}
 	}
 
 	if ((strcasecmp(Parameters->Preconditioner,"Jacobi")==0)||(strncmp(Parameters->Preconditioner,"SOR",3)==0)){
-		myfree(MatrixData->invDe);
-		myfree(MatrixData->invDeaux);
+		free(MatrixData->invDe);
+		free(MatrixData->invDeaux);
 	}
 
-	myfree(MatrixData->Diag);
-	myfree(MatrixData->invDiag);
-	myfree(MatrixData);
-	myfree(FemStructs->Node);
-	myfree(FemStructs->Element);
-	myfree(FemStructs->F);
-	myfree(FemStructs->u);
-	myfree(FemStructs);
-	myfree(FemFunctions);
-	myfree(FemOtherFunctions);
+	free(MatrixData->Diag);
+	free(MatrixData->invDiag);
+	free(MatrixData);
+	free(FemStructs->Node);
+	free(FemStructs->Element);
+	free(FemStructs->F);
+	free(FemStructs->u);
+	free(FemStructs);
+	free(FemFunctions);
+	free(FemOtherFunctions);
 	/***************************************************************************************/
 
 	return 0;

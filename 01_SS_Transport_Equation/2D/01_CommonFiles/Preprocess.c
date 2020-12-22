@@ -5,7 +5,7 @@
 int Preprocess(int narg, char **arguments, ParametersType **Parameters_out,  MatrixDataType **MatrixData_out,
 			FemStructsType **FemStructs_out, FemFunctionsType **FemFunctions_out, FemOtherFunctionsType **FemOtherFunctions_out)
 {
-	int neq, nnodes, nedge, nel, I;
+	int neq, nnodes, nedge, nel, I, J;
 	int tag = 1; // Testing input error
 	int **lm, *lmaux;
 	int size = NDOF*NNOEL;
@@ -42,19 +42,21 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out,  Mat
 	FemOtherFunctions = mycalloc("FemOtherFunctions of 'Preprocess'",1,sizeof(FemOtherFunctionsType));
 
 	InFile = myfopen(arguments[1], "r");
+	tag = fscanf(InFile, "%s\t:%[^\n]\n", Parameters->Experiments, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]\n", Parameters->ProblemTitle, label);
 	tag = fscanf(InFile, "%lf\t:%[^\n]\n", &(Parameters->SolverTolerance), label);
 	tag = fscanf(InFile, "%lf\t:%[^\n]\n", &(Parameters->NonLinearTolerance), label);
-	tag = fscanf(InFile, "%d\t:%[^\n]\n", &(Parameters->LinearMaxIter), label);
+	tag = fscanf(InFile, "%d\t:%[^\n]\n", &(Parameters->SolverMaxIter), label);
 	tag = fscanf(InFile, "%d\t:%[^\n]\n", &(Parameters->KrylovBasisVectorsQuantity), label);
 	tag = fscanf(InFile, "%s\t:%[^\n]\n", Parameters->Solver, label);
-	tag = fscanf(InFile, "%[^\t]%[^\n]\n", Parameters->Preconditioner, label);
+	tag = fscanf(InFile, "%s\t:%[^\n]\n", Parameters->Preconditioner, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]\n", Parameters->Scaling, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]\n", Parameters->reordering, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]\n", Parameters->MatrixVectorProductScheme, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]\n", Parameters->StabilizationForm, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]\n", Parameters->ShockCapture, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]\n", Parameters->h_Shock, label);
+	tag = fscanf(InFile, "%s\t:%[^\n]\n", Parameters->OutputFlow, label);
 	tag = fscanf(InFile, "%d\t:%[^\n]\n",&(Parameters->nnodes), label);
 	tag = fscanf(InFile, "%d\t:%[^\n]\n",&(Parameters->nel), label);
 	fclose(InFile);
@@ -68,7 +70,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out,  Mat
 	InFile = myfopen(FileName, "r");
 	tag =  fscanf(InFile, "%d", &nnodes);
 	Node = (NodeType*) mycalloc("Node of 'Preprocess'",nnodes, sizeof(NodeType));
-	for (I=0, neq = 0; I<nnodes; I++)
+	for (I = 0, neq = 0; I < nnodes; I++)
 	{
 		tag = fscanf(InFile, "%lf%lf%d\n", &(Node[I].x), &(Node[I].y), &(Node[I].Type));
 
@@ -78,16 +80,76 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out,  Mat
 			Node[I].id = -1;
 	}
 	/*****************************************************************************/
-
+	
+/*	for(I = 0; I < nnodes; I++){
+		printf("%lf \t %lf\n", Node[I].x, Node[I].y);	
+	}*/
+	
+/*	for(I = 0; I < nnodes; I++){
+		printf("id = %d\n", Node[I].id);	
+	}*/
 
 	/************************************************************************************************************/
 	//						Reading connection mesh
 	/************************************************************************************************************/
 	tag = fscanf(InFile, "%d", &nel);
 	Element = (ElementType*) mycalloc("Element of 'Preprocess'",nel, sizeof(ElementType));
-	for (I=0; I<nel; I++)
-		tag = fscanf(InFile, "%d%d%d", &(Element[I].Vertex[0]),  &(Element[I].Vertex[1]), &(Element[I].Vertex[2]));
+	for (I = 0; I < nel; I++)
+		tag = fscanf(InFile, "%d%d%d%d\n", &(Element[I].Vertex[0]),  &(Element[I].Vertex[1]), &(Element[I].Vertex[2]), &(Element[I].Type));
 	fclose(InFile);
+	
+/*	for(I = 0; I < nel; I++){
+		printf("%d \t %d \t %d\n", Element[I].Vertex[0],  Element[I].Vertex[1], Element[I].Vertex[2]);	
+	}
+	getchar();*/
+	
+	int p, cont1, cont2, cont3, cont4;
+	
+	for(I = 0; I < nel; I++){
+		cont1 = 0; cont2 = 0; cont3 = 0; cont4 = 0;
+		for(J = 0; J < NNOEL; J++){
+			p = Element[I].Vertex[J];
+			if(Node[p].x == 0.0){ // reta 1: x = 0 
+				cont1 = cont1 + 1;
+			}
+			if(Node[p].y == 0.0){ // reta 2: y = 0
+				cont2 = cont2 + 1;
+			}
+			if(Node[p].x == 1.0){ // reta 3: x = 1
+				cont3 = cont3 + 1;
+			}
+			if(Node[p].y == 1.0){ // reta 4: y = 1
+				cont4 = cont4 + 1;
+			}
+		}
+		
+			
+		if(cont1 == 2){
+			if(cont1 == cont2){
+				Element[I].Type = 5; // esquina entre x = 0 e y = 0
+			}else if(cont1 == cont4){
+				Element[I].Type = 8; // esquina entre y = 1 e x = 0
+			}else{
+				Element[I].Type = 1;
+			}
+		}else if(cont2 == 2){
+			if(cont2 == cont3){
+				Element[I].Type = 6; // esquina entre y = 0 e x = 1
+			}else{
+				Element[I].Type = 2;
+			}
+		}else if(cont3 == 2){
+			if(cont3 == cont4){
+				Element[I].Type = 7; // esquina entre x = 1 e y = 1
+			}else{
+				Element[I].Type = 3;
+			}
+		}else if(cont4 == 2){
+				Element[I].Type = 4;
+		}else{ // não está em nenhum contorno
+			Element[I].Type = -1;
+		}
+	}
 	/*************************************************************************************************************/
 
 
@@ -97,6 +159,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out,  Mat
 
 	// Some variable inicializations
 
+	MatrixData = (MatrixDataType *) mycalloc("MatrixData of 'Preprocess'",1, sizeof(MatrixDataType));
 	F = (double*) mycalloc("F of 'Preprocess'",neq+1, sizeof(double));
 	u = (double*) mycalloc("u of 'Preprocess'",neq+1, sizeof(double));
 	Diag = (double*) mycalloc("Diag of 'Preprocess'",neq+1, sizeof(double));

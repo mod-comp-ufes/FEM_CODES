@@ -1,7 +1,7 @@
 #include "SSTranspEquation.h"
 
 double YZBeta_ShockCapture2(double kx, double ky, double Be_x, double Be_y, double gamma, double ue1, double ue2, double ue3, double ueb, double feb, 
-                        double y23, double y31, double y12, double x32, double x13, double x21, double invArea, double h)
+                        double y23, double y31, double y12, double x32, double x13, double x21, double invArea, double h, double *CbOld, int e)
 {
 	double Eu, BetaGradu, Ru, normRu, Gradu[2], normGradu;	
 

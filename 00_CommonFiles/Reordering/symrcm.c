@@ -1,5 +1,4 @@
 #include "reordering.h"
-#include "../Allocation_Operations/allocations.h"
 
 // An implementation of the Cuthill-McKee algorithm.
 void REORDERING_SYMRCM(ParametersType *Parameters, int *ja, int *ia, int *p, int *pT)
@@ -26,8 +25,8 @@ void REORDERING_SYMRCM(ParametersType *Parameters, int *ja, int *ia, int *p, int
 	cidx = ia; 
 	ridx = ja; 
 
-  	int *cidx2 = mycalloc("cidx2 in REORDERING_SYMRCM",N+1, sizeof(int));
-  	int *ridx2 = mycalloc("ridx2 in REORDERING_SYMRCM",nnz, sizeof(int));
+  	int *cidx2 = calloc(N+1, sizeof(int));
+  	int *ridx2 = calloc(nnz, sizeof(int));
 
     	transpose (N, ridx, cidx, ridx2, cidx2);
   
@@ -35,7 +34,7 @@ void REORDERING_SYMRCM(ParametersType *Parameters, int *ja, int *ia, int *p, int
 	int *P = p;
   
 	// compute the node degrees
-	int *D = mycalloc("D in REORDERING_SYMRCM",N, sizeof(int));
+	int *D = calloc(N, sizeof(int));
 	int max_deg = calc_degrees (N, ridx, cidx, D);
   
 	// if none of the nodes has a degree > 0 (a matrix of zeros)
@@ -49,11 +48,11 @@ void REORDERING_SYMRCM(ParametersType *Parameters, int *ja, int *ia, int *p, int
       	}
 	// a heap for the a node's neighbors. The number of neighbors is
 	// limited by the maximum degree max_deg:
-	CMK_NodeType *S = mycalloc("S in REORDERING_SYMRCM", max_deg, sizeof(CMK_NodeType));
+	CMK_NodeType *S = calloc(max_deg, sizeof(CMK_NodeType));
   
 	// a queue for the BFS. The array is always one element larger than
 	// the number of entries that are stored.
-	CMK_NodeType *Q = mycalloc("Q in REORDERING_SYMRCM",N+1, sizeof(CMK_NodeType));
+	CMK_NodeType *Q = calloc(N+1, sizeof(CMK_NodeType));
   
 	// a counter (for building the permutation)
 	int c = -1;
@@ -67,7 +66,7 @@ void REORDERING_SYMRCM(ParametersType *Parameters, int *ja, int *ia, int *p, int
 	// mark all nodes as unvisited; with the exception of the nodes
 	// that have degree==0 and build a CC of the graph.
   
-    	int *visit = mycalloc("visit in REORDERING_SYMRCM",N, sizeof(int)); // visit[0..N-1] receive zero. It means visit_i is false initially
+    	int *visit = calloc(N, sizeof(int)); // visit[0..N-1] receive zero. It means visit_i is false initially
   
 	do
 	{
@@ -220,14 +219,14 @@ void REORDERING_SYMRCM(ParametersType *Parameters, int *ja, int *ia, int *p, int
 	// are there any nodes left?
 	while (c+1 < N);
  
-	myfree(Q);
-	myfree(S);
-	myfree(D);
-//	myfree(cidx);
-//	myfree(ridx);
-	myfree(cidx2);
-	myfree(ridx2);
-	myfree(visit);
+	free(Q);
+	free(S);
+	free(D);
+//	free(cidx);
+//	free(ridx);
+	free(cidx2);
+	free(ridx2);
+	free(visit);
  
 	// compute the reverse-ordering
 	s = N / 2 - 1;
@@ -247,7 +246,7 @@ void transform_CSR_to_CCS(int N,const int *ja, const int *ia, int *cidx,int *rid
 	int i, j, count, nz = ia[N];
 	ARRAY *IJ;
 
-	IJ = mycalloc("IJ in transform_CSR_to_CCS",nz, sizeof(ARRAY));
+	IJ = calloc(nz, sizeof(ARRAY));
 	
 	count = 0;
 	for (i=0; i<N; i++){
@@ -272,7 +271,7 @@ void transform_CSR_to_CCS(int N,const int *ja, const int *ia, int *cidx,int *rid
 	for (i=0; i<N; i++)
 		cidx[i+1] += cidx[i];
 
-	myfree(IJ);
+	free(IJ);
 }
 
 void transpose (int N, const int *ridx, const int *cidx, int *ridx2, int *cidx2)
@@ -280,7 +279,7 @@ void transpose (int N, const int *ridx, const int *cidx, int *ridx2, int *cidx2)
 	int i, j, k, q, nz = cidx[N];
 	int *w;
 	
-	w = mycalloc("w in transpose",N+1, sizeof(int));
+	w = calloc(N+1, sizeof(int));
   
 	for (i = 0; i < N; i++)
 		w[i] = 0;
@@ -305,7 +304,7 @@ void transpose (int N, const int *ridx, const int *cidx, int *ridx2, int *cidx2)
 		}
 	}
 
-	myfree(w);
+	free(w);
 }
 
 int calc_degrees(int N, const int *ridx, const int *cidx, int *D)
@@ -358,9 +357,9 @@ int calc_degrees(int N, const int *ridx, const int *cidx, int *D)
 int find_starting_node (int N, const int *ridx, const int *cidx, const int *ridx2, const int *cidx2, int *D, int start)
 {
 	CMK_NodeType w;
-	CMK_NodeType *Q = mycalloc("Q in find_starting_node",N+1, sizeof(CMK_NodeType));
+	CMK_NodeType *Q = calloc(N+1, sizeof(CMK_NodeType));
 	
-	int *visit = mycalloc("visit in find_starting_node",N, sizeof(int)); // visit[0..N-1] receive zero. It means visit_i is false initially
+	int *visit = calloc(N, sizeof(int)); // visit[0..N-1] receive zero. It means visit_i is false initially
   
 	int qh = 0;
 	int qt = 0;
@@ -482,8 +481,8 @@ int find_starting_node (int N, const int *ridx, const int *cidx, const int *ridx
 			break;
 	}
 
-	myfree(Q);
-	myfree(visit);
+	free(Q);
+	free(visit);
 
 	return x.id;
 }
