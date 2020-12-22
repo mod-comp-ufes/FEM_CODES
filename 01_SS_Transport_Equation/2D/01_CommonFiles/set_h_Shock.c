@@ -2,7 +2,10 @@
 
 int set_h_Shock(ParametersType *Parameters, double (**h_shock_calculation)(double, double, double, double, double, double, double, double, double, double, double, double))
 {
-	if (strcasecmp(Parameters->h_Shock,"2sqrtArea")==0){ 
+	if (strcasecmp(Parameters->h_Shock,"NOT")==0){ 
+
+	}
+	else if (strcasecmp(Parameters->h_Shock,"2sqrtArea")==0){ 
 		*h_shock_calculation = h_shock_2sqrtArea;
 	}
 	else if (strcasecmp(Parameters->h_Shock,"Option1")==0){  

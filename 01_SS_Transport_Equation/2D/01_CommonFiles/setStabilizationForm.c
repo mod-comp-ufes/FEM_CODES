@@ -2,7 +2,10 @@
 
 int setStabilizationForm(ParametersType *Parameters, FemFunctionsType *FemFunctions, FemOtherFunctionsType *FemOtherFunctions)
 {
-	if (strcasecmp(Parameters->StabilizationForm,"SUPG")==0){
+	if (strcasecmp(Parameters->StabilizationForm,"NOT")==0) {
+		FemOtherFunctions->Build = Build_Galerkin;
+	}
+	else if (strcasecmp(Parameters->StabilizationForm,"SUPG")==0){
 	
 		FemOtherFunctions->Build = Build_K_F_SUPG;
 
@@ -42,7 +45,9 @@ int setStabilizationForm(ParametersType *Parameters, FemFunctionsType *FemFuncti
 	}
 
 	//Set h shock parameter
-	if (strcasecmp(Parameters->h_Shock,"sqrtArea")==0){ 
+	if (strcasecmp(Parameters->h_Shock,"NOT")==0){ 
+		
+	}else if (strcasecmp(Parameters->h_Shock,"sqrtArea")==0){ 
 		FemFunctions->h_shock = h_shock_sqrtArea;
 	}else if (strcasecmp(Parameters->h_Shock,"2sqrtArea")==0){ 
 		FemFunctions->h_shock = h_shock_2sqrtArea;

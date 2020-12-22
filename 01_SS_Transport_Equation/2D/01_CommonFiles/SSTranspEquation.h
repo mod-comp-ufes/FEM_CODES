@@ -151,6 +151,8 @@ void csr_List_insertA(NodeListType **, int, int, int *);
 
 int csr_search(int, int, NodeListType *);
 
+int Build_Galerkin(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *);
+
 int Build_K_F_SUPG(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *);
 
 int Build_K_F_DD(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *);

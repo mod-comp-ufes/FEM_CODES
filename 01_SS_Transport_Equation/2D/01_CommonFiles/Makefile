@@ -13,6 +13,7 @@ ede_Initialization.c \
 csr_Initialization.c \
 eval_U.c \
 F_assembly.c \
+Build_Galerkin.c \
 Build_K_F_SUPG.c \
 Build_K_F_DD.c \
 ebe_assembly.c \
@@ -76,6 +77,11 @@ setzeros.c \
 ../RAMPA2/RAMPA2_Reaction.c \
 ../RAMPA2/RAMPA2_Velocity.c \
 ../RAMPA2/RAMPA2_upresc.c \
+../VALIDACAO/VALIDACAO_Condutivity.c \
+../VALIDACAO/VALIDACAO_Font.c \
+../VALIDACAO/VALIDACAO_Reaction.c \
+../VALIDACAO/VALIDACAO_Velocity.c \
+../VALIDACAO/VALIDACAO_upresc.c \
 ../../../00_CommonFiles/Allocation_Operations/mycalloc.c \
 ../../../00_CommonFiles/BLAS_Operations/dtrsvUP.c \
 ../../../00_CommonFiles/BLAS_Operations/daxpy.c \

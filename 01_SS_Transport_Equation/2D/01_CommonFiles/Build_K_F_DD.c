@@ -4,10 +4,10 @@
 
 int Build_K_F_DD(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs, FemFunctionsType *FemFunctions)
 {
-	int J, E, J1, J2, J3, k;
+	int J, E, J1, J2, J3;
 	int neq, nel;
 	double kx, ky, Be_x, Be_y, gamma, TwoA, invArea, Area, h_shock, Eu;
-	double third=1.0/3.0, sixth = 1.0/6.0, seventh=1.0/7.0, twelfth= 1.0/12.0, three_twentieth=3./20.0, nine_twentieth=9./20.0, nine_forty_cents=9./40.0;
+	double third=1.0/3.0, sixth = 1.0/6.0, twelfth= 1.0/12.0, three_twentieth=3./20.0, nine_twentieth=9./20.0, nine_forty_cents=9./40.0;
 	double y23, y31, y12, x32, x13, x21, X[3], Y[3], Beta[2], ke[3][3], XB, YB;
 	double ue1, ue2, ue3, ueb, fe1, fe2, fe3, feb, Fe1, Fe2, Fe3;
 	double KDD12, KDD13, KDD23, D12, D13, D23, C12, C13, C23, R11, R12, a1, a2, a3, invKBB, Khh[3][3], KhB[3], KBh[3], KBB, Fh[3], FB;

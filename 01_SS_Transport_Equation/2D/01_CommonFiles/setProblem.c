@@ -7,6 +7,7 @@
 #include "../REACTION/reaction.h"
 #include "../RAMPA/rampa.h"
 #include "../RAMPA2/rampa2.h"
+#include "../VALIDACAO/validacao.h"
 
 int setProblem(ParametersType *Parameters, FemFunctionsType *FemFunctions)
 {		
@@ -63,6 +64,13 @@ int setProblem(ParametersType *Parameters, FemFunctionsType *FemFunctions)
 		FemFunctions->Reaction = REACTION_Reaction;
 		FemFunctions->Velocity = REACTION_Velocity;
 		FemFunctions->upresc = REACTION_upresc;
+	}
+	else if (strcasecmp(Parameters->ProblemTitle,"VALIDACAO")==0){
+		FemFunctions->Condutivity = VALIDACAO_Condutivity;	
+		FemFunctions->Font = VALIDACAO_Font;
+		FemFunctions->Reaction = VALIDACAO_Reaction;
+		FemFunctions->Velocity = VALIDACAO_Velocity;
+		FemFunctions->upresc = VALIDACAO_upresc;
 	}
 	else{
 		printf("Problem not defined!\n");
