@@ -43,5 +43,3 @@ int ebemv3Dndof1(ParametersType *Parameters, MatrixDataType *MatrixData, FemStru
 
 	return 0;
 }
-
-

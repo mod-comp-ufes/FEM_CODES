@@ -251,9 +251,3 @@ int ebemvNDOF4(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruct
 
 	return 0;
 }
-
-
-
-
-
-

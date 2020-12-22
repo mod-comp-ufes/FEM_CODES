@@ -35,5 +35,3 @@
 #include "../IO_Operations/io.h"
 
 void calculateTime(double, double, double, ParametersType *);
-
-

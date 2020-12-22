@@ -20,9 +20,6 @@ typedef struct {
     alloc *head, *tail;
 } alloc_list;
 
-void *mycalloc(char *var_name, int n, int struct_size);
-void myfree(void *ptr);
-void list_leaks();
 
 alloc_list** hashArray = NULL;
 

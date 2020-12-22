@@ -1,3 +1,6 @@
+#ifndef _solvers_h_
+#define _solvers_h_
+
 #ifdef SSTranspEquation2D
 	#include "../../01_SS_Transport_Equation/2D/01_CommonFiles/SSTranspEquation.h"
 #endif
@@ -40,6 +43,7 @@ int pgmres (ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsTy
 
 int gmres (ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs, FemFunctionsType *FemFunctions);
 
-
 int pcg (ParametersType *Parameters,	MatrixDataType *MatrixData, FemStructsType *FemStructs,
 			FemFunctionsType *FemFunctions);
+
+#endif

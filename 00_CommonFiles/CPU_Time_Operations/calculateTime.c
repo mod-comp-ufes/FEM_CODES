@@ -69,6 +69,3 @@ void calculateTime(double Preprocess_Time, double Process_Time, double Postproce
 	printf("\n=========================================================================\n\n");
 	
 }
-
-
-

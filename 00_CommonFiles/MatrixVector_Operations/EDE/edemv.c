@@ -37,10 +37,3 @@ int edemv(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType
 
 	return 0;
 }
-
-
-
-
-
-
-

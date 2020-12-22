@@ -1,3 +1,6 @@
+#ifndef _time_integration_h_
+#define _time_integration_h_
+
 #ifdef TranspEquation2D
 	#include "../../02_Transport_Equation/2D/01_CommonFiles/TranspEquation.h"
 #endif
@@ -46,9 +49,4 @@ int StopBySteadyState(ParametersType *, double *, double *, double);
 
 int StopByTime(ParametersType *, double *, double *, double);
 
-
-
-
-
-
-
+#endif

@@ -1,3 +1,6 @@
+#ifndef _preconditioners_h_
+#define _preconditioners_h_
+
 #ifdef SSTranspEquation2D
 	#include "../../01_SS_Transport_Equation/2D/01_CommonFiles/SSTranspEquation.h"
 	int SGS_precond_EBE (ParametersType *, MatrixDataType *, FemStructsType *,double *, double *);
@@ -109,3 +112,5 @@ int Diag_precond_EBE_setup (ParametersType *, MatrixDataType *, FemStructsType *
 int Diag_precond_EDE_setup (ParametersType *, MatrixDataType *, FemStructsType *, int, double *);
 int Diag_precond_CSR_setup (ParametersType *, MatrixDataType *, FemStructsType *, int, double *);
 int ILUp_precond_setup (ParametersType *, MatrixDataType *, FemStructsType *, int, double *);
+
+#endif
