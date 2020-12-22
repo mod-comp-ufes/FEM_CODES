@@ -17,6 +17,3 @@ double ddot(int n, double *x, double *y)
 
 	return stemp;
 } 
-
-
-

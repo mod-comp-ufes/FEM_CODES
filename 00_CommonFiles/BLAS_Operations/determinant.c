@@ -1,8 +1,8 @@
 #include "ourBLAS.h"
 #include "../Allocation_Operations/allocations.h"
 
-//	calculate determinte of matrix
-double determinant(double **a,int n){
+// calculate determinte of matrix
+double determinant(double **a, int n) {
 	int i;
 	double **b, sum = 0.0;
 	

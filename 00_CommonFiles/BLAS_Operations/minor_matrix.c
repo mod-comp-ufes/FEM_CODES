@@ -1,7 +1,7 @@
 #include "ourBLAS.h"
 
-//	calculate minor of matrix OR build new matrix : k-had = minor
-void minor_matrix(double **b, double **a, int i, int n){
+// calculate minor of matrix OR build new matrix : k-had = minor
+void minor_matrix(double **b, double **a, int i, int n) {
 	int j, l, h = 0, k = 0;
 	
 	/*printf("\nDentro de minor_matrix\n");

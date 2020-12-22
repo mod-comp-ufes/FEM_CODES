@@ -1,6 +1,6 @@
 #include "ourBLAS.h"
 
-void matrix_multiplication(double **Mat1, int lin1, int col1, double **Mat2, int lin2, int col2, double **Sol){
+void matrix_multiplication(double **Mat1, int lin1, int col1, double **Mat2, int lin2, int col2, double **Sol) {
 	//Definição de variaveis
 	int i, j, x;
 	double aux = 0.0;

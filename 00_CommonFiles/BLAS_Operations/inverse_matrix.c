@@ -1,8 +1,8 @@
 #include "ourBLAS.h"
 #include "../Allocation_Operations/allocations.h"
 
-//	calculate inverse of matrix
-void inverse_matrix(double **Mat, double **Inv, int n){
+// calculate inverse of matrix
+void inverse_matrix(double **Mat, double **Inv, int n) {
 	int l, h, m, k, i, j;
 	double **M, **I, **B, **C, **Caux, det;
 	

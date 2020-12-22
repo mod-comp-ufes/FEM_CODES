@@ -17,5 +17,3 @@ int dcopy(int n, double *x, double *y)
 	
 	return 0;
 }
-
-

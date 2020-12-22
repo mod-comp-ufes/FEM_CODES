@@ -16,5 +16,3 @@ int dzero(int n, double *x)
 	
 	return 0;
 }
-
-

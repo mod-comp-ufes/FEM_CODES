@@ -19,5 +19,3 @@ int daxpy(int n, double a, double *x, double *y)
 	
 	return 0;
 }
-
-

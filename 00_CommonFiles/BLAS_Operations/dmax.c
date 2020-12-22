@@ -1,6 +1,6 @@
 #include "ourBLAS.h"
 
-double dmax(int n, double *v){
+double dmax(int n, double *v) {
 	int i;
 	double max = v[0];
 	
