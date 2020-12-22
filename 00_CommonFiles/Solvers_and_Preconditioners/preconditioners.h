@@ -112,5 +112,7 @@ int Diag_precond_EBE_setup (ParametersType *, MatrixDataType *, FemStructsType *
 int Diag_precond_EDE_setup (ParametersType *, MatrixDataType *, FemStructsType *, int, double *);
 int Diag_precond_CSR_setup (ParametersType *, MatrixDataType *, FemStructsType *, int, double *);
 int ILUp_precond_setup (ParametersType *, MatrixDataType *, FemStructsType *, int, double *);
+int AMG_precond (ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
+int AMG_precond_setup (ParametersType *, MatrixDataType *, FemStructsType *, int, double *);
 
 #endif

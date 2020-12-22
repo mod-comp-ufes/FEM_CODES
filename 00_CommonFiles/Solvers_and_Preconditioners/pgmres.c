@@ -8,7 +8,7 @@ int pgmres (ParametersType *Parameters,	MatrixDataType *MatrixData, FemStructsTy
 	int i, j, k, l, cont, kmax, lmax, neq;
 	double normb, normb2, ui2, uip12, r2, eps, r, rho, soma, h1, h2;
 	double tol;
-	double **u, *u_aux, **h, *h_aux;
+	double **u, **h;
 	double *c, *s, *y, *e, *z, *v, *B, *X;
 
 	kmax = Parameters->KrylovBasisVectorsQuantity;
@@ -186,8 +186,8 @@ int pgmres (ParametersType *Parameters,	MatrixDataType *MatrixData, FemStructsTy
 	#ifdef debug
 		printf(" Iteracoes GMRES: %d \n", cont);
 	#endif
-	Parameters->ResGMRES = rho;
-	Parameters->ContGMRES = cont;
+	// Parameters->ResGMRES = rho;
+	// Parameters->ContGMRES = cont;
 	Parameters->SolverIterations += cont;
 
 	FemFunctions->precondR (Parameters, MatrixData, FemStructs, X, X);
