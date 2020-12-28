@@ -78,7 +78,6 @@ int Build_Galerkin(ParametersType *Parameters, MatrixDataType *MatrixData, FemSt
 		ueb = third * (ue1 + ue2 + ue3);
 
 		// Galerkin diffusion matrix
-        // Cadê os outros termos? 
 		D12 = 0.25*invArea*((kx * y23 * y31) + (ky * x32 * x13));
 		D13 = 0.25*invArea*((kx * y23 * y12) + (ky * x32 * x21));
 		D23 = 0.25*invArea*((kx * y31 * y12) + (ky * x13 * x21));
