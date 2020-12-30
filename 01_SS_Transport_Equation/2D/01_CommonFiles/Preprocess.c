@@ -74,7 +74,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out,  Mat
 	{
 		tag = fscanf(InFile, "%lf%lf%d\n", &(Node[I].x), &(Node[I].y), &(Node[I].Type));
 
-		if (Node[I].Type == 1)
+		if (Node[I].Type >= 1)
 			Node[I].id = neq++;
 		else
 			Node[I].id = -1;

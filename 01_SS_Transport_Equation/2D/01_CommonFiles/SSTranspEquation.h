@@ -101,6 +101,7 @@ typedef struct
 	double (*Reaction)(void);
 	void (*Velocity)(double, double, double []);
 	double (*upresc)(double, double);
+	double (*hflux)(double, double);
 	double (*h_shock)(ParametersType *, ElementType *, int, double, double, double, double, double, double, double, double, double, double, double, double);
 	double (*ShockCapture)(double,  double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double *, int);
 

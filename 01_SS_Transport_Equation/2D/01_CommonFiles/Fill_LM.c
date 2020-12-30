@@ -13,7 +13,7 @@ int Fill_LM(int neq, int nel, int **lm, NodeType *Node, ElementType *Element)
 		{
 			JJ = Element[K].Vertex[J];
 
-			if (Node[JJ].Type==1)
+			if (Node[JJ].Type>=1)
 				lm[K][J] = Node[JJ].id;
 
 		}

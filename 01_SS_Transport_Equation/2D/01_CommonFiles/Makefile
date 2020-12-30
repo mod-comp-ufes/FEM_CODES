@@ -82,6 +82,7 @@ setzeros.c \
 ../VALIDACAO/VALIDACAO_Reaction.c \
 ../VALIDACAO/VALIDACAO_Velocity.c \
 ../VALIDACAO/VALIDACAO_upresc.c \
+../VALIDACAO/VALIDACAO_hflux.c \
 ../../../00_CommonFiles/Allocation_Operations/mycalloc.c \
 ../../../00_CommonFiles/BLAS_Operations/dtrsvUP.c \
 ../../../00_CommonFiles/BLAS_Operations/daxpy.c \

@@ -16,7 +16,7 @@ int Data_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemFunct
 	
 	AproximationInEachNode(Parameters, FemStructs, FemFunctions, v);
 	
-	sprintf(FileName,"../03_output/GNUPLOT_%s_N%d_E%d.txt", Parameters->ProblemTitle, Parameters->nnodes, Parameters->nel);
+	sprintf(FileName,"../03_output/GNUPLOT_%s_%s_N%d_E%d.txt", Parameters->Experiments, Parameters->ProblemTitle, Parameters->nnodes, Parameters->nel);
 	
 	OutFile = myfopen(FileName,"w");
 	

@@ -71,6 +71,7 @@ int setProblem(ParametersType *Parameters, FemFunctionsType *FemFunctions)
 		FemFunctions->Reaction = VALIDACAO_Reaction;
 		FemFunctions->Velocity = VALIDACAO_Velocity;
 		FemFunctions->upresc = VALIDACAO_upresc;
+		FemFunctions->hflux = VALIDACAO_hflux;
 	}
 	else{
 		printf("Problem not defined!\n");
