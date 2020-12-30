@@ -5,7 +5,7 @@ double VALIDACAO_upresc(double X, double Y)
 {
 	double u;
 
-	u = 10.0;
+	u = 0.0;
 
 	return u;
 

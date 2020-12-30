@@ -4,7 +4,7 @@ double VALIDACAO_Reaction(void)
 {
 	double gamma;
 
-	gamma = 0;
+	gamma = 1;
 
 	return gamma;
 }

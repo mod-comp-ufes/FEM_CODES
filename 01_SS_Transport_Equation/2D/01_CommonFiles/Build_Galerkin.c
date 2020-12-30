@@ -6,10 +6,10 @@ int Build_Galerkin(ParametersType *Parameters, MatrixDataType *MatrixData, FemSt
 {
 	int J, E, J1, J2, J3;
 	int neq, nel;
-	double kx, ky, Be_x, Be_y, gamma, TwoA, invArea, Area, norm, Be2_x, Be2_y;
+	double kx, ky, Be_x, Be_y, gamma, TwoA, invArea, Area;
 	double third=1.0/3.0, sixth = 1.0/6.0, twelfth= 1.0/12.0;
 	double y23, y31, y12, x32, x13, x21, X[3], Y[3], Beta[2], ke[3][3];
-	double ue1, ue2, ue3, ueb, fe1, fe2, fe3, feb, Fe1, Fe2, Fe3;
+	double fe1, fe2, fe3, Fe1, Fe2, Fe3;
 	double D12, D13, D23, C11, C12, C13, R11, R12, XB, YB;
 	double *U;
 	double *F = FemStructs->F;
@@ -62,20 +62,11 @@ int Build_Galerkin(ParametersType *Parameters, MatrixDataType *MatrixData, FemSt
 
 		Be_x = Beta[0];
 		Be_y = Beta[1];
-		Be2_x = Be_x*Be_x;
-		Be2_y = Be_y*Be_y;
 
 		//Calculation of Font
 		fe1 = FemFunctions->Font(X[0], Y[0], kx, gamma, Be_x, Be_y);
 		fe2 = FemFunctions->Font(X[1], Y[1], kx, gamma, Be_x, Be_y);
 		fe3 = FemFunctions->Font(X[2], Y[2], kx, gamma, Be_x, Be_y);
-
-		//Calculation of ue in element e 
-		ue1 = U[J1];
-		ue2 = U[J2];
-		ue3 = U[J3];
-		
-		ueb = third * (ue1 + ue2 + ue3);
 
 		// Galerkin diffusion matrix
 		D12 = 0.25*invArea*((kx * y23 * y31) + (ky * x32 * x13));
