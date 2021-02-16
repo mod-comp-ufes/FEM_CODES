@@ -13,6 +13,7 @@ int Build_K_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, FemSt
 	double D12, D13, D23, C11, C12, C13, R11, R12, XB, YB;
 	double *U;
 	double *F = FemStructs->F;
+	double *CbOld;
 	NodeType *Node = FemStructs->Node;
 	ElementType *Element = FemStructs->Element;
 
@@ -28,6 +29,8 @@ int Build_K_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, FemSt
 	
 	for (J=0;J<neq;J++)
 		F[J] = 0;
+
+	CbOld = mycalloc("CbOld of 'Build_K_F_DD'", nel, sizeof(double));
 
 	for (E=0; E<nel; E++)
 	{
@@ -113,11 +116,11 @@ int Build_K_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, FemSt
 
 	   	
 		/***************** local length element **********************/
-		h_shock = FemFunctions->h_shock(Be_x, Be_y, ue1, ue2, ue3, y23, y31, y12, x32, x13, x21, Area);
+		h_shock = FemFunctions->h_shock(Parameters, Element, E, Be_x, Be_y, ue1, ue2, ue3, y23, y31, y12, x32, x13, x21, Area);
 		/**************************************************************/
 
 		/**************************** Shock capture parameter calculations***************************************/
-		Eu = FemFunctions->ShockCapture(kx, ky, Be_x, Be_y, gamma, ue1, ue2, ue3, ueb, feb, y23, y31,y12, x32,x13,x21,invArea, h_shock); 
+		Eu = FemFunctions->ShockCapture(kx, ky, Be_x, Be_y, gamma, ue1, ue2, ue3, ueb, feb, y23, y31,y12, x32,x13,x21,invArea, h_shock, CbOld, E); 
 
 	//*CUIDADO MUDAR DEPOIS!!!!!=>*/ Eu = 0;
 		
@@ -153,7 +156,8 @@ int Build_K_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, FemSt
 
 	}
 
-	myfree(U);
+	free(U);
+	free(CbOld);
 
 	return 0;
 }

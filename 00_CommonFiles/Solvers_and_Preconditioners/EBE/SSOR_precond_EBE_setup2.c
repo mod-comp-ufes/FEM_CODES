@@ -46,7 +46,7 @@ int SSOR_precond_EBE_setup2 (ParametersType *Parameters, MatrixDataType *MatrixD
 	}
 
 	/* F preconditioning */
-	double *faux = mycalloc("faux of SSOR_precond_EBE_setup2",(neq + 1), sizeof(double));
+	double *faux = calloc((neq + 1), sizeof(double));
 	for (I = 0; I < neq; I++){
 		faux[I] = F[I];
 	}
@@ -55,7 +55,7 @@ int SSOR_precond_EBE_setup2 (ParametersType *Parameters, MatrixDataType *MatrixD
 
 	SSOR_precond_EBE (Parameters, MatrixData, FemStructs, faux, F);
 
-	myfree(faux);
+	free(faux);
 
 	return 0;
 }

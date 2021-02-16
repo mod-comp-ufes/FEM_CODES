@@ -5,15 +5,15 @@ int setMatrixVectorProductType(ParametersType *Parameters, FemFunctionsType *Fem
 {
 	if (strcasecmp(Parameters->MatrixVectorProductScheme,"EBE")==0){
 		FemFunctions->assembly = ebe_assembly;
-		FemFunctions->mv = ebemv;
+		FemFunctions->ProductMatrixVector = ebemv;
 	}
 	else if (strcasecmp(Parameters->MatrixVectorProductScheme,"EDE")==0){
 		FemFunctions->assembly = ede_assembly;
-		FemFunctions->mv = edemv;
+		FemFunctions->ProductMatrixVector = edemv;
 	} 
 	else if (strcasecmp(Parameters->MatrixVectorProductScheme,"CSR")==0){
 		FemFunctions->assembly = csr_assembly;
-		FemFunctions->mv = csrmv;
+		FemFunctions->ProductMatrixVector = csrmv;
 	}
 	else{
 		printf("\nMatrix vector product scheme is not defined!\n\n");

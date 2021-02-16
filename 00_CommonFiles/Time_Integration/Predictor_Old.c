@@ -1,5 +1,4 @@
 #include "time_integration.h"
-# include "../Allocation_Operations/allocations.h"
 
 int Predictor_Old(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs,
 		FemFunctionsType *FemFunctions, FemOtherFunctionsType *FemOtherFunctions)
@@ -133,13 +132,13 @@ int Predictor_Old(ParametersType *Parameters, MatrixDataType *MatrixData, FemStr
 	}while(!FemFunctions->StopTimeIntegration(Parameters,u,u_old,t)); // end while time
 
 	
-	myfree(a);
-	myfree(Da);
-	myfree(u_old);
-	myfree(auxVec);
-	myfree(uB_old);
-	myfree(delta_old);
-	myfree(AuxBuild);
+	free(a);
+	free(Da);
+	free(u_old);
+	free(auxVec);
+	free(uB_old);
+	free(delta_old);
+	free(AuxBuild);
 
 	return 0;
 

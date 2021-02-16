@@ -22,9 +22,3 @@ int csrmv(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType
 	return 0;
 
 }
-
-
-
-
-
-

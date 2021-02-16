@@ -1,5 +1,6 @@
 #include "ourBLAS.h"
 
+// x = ax
 int dscal(int n, double a, double *x)
 {
 	long int i, m;
@@ -10,8 +11,8 @@ int dscal(int n, double a, double *x)
 	for (i = 0; i < m; i += 4){
 		x[i] = sa * x[i];
 		x[i+1] = sa * x[i+1];
-	        x[i+2] = sa * x[i+2];
-	        x[i+3] = sa * x[i+3];
+		x[i+2] = sa * x[i+2];
+		x[i+3] = sa * x[i+3];
 	}
 	for ( ; i < n; ++i) /* clean-up loop */
 		x[i] = sa * x[i];

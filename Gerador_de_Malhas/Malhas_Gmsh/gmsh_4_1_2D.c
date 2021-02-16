@@ -7,10 +7,11 @@
 
 extern int setmark_according_boundary(NodeType *node, int *mark, int nNode);
 
-int print_bound[16][4] = {{0,0,0,0}/*mark 0 */, {0,0,0,1}/*mark 1 */, {0,0,1,0}/*mark 2 */, {0,0,1,1}/*mark 3 */,
+int print_bound[17][4] = {{0,0,0,0}/*mark 0 */, {0,0,0,1}/*mark 1 */, {0,0,1,0}/*mark 2 */, {0,0,1,1}/*mark 3 */,
 				         {0,1,0,0}/*mark 4 */, {0,1,0,1}/*mark 5 */, {0,1,1,0}/*mark 6 */, {0,1,1,1}, /*mark 7 */
 						 {1,0,0,0}/*mark 8 */, {1,0,0,1}/*mark 9 */, {1,0,1,0}/*mark 10 */, {1,0,1,1}/*mark 11 */,
-				         {1,1,0,0}/*mark 12 */, {1,1,0,1}/*mark 13 */, {1,1,1,0}/*mark 14 */, {1,1,1,1}, /*mark 15 */};
+				         {1,1,0,0}/*mark 12 */, {1,1,0,1}/*mark 13 */, {1,1,1,0}/*mark 14 */, {1,1,1,1} /*mark 15 */,
+						 {2,1,1,1}/*mark 16 */ };
 
 char* read_line(FILE *arq) {
     size_t n = 0, r;

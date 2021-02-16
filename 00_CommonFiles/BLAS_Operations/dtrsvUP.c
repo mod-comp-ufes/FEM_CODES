@@ -15,6 +15,3 @@ int dtrsvUP (int n, double **A, double *b, double *x)
 	
 	return 0;
 }
-
-
-

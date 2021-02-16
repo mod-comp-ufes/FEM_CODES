@@ -12,5 +12,3 @@ FILE *myfopen(char *FileName, char *op)
 	}	
 	return InFile; 
 }
-
-

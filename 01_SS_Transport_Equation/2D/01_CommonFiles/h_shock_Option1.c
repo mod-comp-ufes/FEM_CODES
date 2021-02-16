@@ -1,6 +1,6 @@
 #include "SSTranspEquation.h"
 
-double h_shock_Option1(double Be_x, double Be_y, double u1, double u2, double u3, double y23, double y31, double y12, double x32, double x13, double x21, double Area)
+double h_shock_Option1(ParametersType *Parameters, ElementType *Element, int e, double Be_x, double Be_y, double u1, double u2, double u3, double y23, double y31, double y12, double x32, double x13, double x21, double Area)
 {
 	double h_shock, P1, P2, P3, aux1, aux2, normGraduArea;
 

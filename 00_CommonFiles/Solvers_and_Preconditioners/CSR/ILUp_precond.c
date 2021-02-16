@@ -10,9 +10,10 @@ int ILUp_precond(ParametersType *Parameters, MatrixDataType *MatrixData, FemStru
 	  x  = solution on return
 	  lu = LU matrix as produced by ilup.
 	------------------------------------------------------------------*/
-	int n = Parameters->neq, i, j, nzcount, *ja;
-	double *D, *ma, *x, *y;
-	SparMAT *L, *U;
+	
+	int n = Parameters->neq, i, j, nzcount, *ja;	
+	double *D, *ma, *x, *y;		
+	SparMAT *L, *U;		
 	SparILU *lu;	
 
 	lu = MatrixData->ILUp;
@@ -32,6 +33,7 @@ int ILUp_precond(ParametersType *Parameters, MatrixDataType *MatrixData, FemStru
 			x[i] -= x[ja[j]] * ma[j];
 		}
 	}
+
 	/* Block -- U solve */
 	for( i = n-1; i >= 0; i-- ) {
 		nzcount = U->nzcount[i];

@@ -16,5 +16,3 @@ int izero(int n, int *v)
 	
 	return 0;
 }
-
-
