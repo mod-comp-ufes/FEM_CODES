@@ -31,5 +31,8 @@
 	int Block_scaling_EBE(ParametersType *, MatrixDataType *, FemStructsType *); 
 	int NO_unscaling(ParametersType *, MatrixDataType *, FemStructsType *, double *); 
 #endif
+#ifdef ShalowWater
+	#include "../../06_AguaRasa/2D/01_CommonFiles/ShalowWater.h"
+#endif
 
 #endif

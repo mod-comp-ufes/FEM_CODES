@@ -1,7 +1,7 @@
 EXE = ShalowWater
-CFLAGS = 
+CFLAGS = -DShalowWater -lm# -lrt -Wall -Ofast -march=native
 
-SRC=$(wildcard *.c)# \
+SRC = $(wildcard *.c) \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/amg_precond.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_dpa.c \
@@ -18,6 +18,8 @@ SRC=$(wildcard *.c)# \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/ILUp_precond_setup.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/Diag_precond.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/ILUp_precond.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/NO_precond.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/NO_precond_setup.c \
 ../../../00_CommonFiles/BLAS_Operations/dtrsvUP.c \
 ../../../00_CommonFiles/BLAS_Operations/daxpy.c \
 ../../../00_CommonFiles/BLAS_Operations/dcopy.c \
@@ -34,11 +36,8 @@ SRC=$(wildcard *.c)# \
 ../../../00_CommonFiles/Reordering/reordering.c \
 ../../../00_CommonFiles/Reordering/symrcm.c \
 ../../../00_CommonFiles/Time_Integration/Criteria.c \
-../../../00_CommonFiles/Time_Integration/Predictor_New.c \
 ../../../00_CommonFiles/Time_Integration/Predictor_Old.c \
-../../../00_CommonFiles/Time_Integration/Predictor_New_BDF.c \
 ../../../00_CommonFiles/Time_Integration/Predictor_Old_BDF.c \
-../../../00_CommonFiles/Time_Integration/Predictor_New_TRBDF2.c \
 ../../../00_CommonFiles/Time_Integration/Predictor_Old_TRBDF2.c \
 
 all: $(SRC)

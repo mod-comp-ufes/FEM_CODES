@@ -530,7 +530,3 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 
 	return 0;
 }
-
-int main() {
-	return 0;
-}

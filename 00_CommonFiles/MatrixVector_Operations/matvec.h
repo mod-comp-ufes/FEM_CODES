@@ -39,6 +39,9 @@
 #ifdef PoissonEquation3D
 	#include "../../08_Poisson_Equation/3D/01_CommonFiles/PoissonEquation3D.h"
 #endif
+#ifdef ShalowWater
+	#include "../../06_AguaRasa/2D/01_CommonFiles/ShalowWater.h"
+#endif
 
 int ebemv3Dndof1(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 int ebemvNDOF3(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);

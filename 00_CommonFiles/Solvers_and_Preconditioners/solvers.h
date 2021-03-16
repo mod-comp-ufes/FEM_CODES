@@ -35,15 +35,17 @@
 #ifdef PoissonEquation3D
 	#include "../../08_Poisson_Equation/3D/01_CommonFiles/PoissonEquation3D.h"
 #endif
+#ifdef ShalowWater
+	#include "../../06_AguaRasa/2D/01_CommonFiles/ShalowWater.h"
+#endif
 #include "../BLAS_Operations/ourBLAS.h"
 #include "../Allocation_Operations/allocations.h"
 #include <math.h>
 
-int pgmres (ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *);
+int pgmres (ParametersType *,	MatrixDataType *, FemStructsType *, FemFunctionsType *, double *, double *);
 
-int gmres (ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs, FemFunctionsType *FemFunctions);
+int gmres (ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *);
 
-int pcg (ParametersType *Parameters,	MatrixDataType *MatrixData, FemStructsType *FemStructs,
-			FemFunctionsType *FemFunctions);
+int pcg (ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *);
 
 #endif

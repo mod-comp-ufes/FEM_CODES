@@ -22,6 +22,9 @@
 #ifdef NavierStokesEquations3D
 	#include "../../05_NavierStokes_Equations/3D/01_CommonFiles/NavierStokesEquations3D.h"
 #endif
+#ifdef ShalowWater
+	#include "../../06_AguaRasa/2D/01_CommonFiles/ShalowWater.h"
+#endif
 #include "../BLAS_Operations/ourBLAS.h"
 #include "../Allocation_Operations/allocations.h"
 #include "../IO_Operations/io.h"

@@ -101,6 +101,9 @@
 #ifdef PoissonEquation3D
 	#include "../../08_Poisson_Equation/3D/01_CommonFiles/PoissonEquation3D.h"
 #endif
+#ifdef ShalowWater
+	#include "../../06_AguaRasa/2D/01_CommonFiles/ShalowWater.h"
+#endif
 
 #include <math.h>
 

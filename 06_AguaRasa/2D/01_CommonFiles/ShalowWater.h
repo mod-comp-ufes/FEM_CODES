@@ -1,5 +1,5 @@
-#ifndef ShalowWater
-#define ShalowWater
+#ifndef _ShalowWater_h_
+#define _ShalowWater_h_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -79,6 +79,11 @@ typedef struct
 	int LinearMaxIter;                           // itermax: maximum number of iteration
 	int NonLinearMaxIter;                  // Maximum nonlinear iterations: number of multicorrection
 	int bandwidth_bef, bandwidth_aft;	// half bandwidth before and after reordering
+		
+	int SolverIterations;
+	int SolverMaxIter;
+	int ResGMRES;
+	int ContGMRES;
 } ParametersType;
 
 typedef struct
@@ -140,8 +145,8 @@ typedef struct
 	double (*qypresc)(double, double);
 	int (*InitialSolution)(ParametersType *, NodeType *, double *);
 
-	double (*ShockCapture)(double, double *, double *, double *, double (*)[3], double (*)[3], double (*)[3],
-					double *, double, double, double, double, double, double, double, int, double *, double*);
+	double (*ShockCapture)(double, double *, double *, double *, double (*)[3], double (*)[3],
+				           double *, double, double, double, double, double, double, double, int, double *);
 	void (*A1_A2_calculations)(double [3], double [3][3], double [3][3]);
 	int (*StopCriteria)(ParametersType *, double, double, int);
 	int (*StopTimeIntegration)(ParametersType *, double *, double *, double);
@@ -151,6 +156,11 @@ typedef struct
 	int (*precond)(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 	int (*precondR)(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 	int (*precond_setup)(ParametersType *, MatrixDataType *, FemStructsType *, int, double *);
+
+	int (*scaling)(ParametersType *, MatrixDataType *, FemStructsType *);
+	int (*unscaling)(ParametersType *, MatrixDataType *, FemStructsType *, double *);
+
+	int (*ProductMatrixVector)(ParametersType *, MatrixDataType *, FemStructsType *, double*, double*);
 } FemFunctionsType;
 
 typedef struct
