@@ -163,6 +163,7 @@ typedef struct
 	int (*unscaling)(ParametersType *, MatrixDataType *, FemStructsType *, double *);
 }FemFunctionsType;
 
+
 typedef struct
 {
 	int (*solver) (ParametersType *, MatrixDataType *, FemStructsType*, FemFunctionsType*, double *, double *);

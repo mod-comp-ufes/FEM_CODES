@@ -32,7 +32,7 @@
 	int NO_unscaling(ParametersType *, MatrixDataType *, FemStructsType *, double *); 
 #endif
 #ifdef ShalowWater
-	#include "../../06_AguaRasa/2D/01_CommonFiles/ShalowWater.h"
+	#include "../../06_ShallowWater/2D/01_CommonFiles/ShalowWater.h"
 #endif
 
 #endif

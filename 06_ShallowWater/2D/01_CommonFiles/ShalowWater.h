@@ -143,6 +143,8 @@ typedef struct
 	double (*hpresc)(double, double);
 	double (*qxpresc)(double, double);
 	double (*qypresc)(double, double);
+	double (*zb_x)(double, double);
+	double (*zb_y)(double, double);
 	int (*InitialSolution)(ParametersType *, NodeType *, double *);
 
 	double (*ShockCapture)(double, double *, double *, double *, double (*)[3], double (*)[3],
@@ -217,5 +219,6 @@ int setStabilizationForm(ParametersType *Parameters,FemFunctionsType *FemFunctio
 
 int setzeros(ParametersType *Parameters, MatrixDataType *MatrixData);
 
+void F_assembly(int e, double Fe[9], double De[9][9], FemFunctionsType *FemFunctions, FemStructsType *FemStructs, int neq);
 
 #endif

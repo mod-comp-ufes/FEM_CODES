@@ -36,7 +36,7 @@
 	#include "../../08_Poisson_Equation/3D/01_CommonFiles/PoissonEquation3D.h"
 #endif
 #ifdef ShalowWater
-	#include "../../06_AguaRasa/2D/01_CommonFiles/ShalowWater.h"
+	#include "../../06_ShallowWater/2D/01_CommonFiles/ShalowWater.h"
 #endif
 #include "../BLAS_Operations/ourBLAS.h"
 #include "../Allocation_Operations/allocations.h"

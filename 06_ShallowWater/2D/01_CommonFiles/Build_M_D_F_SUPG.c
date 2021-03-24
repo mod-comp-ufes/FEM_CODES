@@ -8,14 +8,16 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 {
 	double mu = 0.01;
 	double rho = 1000;
+	double g = 9.8;
+	double gamma = 0.0;
 	int e, i, j;
 	int J1, J2, J3, nel, neq;
-	double x1, x2, x3, y1, y2, y3, y23, y31, y12, x32, x13, x21;
-	double Area, twoArea, invArea, third = 1.0/3.0, forth = 1.0/4.0, sixth = 1.0/6.0, twelve = 1.0/12.0;
+	double X[3], Y[3], x1, x2, x3, y1, y2, y3, y23, y31, y12, x32, x13, x21;
+	double Area, twoArea, invArea, second = 0.5, third = 1.0/3.0, forth = 0.25, sixth = 1.0/6.0, twelve = 1.0/12.0;
 	double c, h, abs_vbeta, betax, betay, betaxy, CFL;
 	double tau, delta;
-	double *U, *dU;
-	double Me[9][9], De[9][9], Ub[3], dUb[3], Ue[9], dUe[9], gradUx[3], gradUy[3];
+	double *U, *dU, *F;
+	double Me[9][9], De[9][9], Ue[9], dUe[9], gradUx[3], gradUy[3], Ub[3], dUb[3];
 	double tolerance;
 	double alpha = Parameters->Alpha_Build;
 	double delta_t = Parameters->DeltaT_Build;
@@ -35,6 +37,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 
 	U = (double*) mycalloc("U of 'Build_M_F_SUPG_Transiente'", 3*Parameters->nnodes, sizeof(double));
 	dU = (double*) mycalloc("dU of 'Build_M_F_SUPG_Transiente'", 3*Parameters->nnodes, sizeof(double));
+
 	eval_U_dU(Parameters,FemStructs,FemFunctions,U,dU);
 
 	for (e = 0; e < nel; e++){
@@ -44,6 +47,13 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		J3 = Element[e].Vertex[2];
 
 		// *** Coordenadas nodais e operador diferencial
+		X[0] = Node[J1].x;
+		X[1] = Node[J2].x;
+		X[2] = Node[J3].x;
+		Y[0] = Node[J1].y;
+		Y[1] = Node[J2].y;
+		Y[2] = Node[J3].y;
+
 		x1 = Node[J1].x;
 		x2 = Node[J2].x;
 		x3 = Node[J3].x;
@@ -65,7 +75,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		Area = 0.5*twoArea;
 		invArea = 1.0/Area;
 
-		// Fill ' Ue ' with the values ​​of the previous solution or workaround for each degree of liberty of the element node
+		// Fill 'Ue' with the values ​​of the previous solution or workaround for each degree of liberty of the element node
 		// height
 		Ue[0] = U[3*J1];
 		Ue[3] = U[3*J2];
@@ -75,7 +85,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		dUe[3] = dU[3*J2];
 		dUe[6] = dU[3*J3];
 
-		// discharge in x
+		// discharge in X
 		Ue[1] = U[3*J1+1];
 		Ue[4] = U[3*J2+1];
 		Ue[7] = U[3*J3+1];
@@ -219,7 +229,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		ms3[2][0] = y12*A1[2][0] + x21*A2[2][0];
 		ms3[2][1] = y12*A1[2][1];
 		ms3[2][2] = y12*A1[2][2] + x21*A2[2][2];
-		 
+
 
 		// *** Coeficientes da Matriz de Massa [Me]
 
@@ -499,6 +509,40 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		De[8][6] = sixth*ms3[8][6] + forth*invArea*(-d21[8][6] -d23[8][6]) + tau*forth*invArea*ds33[8][6] + delta*forth*invArea*(-sh13 -sh23);
 		De[8][7] = sixth*ms3[8][7] + forth*invArea*(-d21[8][7] -d23[8][7]) + tau*forth*invArea*ds33[8][7] + delta*forth*invArea*(-sh13 -sh23);
 		De[8][8] = sixth*ms3[8][8] + forth*invArea*(-d21[8][8] -d23[8][8]) + tau*forth*invArea*ds33[8][8] + delta*forth*invArea*(-sh13 -sh23);
+
+
+		// *** Matriz do termo fonte
+		double S1[3], S2[3], S3[3], Sb[3], Fe[9];
+
+		S1[0] = 0.0;
+		S2[0] = 0.0;
+		S3[0] = 0.0;
+
+		S1[1] = -g*FemFunctions->zb_x(x1, y1)*Ue[0] - gamma*Ue[1];
+		S2[1] = -g*FemFunctions->zb_x(x2, y2)*Ue[3] - gamma*Ue[4];
+		S3[1] = -g*FemFunctions->zb_x(x3, y3)*Ue[6] - gamma*Ue[7];
+
+		S1[2] = -g*FemFunctions->zb_y(x1, y1)*Ue[0] - gamma*Ue[2];
+		S2[2] = -g*FemFunctions->zb_y(x2, y2)*Ue[3] - gamma*Ue[5];
+		S3[2] = -g*FemFunctions->zb_y(x3, y3)*Ue[6] - gamma*Ue[8];
+
+		Sb[0] = third*(S1[0] + S2[0] + S3[0]);
+		Sb[1] = third*(S1[1] + S2[2] + S3[1]);
+		Sb[2] = third*(S1[2] + S2[2] + S3[2]);
+
+
+		Fe[0] = Area*twelve*(2*S1[0] + S2[0] + S3[0]) + tau*second*(ms1[0][0]*Sb[0] + ms1[0][1]*Sb[1] + ms1[0][2]*Sb[2]);
+		Fe[1] = Area*twelve*(2*S1[1] + S2[1] + S3[1]) + tau*second*(ms1[1][0]*Sb[0] + ms1[1][1]*Sb[1] + ms1[1][2]*Sb[2]);
+		Fe[2] = Area*twelve*(2*S1[2] + S2[2] + S3[2]) + tau*second*(ms1[2][0]*Sb[0] + ms1[2][1]*Sb[1] + ms1[2][2]*Sb[2]);
+		Fe[3] = Area*twelve*(S1[0] + 2*S2[0] + S3[0]) + tau*second*(ms2[0][0]*Sb[0] + ms2[0][1]*Sb[1] + ms2[0][2]*Sb[2]);
+		Fe[4] = Area*twelve*(S1[1] + 2*S2[1] + S3[1]) + tau*second*(ms2[1][0]*Sb[0] + ms2[1][1]*Sb[1] + ms2[1][2]*Sb[2]);
+		Fe[5] = Area*twelve*(S1[2] + 2*S2[2] + S3[2]) + tau*second*(ms2[2][0]*Sb[0] + ms2[2][1]*Sb[1] + ms2[2][2]*Sb[2]);
+		Fe[6] = Area*twelve*(S1[0] + S2[0] + 2*S3[0]) + tau*second*(ms3[0][0]*Sb[0] + ms3[0][1]*Sb[1] + ms3[0][2]*Sb[2]);
+		Fe[7] = Area*twelve*(S1[1] + S2[1] + 2*S3[1]) + tau*second*(ms3[1][0]*Sb[0] + ms3[1][1]*Sb[1] + ms3[1][2]*Sb[2]);
+		Fe[8] = Area*twelve*(S1[2] + S2[2] + 2*S3[2]) + tau*second*(ms3[2][0]*Sb[0] + ms3[2][1]*Sb[1] + ms3[2][2]*Sb[2]);
+
+
+		F_assembly(e, Fe, De, FemFunctions, FemStructs, neq);
 
 		//*****************************************
 

@@ -86,7 +86,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	Node = (NodeType*) mycalloc("Node of 'Preprocess'", nnodes, sizeof(NodeType));
 	for (I = 0; I < nnodes; I++)
 	{
-		tag = fscanf(InFile, "%lf%lf%d%d%d%d", &(Node[I].x), &(Node[I].y), &(Node[I].hType), &(Node[I].qxType), &(Node[I].qyType));
+		tag = fscanf(InFile, "%lf%lf%d%d%d", &(Node[I].x), &(Node[I].y), &(Node[I].hType), &(Node[I].qxType), &(Node[I].qyType));
 	}
 	Fill_ID(&neq, Node, nnodes);
 	
