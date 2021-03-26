@@ -130,6 +130,7 @@ typedef struct
 	NodeType *Node;
 	ElementType *Element;
 	double *F;
+	double *R;
 	double *u;
 	double *du;
 	double *delta_old;

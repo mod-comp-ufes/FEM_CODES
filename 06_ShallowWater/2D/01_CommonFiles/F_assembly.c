@@ -11,7 +11,7 @@ void F_assembly(int e, double Fe[9], double De[9][9], FemFunctionsType *FemFunct
 	
 	F = FemStructs->F;
 	lm = FemStructs->lm;
-	
+
 	// Global node that composes the element
 	J1 = Element[e].Vertex[0];
 	J2 = Element[e].Vertex[1];
@@ -75,7 +75,6 @@ void F_assembly(int e, double Fe[9], double De[9][9], FemFunctionsType *FemFunct
 		g[8] = FemFunctions->qypresc(Node[J3].x, Node[J3].y);
 	}
 
-
 	Fe[0] -= De[0][0]*g[0] + De[0][1]*g[1] + De[0][2]*g[2] + De[0][3]*g[3] + De[0][4]*g[4] + De[0][5]*g[5] + De[0][6]*g[6] + De[0][7]*g[7] + De[0][8]*g[8];
 	Fe[1] -= De[1][0]*g[0] + De[1][1]*g[1] + De[1][2]*g[2] + De[1][3]*g[3] + De[1][4]*g[4] + De[1][5]*g[5] + De[1][6]*g[6] + De[1][7]*g[7] + De[1][8]*g[8];
 	Fe[2] -= De[2][0]*g[0] + De[2][1]*g[1] + De[2][2]*g[2] + De[2][3]*g[3] + De[2][4]*g[4] + De[2][5]*g[5] + De[2][6]*g[6] + De[2][7]*g[7] + De[2][8]*g[8];
@@ -86,17 +85,16 @@ void F_assembly(int e, double Fe[9], double De[9][9], FemFunctionsType *FemFunct
 	Fe[7] -= De[7][0]*g[0] + De[7][1]*g[1] + De[7][2]*g[2] + De[7][3]*g[3] + De[7][4]*g[4] + De[7][5]*g[5] + De[7][6]*g[6] + De[7][7]*g[7] + De[7][8]*g[8];
 	Fe[8] -= De[8][0]*g[0] + De[8][1]*g[1] + De[8][2]*g[2] + De[8][3]*g[3] + De[8][4]*g[4] + De[8][5]*g[5] + De[8][6]*g[6] + De[8][7]*g[7] + De[8][8]*g[8];
 
-
 	// preenchendo vetor fonte F
-	F[lm[e][0]]  = F[lm[e][0]] + Fe[0];
-	F[lm[e][1]]  = F[lm[e][1]] + Fe[1];
-	F[lm[e][2]]  = F[lm[e][2]] + Fe[2];
-	F[lm[e][3]]  = F[lm[e][3]] + Fe[3];
-	F[lm[e][4]]  = F[lm[e][4]] + Fe[4];
-	F[lm[e][5]]  = F[lm[e][5]] + Fe[5];
-	F[lm[e][6]]  = F[lm[e][6]] + Fe[6];
-	F[lm[e][7]]  = F[lm[e][7]] + Fe[7];
-	F[lm[e][8]]  = F[lm[e][8]] + Fe[8];
+	F[lm[e][0]] += Fe[0];
+	F[lm[e][1]] += Fe[1];
+	F[lm[e][2]] += Fe[2];
+	F[lm[e][3]] += Fe[3];
+	F[lm[e][4]] += Fe[4];
+	F[lm[e][5]] += Fe[5];
+	F[lm[e][6]] += Fe[6];
+	F[lm[e][7]] += Fe[7];
+	F[lm[e][8]] += Fe[8];
 
 	F[neq] = 0.0;
 }

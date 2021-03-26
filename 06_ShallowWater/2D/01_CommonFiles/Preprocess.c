@@ -10,7 +10,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	int **lm, *lmaux;
 	int size = NDOF*NNOEL;
 	int size2 = size*size;
-	double *F, *u;
+	double *F, *R, *u;
 	char FileName[2000], label[2000];
 	FILE *InFile;
 	NodeType *Node;
@@ -117,6 +117,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 
 	MatrixData = (MatrixDataType *) mycalloc("MatrixData of 'Preprocess'", 1, sizeof(MatrixDataType));
 	F = (double*) mycalloc("F of 'Preprocess'", neq+1, sizeof(double));
+	R = (double*) mycalloc("R of 'Preprocess'", neq+1, sizeof(double));
 	u = (double*) mycalloc("u of 'Preprocess'", neq+1, sizeof(double));
 	lm = (int**) mycalloc("lm of 'Preprocess'", nel, sizeof(int*));
 	lmaux = (int*) mycalloc("lmaux of 'Preprocess'", nel*size, sizeof(int));
@@ -163,6 +164,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	FemStructs->Node = Node;
 	FemStructs->Element = Element;
 	FemStructs->F = F;
+	FemStructs->R = R;
 	FemStructs->u = u;
 	
 	*Parameters_out = Parameters;

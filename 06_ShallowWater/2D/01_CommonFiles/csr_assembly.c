@@ -7,7 +7,7 @@ void csr_assembly(ParametersType *Parameters, MatrixDataType *MatrixData, FemStr
 	double *M;
 	int *CSR_by_Element;
 	int nnzero = Parameters->nnzero;
-			
+
 	M = MatrixData->AA;
 	CSR_by_Element = MatrixData->Scheme_by_Element[E];
 

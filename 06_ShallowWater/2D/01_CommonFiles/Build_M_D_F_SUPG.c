@@ -12,16 +12,17 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 	double gamma = 0.0;
 	int e, i, j;
 	int J1, J2, J3, nel, neq;
-	double X[3], Y[3], x1, x2, x3, y1, y2, y3, y23, y31, y12, x32, x13, x21;
+	double x1, x2, x3, y1, y2, y3, y23, y31, y12, x32, x13, x21;
 	double Area, twoArea, invArea, second = 0.5, third = 1.0/3.0, forth = 0.25, sixth = 1.0/6.0, twelve = 1.0/12.0;
-	double c, h, abs_vbeta, betax, betay, betaxy, CFL;
+	double c[3], u[3], v[3];
 	double tau, delta;
-	double *U, *dU, *F;
-	double Me[9][9], De[9][9], Ue[9], dUe[9], gradUx[3], gradUy[3], Ub[3], dUb[3];
+	double *U, *dU;
+	double Me[9][9], De[9][9], Ue[9], dUe[9], gradUx[3], gradUy[3];
 	double tolerance;
 	double alpha = Parameters->Alpha_Build;
 	double delta_t = Parameters->DeltaT_Build;
-	double *R = FemStructs->F;
+	double *F = FemStructs->F;
+	double *R = FemStructs->R;
 	double *delta_old = FemStructs->delta_old;
 	int **lm = FemStructs->lm;
 
@@ -32,8 +33,9 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 	nel = Parameters->nel;
 	neq = Parameters->neq;
 	
+	dzero(neq+1, F);
 	dzero(neq+1, R);
-	setzeros(Parameters,MatrixData);
+	setzeros(Parameters, MatrixData);
 
 	U = (double*) mycalloc("U of 'Build_M_F_SUPG_Transiente'", 3*Parameters->nnodes, sizeof(double));
 	dU = (double*) mycalloc("dU of 'Build_M_F_SUPG_Transiente'", 3*Parameters->nnodes, sizeof(double));
@@ -45,14 +47,6 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		J1 = Element[e].Vertex[0];
 		J2 = Element[e].Vertex[1];
 		J3 = Element[e].Vertex[2];
-
-		// *** Coordenadas nodais e operador diferencial
-		X[0] = Node[J1].x;
-		X[1] = Node[J2].x;
-		X[2] = Node[J3].x;
-		Y[0] = Node[J1].y;
-		Y[1] = Node[J2].y;
-		Y[2] = Node[J3].y;
 
 		x1 = Node[J1].x;
 		x2 = Node[J2].x;
@@ -103,11 +97,19 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		dUe[5] = dU[3*J2+2];
 		dUe[8] = dU[3*J3+2];
 
-		// Baricentro do triangulo
-		for (i = 0; i < 3; i++){
-			Ub[i] = (Ue[i] + Ue[i+3] + Ue[i+6]) * third;
-			dUb[i] = (dUe[i] + dUe[i+3] + dUe[i+6]) * third;
-		}
+		// velocities
+		u[0] = Ue[1]/Ue[0];
+		u[1] = Ue[4]/Ue[3];
+		u[2] = Ue[7]/Ue[6];
+
+		v[0] = Ue[2]/Ue[0];
+		v[1] = Ue[5]/Ue[3];
+		v[2] = Ue[8]/Ue[6];
+
+		// wave speed
+		c[0] = sqrt(g*Ue[0]);
+		c[3] = sqrt(g*Ue[3]);
+		c[6] = sqrt(g*Ue[6]);
 
 		// *** Calculo do Gradiente (gradu = Bu)
 		for (i = 0; i < 3; i++)
@@ -120,7 +122,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		double A1[3][3];
 		double A2[3][3];
 	
-		FemFunctions->A1_A2_calculations(Ub, A1, A2);
+		FemFunctions->A1_A2_calculations(Ue, A1, A2);
 
 		double axx[3][3], axy[3][3], ayx[3][3], ayy[3][3];
 
@@ -169,21 +171,25 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		//									twoArea, e, Parameters->invY, Ub);
 
 		// *** Calculo do parametro de estabilizacao (tau) do SUPG            
-		betax = 2.0 * (gradUx[0]*Ub[0] + gradUx[1]*Ub[1] + gradUx[2]*Ub[2] + gradUx[3]*Ub[3]);
-		betay = 2.0 * (gradUy[0]*Ub[0] + gradUy[1]*Ub[1] + gradUy[2]*Ub[2] + gradUy[3]*Ub[3]);
+		double tauSUGN1 = 0.0, tauSUGN2 = 0.0;
+		double j1, j2, normj;
 
-		betaxy = sqrt(betax*betax + betay*betay);    
-
-		if (betaxy != 0.0)
+		for (int i=0; i<3; i++)
 		{
-			betax = betax / betaxy;
-			betay = betay / betaxy;
+			j1 = gradUx[i] + FemFunctions->zb_x(Node[Element[e].Vertex[i]].x, Node[Element[e].Vertex[i]].y);
+			j2 = gradUy[i] + FemFunctions->zb_y(Node[Element[e].Vertex[i]].x, Node[Element[e].Vertex[i]].y);
+			normj = sqrt(j1*j1 + j2*j2);
+			j1 /= normj;
+			j2 /= normj;
+
+			tauSUGN1 += c[i]*abs(y23*j1+x32*j2 + y31*j1+x13*j2 + y12*j1+x21*j2) + abs(y23*u[i]+x32*v[i] + y31*u[i]+x13*v[i] + y12*u[i]+x21*v[i]);
 		}
+		tauSUGN1 = 1.0/tauSUGN1;
 
-		h = sqrt (twoArea);
+		tauSUGN2 = delta_t/2.0;
 
-		tau = 1.0; 
-		if (tau < 0.0) 
+		tau = sqrt(1.0/(tauSUGN1*tauSUGN1) + 1.0/(tauSUGN2*tauSUGN2)); 
+		if (tau < 0.0)
 			tau = 0.0;
 
 		delta = 1.0;
@@ -546,20 +552,19 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 
 		//*****************************************
 
-		//Fill local Ae and Re and Global R
-		double Re[9], MedUe[9], KeUe[9], Ae[9][9];
+		//Fill local Re and Global R
+		double Ae[9][9], Re[9], MedUe[9], DeUe[9];
 		
 		for (i=0; i<9; i++){
 			MedUe[i] = 0;
-			KeUe[i] = 0;
+			DeUe[i] = 0;
 			for (j=0; j<9; j++){
 				MedUe[i] += Me[i][j]*dUe[j];
-				KeUe[i] += De[i][j]*Ue[j];
-				Ae[i][j] = Me[i][j] + alpha*delta_t*De[i][j];
+				DeUe[i] += De[i][j]*Ue[j];
+				Ae[i][j] = Me[i][j] + De[i][j];
 			}
-			Re[i] = - MedUe[i] - KeUe[i];
+			Re[i] = Fe[i] - MedUe[i] - DeUe[i];
 		}
-
 
 		for (i=0; i<9; i++)
 			R[lm[e][i]] += Re[i];
