@@ -182,8 +182,7 @@ void csr_assembly(ParametersType *Parameters, MatrixDataType *MatrixData, FemStr
 void csr_Initialization(ParametersType *Parameters, NodeType *Node, int **JA_out, int **IA_out, int **perm_out, int  **invperm_out,
 			int ***lm_out, int **lmaux_out, int ***CSR_by_Element_out);
 
-double Delta_CAU(double tolerance, double *delta_old, double *gradUx, double *gradUy, double (*A1)[3], double (*A2)[3],
-				 double *dUb, double y23, double y31, double y12, double x32, double x13, double x21, double twoArea, int e, double *invY);
+
 
 void eval_U_dU(ParametersType *Parameters,FemStructsType *FemStructs, FemFunctionsType *FemFunctions, double *U,double *dU);
 
