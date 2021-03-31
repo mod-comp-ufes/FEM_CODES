@@ -144,13 +144,12 @@ typedef struct
 	double (*hpresc)(double, double);
 	double (*qxpresc)(double, double);
 	double (*qypresc)(double, double);
-	double (*zb_x)(double, double);
-	double (*zb_y)(double, double);
+	double (*zb)(double, double);
 	int (*InitialSolution)(ParametersType *, NodeType *, double *);
 
-	double (*ShockCapture)(double, double *, double *, double *, double (*)[3], double (*)[3],
-				           double *, double, double, double, double, double, double, double, int, double *);
-	void (*A1_A2_calculations)(double [3], double [3][3], double [3][3]);
+	double (*ShockCapture)(double *, double *, double *, double (*)[3], double (*)[3], double *, 
+                           double, double, double, double, double, double, double, double, double);
+	void (*A1_A2_calculations)(double *, double (*)[3], double (*)[3], double);
 	int (*StopCriteria)(ParametersType *, double, double, int);
 	int (*StopTimeIntegration)(ParametersType *, double *, double *, double);
 
@@ -173,7 +172,7 @@ typedef struct
 } FemOtherFunctionsType;
 
 
-void A1_A2_calculations(double Ub[3], double A1[3][3], double A2[3][3]);
+void A1_A2_calculations(double Ub[3], double A1[3][3], double A2[3][3], double g);
 
 int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs, FemFunctionsType *FemFunctions);
 
@@ -182,7 +181,9 @@ void csr_assembly(ParametersType *Parameters, MatrixDataType *MatrixData, FemStr
 void csr_Initialization(ParametersType *Parameters, NodeType *Node, int **JA_out, int **IA_out, int **perm_out, int  **invperm_out,
 			int ***lm_out, int **lmaux_out, int ***CSR_by_Element_out);
 
-
+double delta91_MOD(double Ub[3], double gradUx[3], double gradUy[3], double A1[3][3], double A2[3][3], double Sb[3], 
+                   double y23, double y31, double y12, double x32, double x13, double x21, double twoArea, 
+				   double tau, double g);
 
 void eval_U_dU(ParametersType *Parameters,FemStructsType *FemStructs, FemFunctionsType *FemFunctions, double *U,double *dU);
 

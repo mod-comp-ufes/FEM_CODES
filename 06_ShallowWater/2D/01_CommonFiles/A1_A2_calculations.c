@@ -1,12 +1,11 @@
 #include "ShalowWater.h"
 
 
-void A1_A2_calculations(double Ue[3], double A1[3][3], double A2[3][3])
+void A1_A2_calculations(double Ub[3], double A1[3][3], double A2[3][3], double g)
 {
-	double g = 9.81;
-	double h = Ue[0];
-	double u = Ue[1]/h;
-	double v = Ue[2]/h;
+	double h = Ub[0];
+	double u = Ub[1]/h;
+	double v = Ub[2]/h;
 
 	// *** A1 coefficients
 	A1[0][0] = 0.0;

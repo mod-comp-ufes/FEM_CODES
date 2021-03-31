@@ -23,8 +23,8 @@ int setStabilizationForm(ParametersType *Parameters,FemFunctionsType *FemFunctio
 			exit(1);
 		}
 
-		if (strcasecmp(Parameters->ShockCapture,"CAU")==0){
-			FemFunctions->ShockCapture = Delta_CAU;
+		if (strcasecmp(Parameters->ShockCapture,"delta91-MOD")==0){
+			FemFunctions->ShockCapture = delta91_MOD;
 		}
 		else{
 			printf("Shock capture is not defined correctly!\n");
