@@ -41,7 +41,10 @@ SRC = $(wildcard *.c) \
 ../../../00_CommonFiles/Time_Integration/Predictor_Old_TRBDF2.c \
 
 all: $(SRC)
-	gcc -o $(EXE) $^ $(CFLAGS)
+	gcc -o $(EXE) $^ $(CFLAGS) -DonlyCompile
 
 clean:
 	-rm *.o
+
+1DDamBreak: $(wildcard ../1D_dam_break/*.c) $(SRC)
+	gcc -o $(EXE) $^ $(CFLAGS)

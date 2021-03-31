@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "shalowwater.h": "c"
+        "shalowwater.h": "c",
+        "1d_dam_break.h": "c"
     }
 }

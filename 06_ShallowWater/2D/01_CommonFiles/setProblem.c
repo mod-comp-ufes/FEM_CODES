@@ -1,18 +1,23 @@
 #include "ShalowWater.h"
 
+extern double hpresc(double, double);
+extern double qxpresc(double, double);
+extern double qypresc(double, double);
+extern double zb(double, double);
+extern int InitialSolution(ParametersType *, NodeType *, double *);
+
 
 int setProblem(ParametersType *Parameters, FemFunctionsType *FemFunctions)
 {
-	if (strcasecmp(Parameters->ProblemTitle,"OBLIQUO")==0)
-	{
-		//FemFunctions->rhopresc = OBLIQUO_rhopresc;
-		//FemFunctions->v1presc = OBLIQUO_v1presc;
-		//FemFunctions->v2presc = OBLIQUO_v2presc;
-	}
-	else{
-		printf("Problem is not defined correctly!\n");
-		exit(1);
+	#ifndef onlyCompile
 
-	}
+		FemFunctions->hpresc = hpresc;
+		FemFunctions->qxpresc = qxpresc;
+		FemFunctions->qypresc = qypresc;
+		FemFunctions->zb = zb;
+		FemFunctions->InitialSolution = InitialSolution;
+
+	#endif
+
 	return 0;
 }
