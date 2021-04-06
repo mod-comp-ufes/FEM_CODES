@@ -45,41 +45,34 @@ typedef struct
 	char ProblemTitle[300];                // Problem name to be solved
 	char Solver[200];                      // type of method used in the solution
 	char TimeIntegration[200];             // Time integration method
-	char MatrixVectorProductScheme[200];   // the global matrix storage form
-	char StabilizationForm[200];           // type of stabilization method
-	char ShockCapture[200];            // type discontinuities capture Operator
-	char Preconditioner[200];           // preconditioners: yes - use or not - don't use
-	char Scaling[200];
+	char MatrixVectorProductScheme[200];   // The global matrix storage form
+	char StabilizationForm[200];           // Type of stabilization method
+	char ShockCapture[200];                // Type discontinuities capture Operator
+	char Preconditioner[200];              // Preconditioners: yes - use or not - don't use
 	char Experiments[200];
 	char StopMulticorrection[200];         // Fala se o loop espacial para pela norma ou por um numero fixo de iteracao - NORM: para pela norma; ITERATION: para pela iteracao
-	char reordering[200];			// Reordering for CSR (NOT, Spectral, Weigthed Spectral (WSO) or RCM)
-	char Dimensionless[200];		// Determines whether or not a problem is dimensionless
-	char StopAtSteadyState[200];		// YES or NO if you want to stop in steady state or final time
-	double SolverTolerance;                // tolerance for the solution method
-	double NonLinearTolerance;            // tolerance for the loop of correction
-	double TimeIntegrationTolerance;       // tolerance for the loop of time integration
-	double StabilizationTolerance;           // tolerance for coefficient used in the stabilization form
-	double Mach;				//Mach number of reference
-	double Alpha;                          // parameter determining the stability control and accuracy time integration method
-	double Alpha_Build;					// parameter Alpha to be used inside Build functions
-	double DeltaT;                         // time step
-	double DeltaT_Build;					// time step to be used inside Build functions
-	double FinalTime;                         // final time
-	double CurrentTime;                         // current time (to be used in steady state situation)
-	double invY[4];                        // vector that stores 1/U used in the capture operator YZBeta
+	char reordering[200];			       // Reordering for CSR (NOT, Spectral, Weigthed Spectral (WSO) or RCM)
+	char StopAtSteadyState[200];		   // YES or NO if you want to stop in steady state or final time
+	double SolverTolerance;                // Tolerance for the solution method
+	double NonLinearTolerance;             // Tolerance for the loop of correction
+	double TimeIntegrationTolerance;       // Tolerance for the loop of time integration
+	double Alpha;                          // Parameter determining the stability control and accuracy time integration method
+	double Alpha_Build;					   // Parameter Alpha to be used inside Build functions
+	double StabilizationTolerance;         // Tolerance for coefficient used in the stabilization form
+	double DeltaT;                         // Time step
+	double DeltaT_Build;				   // Time step to be used inside Build functions
+	double FinalTime;                      // Tinal time
+	double CurrentTime;                    // Current time (to be used in steady state situation)
 	int KrylovBasisVectorsQuantity;        // Krylov number of vectors in the basis for the restart
-	int nnodes;                            // nnodes: number of nodes
-	int nonpnodes;				//nonpnodes: number of nodes with no penetrability boundary conditions
-	int nel;                               // nel: number of element
-	int neq;                               // neq: number of equations to be solved
-	int neqrho;                            // neqrho: number of equations relating the density
+	int nnodes;                            // Number of nodes
+	int nel;                               // Number of element
+	int neq;                               // Number of equations to be solved
 	int nedge;
 	int nnzero;
-	int iterations;                        // iterations: total number of iteration 
-	int LinearMaxIter;                           // itermax: maximum number of iteration
+	int iterations;                        // Total number of iteration 
+	int LinearMaxIter;                     // Maximum number of iteration
 	int NonLinearMaxIter;                  // Maximum nonlinear iterations: number of multicorrection
-	int bandwidth_bef, bandwidth_aft;	// half bandwidth before and after reordering
-		
+	int bandwidth_bef, bandwidth_aft;	   // Half bandwidth before and after reordering
 	int SolverIterations;
 	int SolverMaxIter;
 	int ResGMRES;
@@ -130,7 +123,6 @@ typedef struct
 	NodeType *Node;
 	ElementType *Element;
 	double *F;
-	double *R;
 	double *u;
 	double *du;
 	double *delta_old;

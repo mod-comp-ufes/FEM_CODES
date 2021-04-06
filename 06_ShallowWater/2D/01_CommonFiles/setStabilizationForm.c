@@ -9,13 +9,13 @@ int setStabilizationForm(ParametersType *Parameters,FemFunctionsType *FemFunctio
 	if (strcasecmp(Parameters->StabilizationForm,"SUPG")==0)
 	{
 		FemOtherFunctions->Build = Build_M_D_F_SUPG;
-		if (strcasecmp(Parameters->TimeIntegration,"Predictor1")==0){		
+		if (strcasecmp(Parameters->TimeIntegration,"Predictor")==0){		
 			*Predictor = Predictor_Old;
 		}
-		else if (strcasecmp(Parameters->TimeIntegration,"Predictor1_BDF")==0){		
+		else if (strcasecmp(Parameters->TimeIntegration,"Predictor_BDF")==0){		
 			*Predictor = Predictor_Old_BDF;
 		}
-		else if (strcasecmp(Parameters->TimeIntegration,"Predictor1_TRBDF2")==0){		
+		else if (strcasecmp(Parameters->TimeIntegration,"Predictor_TRBDF2")==0){		
 			*Predictor = Predictor_Old_TRBDF2;
 		}
 		else{

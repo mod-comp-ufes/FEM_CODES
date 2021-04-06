@@ -1,3 +1,3 @@
-double qypresc(double x, double y) {
-
+double qxpresc(double x, double y) {
+    return 0.0;
 }

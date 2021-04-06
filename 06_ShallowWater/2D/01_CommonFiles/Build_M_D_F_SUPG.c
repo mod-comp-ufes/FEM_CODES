@@ -9,7 +9,8 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 	double mu = 0.01;
 	double rho = 1000;
 	double g = 9.8;
-	double gamma = 0.0;
+	double n = 0.018;
+	double Cf, gamma;
 	int e, i, j;
 	int J1, J2, J3, nel, neq;
 	double x1, x2, x3, y1, y2, y3, y23, y31, y12, x32, x13, x21, zb1, zb2, zb3;
@@ -22,8 +23,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 	double tolerance;
 	double alpha = Parameters->Alpha_Build;
 	double delta_t = Parameters->DeltaT_Build;
-	double *F = FemStructs->F;
-	double *R = FemStructs->R;
+	double *R = FemStructs->F;
 	double *delta_old = FemStructs->delta_old;
 	int **lm = FemStructs->lm;
 
@@ -34,7 +34,6 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 	nel = Parameters->nel;
 	neq = Parameters->neq;
 	
-	dzero(neq+1, F);
 	dzero(neq+1, R);
 	setzeros(Parameters, MatrixData);
 
@@ -178,6 +177,9 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		gradzbx = zb1*y23 + zb2*y31 + zb3*y12;
 		gradzby = zb1*x32 + zb2*x13 + zb3*x21;
 
+		Cf = g*n*n*pow(Ub[0], -7/3);
+		gamma = Cf*sqrt(Ub[1]*Ub[1] + Ub[2]*Ub[2]);
+		
 		S1[0] = 0.0;
 		S2[0] = 0.0;
 		S3[0] = 0.0;
@@ -568,7 +570,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 			for (j=0; j<9; j++){
 				MedUe[i] += Me[i][j]*dUe[j];
 				DeUe[i] += De[i][j]*Ue[j];
-				Ae[i][j] = Me[i][j] + De[i][j];
+				Ae[i][j] = Me[i][j] + alpha*delta_t*De[i][j];
 			}
 			Re[i] = Fe[i] - MedUe[i] - DeUe[i];
 		}

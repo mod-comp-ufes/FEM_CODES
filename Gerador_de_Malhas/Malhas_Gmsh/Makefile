@@ -21,6 +21,9 @@ cylinder:
 validacao:
 	gcc problems/validacao/setmark_according_boundary.c gmsh_4_1_2D.c -o $(EXE)
 
+1DDamBreak:
+	gcc problems/1D_dam_break/setmark.c gmsh_4_1_2D.c -o $(EXE)
+
 
 clean:
 	rm $(EXE)

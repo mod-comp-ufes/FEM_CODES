@@ -1,5 +1,5 @@
 EXE = ShalowWater
-CFLAGS = -DShalowWater -lm# -lrt -Wall -Ofast -march=native
+CFLAGS = -DShalowWater -lm -g# -lrt -Wall -Ofast -march=native
 
 SRC = $(wildcard *.c) \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/amg_precond.c \
@@ -46,5 +46,6 @@ all: $(SRC)
 clean:
 	-rm *.o
 
-1DDamBreak: $(wildcard ../1D_dam_break/*.c) $(SRC)
+
+1DDamBreak: $(wildcard ../1D_dam_break/*.c) $(SRC) # ../1D_dam_break/ is the path do implemented functions
 	gcc -o $(EXE) $^ $(CFLAGS)

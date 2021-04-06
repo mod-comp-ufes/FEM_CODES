@@ -30,11 +30,11 @@ char* read_line(FILE *arq) {
 
 
 int main(int argc, char *argv[]) {
-	size_t i, j; // counter
+	size_t i, j, k; // counter
 	char *line, // arbtrary line to read
 		 filename_out[255];
 	int tmp[4], m, n, // readers from file in
-		nNode, nElement, 
+		nNode, nElement, nBlocks, 
 		NDOF,
 		*mark;
 	NodeType *node;
@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
 	FILE *in, *out;
 
 	if (argc<3){
-		printf("Use ./gmsh2Mesh <msh file> <problem>\n");
+		printf("Use ./gmsh2Mesh <msh file> <problem name>\n");
 		//Exemplo ./gmsh2Mesh cavity.msh CAVITY
 		exit(1);
 	}
@@ -60,9 +60,11 @@ int main(int argc, char *argv[]) {
         if(strncmp(line, "$Nodes", 6) == 0) {
 			free(line);
 			// Leitura de algo + quantidade de nós
-			fscanf(in, "%d %d %d %d\n", &tmp[0], &nNode, &tmp[1], &tmp[2]);
+			fscanf(in, "%d %d %d %d\n", &nBlocks, &nNode, &tmp[1], &tmp[2]);
 			node = (NodeType*) malloc(nNode*sizeof(NodeType));
-			for(i = 0; i < nNode; ) {
+			i = 0;
+			for(k = 0; k < nBlocks; k++)
+			{
 				// Leitura das informações dos blocos
 				fscanf(in, "%d %d %d %d\n", &tmp[0], &tmp[1], &tmp[2], &m);
 				// Leitura do id e das coordenadas dos nós

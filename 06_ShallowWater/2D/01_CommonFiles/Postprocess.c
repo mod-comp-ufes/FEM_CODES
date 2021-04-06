@@ -41,7 +41,6 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 	printf("Solver used: %s\n", Parameters->Solver);
 	printf("Solver tolerance used: %E\n", Parameters->SolverTolerance);
 	printf("Preconditioner used: %s\n", Parameters->Preconditioner);
-	printf("Scaling used: %s\n", Parameters->Scaling);
 	printf("Maximum number of solver iteration: %d\n", Parameters->LinearMaxIter);
 	printf("Number of restart: %d\n", Parameters->KrylovBasisVectorsQuantity);
 	printf("Number of %s iterations: %d\n", Parameters->Solver, Parameters->iterations);
@@ -71,7 +70,7 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 	fprintf(OutFile, "Reordering: %s\n", Parameters->reordering);
 	fprintf(OutFile, "Solver used: %s\n", Parameters->Solver);
 	fprintf(OutFile, "Solver tolerance used: %E\n", Parameters->SolverTolerance);
-	fprintf(OutFile, "Maximum number of solver iteration: %d\n", Parameters->LinearMaxIter);
+	fprintf(OutFile, "Maximum number of solver iteration: %d\n", Parameters->SolverMaxIter);
 	fprintf(OutFile, "Number of restart: %d\n", Parameters->KrylovBasisVectorsQuantity);
 	fprintf(OutFile, "Number of %s iterations: %d\n", Parameters->Solver, Parameters->iterations);
 	fprintf(OutFile, "Alpha: %lf\t Step time: %E\t Final Time: %lf - Stopped at Steady State? %s (Current Time: %lf)\n", Parameters->Alpha, Parameters->DeltaT,

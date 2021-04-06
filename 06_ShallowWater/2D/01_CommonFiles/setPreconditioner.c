@@ -1,5 +1,6 @@
 #include "ShalowWater.h"
 #include "../../../00_CommonFiles/Solvers_and_Preconditioners/preconditioners.h"
+#include "../../../00_CommonFiles/Solvers_and_Preconditioners/scaling.h"
 
 
 int setPreconditioner(ParametersType *Parameters, FemFunctionsType *FemFunctions)

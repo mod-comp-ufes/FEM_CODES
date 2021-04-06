@@ -10,7 +10,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	int **lm, *lmaux;
 	int size = NDOF*NNOEL;
 	int size2 = size*size;
-	double *F, *R, *u;
+	double *F, *u;
 	char FileName[2000], label[2000];
 	FILE *InFile;
 	NodeType *Node;
@@ -44,43 +44,35 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	InFile = myfopen(arguments[1], "r");
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->Experiments, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->ProblemTitle, label);
-	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->SolverTolerance), label);
-	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->NonLinearTolerance), label);
-	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->TimeIntegrationTolerance), label);
-	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->StabilizationTolerance), label);
-	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->LinearMaxIter), label);
-	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->KrylovBasisVectorsQuantity), label);
-	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->Solver, label);
-	tag = fscanf(InFile, "\n%[^\t]%[^\n]\n", Parameters->Preconditioner, label);
-	tag = fscanf(InFile, "%s\t:%[^\n]\n", Parameters->Scaling, label);
-	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->reordering, label);
-	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->TimeIntegration, label);
-	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->StopAtSteadyState, label);
-	tag = fscanf(InFile, "%lf\t:%[^\n]", &Parameters->Alpha, label);
-	tag = fscanf(InFile, "%lf\t:%[^\n]", &Parameters->DeltaT, label);
-	tag = fscanf(InFile, "%lf\t:%[^\n]", &Parameters->FinalTime, label);
-	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->Dimensionless, label);
-	tag = fscanf(InFile, "%lf\t:%[^\n]", &Parameters->Mach, label);
-	tag = fscanf(InFile, "%d\t:%[^\n]", &Parameters->NonLinearMaxIter, label);
-	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->StopMulticorrection, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->MatrixVectorProductScheme, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->StabilizationForm, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->ShockCapture, label);
-	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->invY[0]), label);
-	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->invY[1]), label);
-	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->invY[2]), label);
-	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->invY[3]), label);
+	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->Solver, label);
+	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->SolverMaxIter), label);
+	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->KrylovBasisVectorsQuantity), label);
+	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->SolverTolerance), label);
+	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->Preconditioner, label);
+	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->reordering, label);
+	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->TimeIntegration, label);
+	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->Alpha), label);
+	tag = fscanf(InFile, "%lf\t:%[^\n]", &Parameters->DeltaT, label);
+	tag = fscanf(InFile, "%lf\t:%[^\n]", &Parameters->FinalTime, label);
+	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->TimeIntegrationTolerance), label);
+	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->StopAtSteadyState, label);
+	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->StopMulticorrection, label);
+	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->NonLinearTolerance), label);
+	tag = fscanf(InFile, "%d\t:%[^\n]", &Parameters->NonLinearMaxIter, label);
 	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->nnodes), label);
 	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->nel), label);
+	tag = fscanf(InFile, "%s\t:%[^\n]", FileName, label);
 	fclose(InFile);
-	
+
 	/* **************************************************************************************************************************** */
 
 
 	/* **************************************************************************************************************************** */
 	//						Reading nodes
 	/* **************************************************************************************************************************** */
-	sprintf(FileName,"../../../../INPUT_DATA/%s_%d_%d.dat", Parameters->ProblemTitle, Parameters->nnodes, Parameters->nel);
 	InFile = myfopen(FileName, "r");
 	tag = fscanf(InFile, "%d", &nnodes);
 	Node = (NodeType*) mycalloc("Node of 'Preprocess'", nnodes, sizeof(NodeType));
@@ -117,7 +109,6 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 
 	MatrixData = (MatrixDataType *) mycalloc("MatrixData of 'Preprocess'", 1, sizeof(MatrixDataType));
 	F = (double*) mycalloc("F of 'Preprocess'", neq+1, sizeof(double));
-	R = (double*) mycalloc("R of 'Preprocess'", neq+1, sizeof(double));
 	u = (double*) mycalloc("u of 'Preprocess'", neq+1, sizeof(double));
 	lm = (int**) mycalloc("lm of 'Preprocess'", nel, sizeof(int*));
 	lmaux = (int*) mycalloc("lmaux of 'Preprocess'", nel*size, sizeof(int));
@@ -164,7 +155,6 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	FemStructs->Node = Node;
 	FemStructs->Element = Element;
 	FemStructs->F = F;
-	FemStructs->R = R;
 	FemStructs->u = u;
 	
 	*Parameters_out = Parameters;
