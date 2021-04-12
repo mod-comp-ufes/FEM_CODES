@@ -137,11 +137,10 @@ typedef struct
 	double (*qxpresc)(double, double);
 	double (*qypresc)(double, double);
 	double (*zb)(double, double);
-	int (*InitialSolution)(ParametersType *, NodeType *, double *);
+	int (*InitialSolution)(ParametersType *, FemStructsType *);
 
 	double (*ShockCapture)(double *, double *, double *, double (*)[3], double (*)[3], double *, 
                            double, double, double, double, double, double, double, double, double);
-	void (*A1_A2_calculations)(double *, double (*)[3], double (*)[3], double);
 	int (*StopCriteria)(ParametersType *, double, double, int);
 	int (*StopTimeIntegration)(ParametersType *, double *, double *, double);
 
@@ -164,7 +163,7 @@ typedef struct
 } FemOtherFunctionsType;
 
 
-void A1_A2_calculations(double Ub[3], double A1[3][3], double A2[3][3], double g);
+void A1_A2_calculations(double Ub[3], double (*A1)[3], double (*A2)[3], double g);
 
 int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs, FemFunctionsType *FemFunctions);
 
@@ -213,5 +212,8 @@ int setStabilizationForm(ParametersType *Parameters,FemFunctionsType *FemFunctio
 int setzeros(ParametersType *Parameters, MatrixDataType *MatrixData);
 
 void F_assembly(int e, double Fe[9], double De[9][9], FemFunctionsType *FemFunctions, FemStructsType *FemStructs, int neq);
+
+int PredictorMulticorrector(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs,
+		FemFunctionsType *FemFunctions, FemOtherFunctionsType *FemOtherFunctions);
 
 #endif

@@ -23,20 +23,20 @@ int pgmres (ParametersType *Parameters,	MatrixDataType *MatrixData, FemStructsTy
 		}
 	getchar();*/
 
-	u = (double**) mycalloc("u of 'gmres'",kmax,sizeof(double));
-	u_aux = (double*) mycalloc("u_aux of 'gmres'",kmax*(neq+1),sizeof(double));
-	for (i = 0; i < kmax; i++)
+	u = (double**) mycalloc("u of 'gmres'",kmax+1,sizeof(double));
+	u_aux = (double*) mycalloc("u_aux of 'gmres'",(kmax+1)*(neq+1),sizeof(double));
+	for (i = 0; i <= kmax; i++)
 		u[i] = &u_aux[i*(neq+1)];
 
-	h = (double**) mycalloc("h of 'gmres'",kmax,sizeof(double*));
-	h_aux = (double*) mycalloc("h_aux of 'gmres'", kmax*kmax ,sizeof(double*));
-	for (i = 0; i < kmax; i++)
-		h[i] = &h_aux[i*kmax];
+	h = (double**) mycalloc("h of 'gmres'",kmax+1,sizeof(double*));
+	h_aux = (double*) mycalloc("h_aux of 'gmres'", (kmax+1)*(kmax+1) ,sizeof(double*));
+	for (i = 0; i <= kmax; i++)
+		h[i] = &h_aux[i*(kmax+1)];
 		
 	e = (double*) mycalloc("e of 'gmres'",kmax+1,sizeof(double));
-	c = (double*) mycalloc("c of 'gmres'",kmax,sizeof(double));
-	s = (double*) mycalloc("s of 'gmres'",kmax,sizeof(double));
-	y = (double*) mycalloc("y of 'gmres'",kmax,sizeof(double));
+	c = (double*) mycalloc("c of 'gmres'",kmax+1,sizeof(double));
+	s = (double*) mycalloc("s of 'gmres'",kmax+1,sizeof(double));
+	y = (double*) mycalloc("y of 'gmres'",kmax+1,sizeof(double));
 	v = (double*) mycalloc("z of 'gmres'",neq + 1,sizeof(double));
 	z = (double*) mycalloc("z of 'gmres'",neq + 1,sizeof(double));
 

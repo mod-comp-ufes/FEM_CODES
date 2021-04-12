@@ -2,6 +2,7 @@
     "files.associations": {
         "shalowwater.h": "c",
         "1d_dam_break.h": "c",
-        "gmsh2mesh.h": "c"
+        "gmsh2mesh.h": "c",
+        "ourblas.h": "c"
     }
 }

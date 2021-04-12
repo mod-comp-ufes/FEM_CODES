@@ -11,7 +11,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 	double g = 9.8;
 	double n = 0.018;
 	double Cf, gamma;
-	int e, i, j;
+	int e, i, j, r;
 	int J1, J2, J3, nel, neq;
 	double x1, x2, x3, y1, y2, y3, y23, y31, y12, x32, x13, x21, zb1, zb2, zb3;
 	double Area, twoArea, invArea, second = 0.5, third = 1.0/3.0, forth = 0.25, sixth = 1.0/6.0, twelve = 1.0/12.0;
@@ -20,17 +20,14 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 	double *U, *dU;
 	double Me[9][9], De[9][9], Ue[9], dUe[9], Ub[3], dUb[3], Fb[3], gradUx[3], gradUy[3];
 	double S1[3], S2[3], S3[3], Sb[3], Fe[9], gradzbx, gradzby;
-	double tolerance;
 	double alpha = Parameters->Alpha_Build;
 	double delta_t = Parameters->DeltaT_Build;
 	double *R = FemStructs->F;
-	double *delta_old = FemStructs->delta_old;
 	int **lm = FemStructs->lm;
 
 	NodeType *Node = FemStructs->Node;
 	ElementType *Element = FemStructs->Element;
 	
-	tolerance = FemStructs->AuxBuild->tolerance;
 	nel = Parameters->nel;
 	neq = Parameters->neq;
 	
@@ -122,9 +119,8 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		// *** A = [A1 A2]
 		double A1[3][3];
 		double A2[3][3];
-	
-		FemFunctions->A1_A2_calculations(Ue, A1, A2, g);
-
+		A1_A2_calculations(Ue, A1, A2, g);
+		
 		double a11[3][3], a12[3][3], a21[3][3], a22[3][3];
 
 		a11[0][0] = A1[1][0];
@@ -167,18 +163,18 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		a22[2][1] = 0.0;
 		a12[2][2] = A2[2][0] + A2[2][2]*A2[2][2];
 
-
 		// Source
 
 		zb1 = FemFunctions->zb(x1, y1);
 		zb2 = FemFunctions->zb(x2, y2);
 		zb3 = FemFunctions->zb(x3, y3);
 
-		gradzbx = zb1*y23 + zb2*y31 + zb3*y12;
-		gradzby = zb1*x32 + zb2*x13 + zb3*x21;
+		gradzbx = (zb1*y23 + zb2*y31 + zb3*y12)/(2*Area);
+		gradzby = (zb1*x32 + zb2*x13 + zb3*x21)/(2*Area);
 
-		Cf = g*n*n*pow(Ub[0], -7/3);
-		gamma = Cf*sqrt(Ub[1]*Ub[1] + Ub[2]*Ub[2]);
+		Cf = (Ub[0]>=0) ? g*n*n*pow(Ub[0], -7/3) : 0.0;
+		r = Ub[1]*Ub[1] + Ub[2]*Ub[2];
+		gamma = (r>=0) ? Cf*sqrt(r) : 0.0;
 		
 		S1[0] = 0.0;
 		S2[0] = 0.0;
@@ -196,28 +192,25 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		Sb[1] = third*(S1[1] + S2[2] + S3[1]);
 		Sb[2] = third*(S1[2] + S2[2] + S3[2]);
 
-		//  OPERADOR DE CAPTURA DE DESCONTINUIDADES
-		//delta = FemFunctions->ShockCapture(tolerance, delta_old, gradUx, gradUy, Ax, Ay, A0, dUb, y23, y31, y12, x32, x13, x21,
-		//									twoArea, e, Parameters->invY, Ub);
-
 		// *** Calculo do parametro de estabilizacao (tau) do SUPG            
 		double tauSUGN1 = 0.0, tauSUGN2 = 0.0;
 		double jbold[2], normjbold = 0.0;
 
 		jbold[0] = second*invArea*(y23*(Ue[0] + zb1) + y31*(Ue[3] + zb2) + y12*(Ue[6] + zb3));
 		jbold[1] = second*invArea*(x32*(Ue[0] + zb1) + x13*(Ue[3] + zb2) + x21*(Ue[6] + zb3));
-		normjbold = sqrt(jbold[0]*jbold[0] + jbold[1]*jbold[1]);
+		r = jbold[0]*jbold[0] + jbold[1]*jbold[1];
+		normjbold = (r>=0) ? sqrt(r) : 0.0;
 		jbold[0] /= normjbold;
 		jbold[1] /= normjbold;
 
-		tauSUGN1 = 1.0/(second*Area*sqrt(g*Ub[0])*(abs(jbold[0]*y23 + jbold[1]*x32) + abs(Ub[1]*y23 + Ub[2]*x32) +
-		                                           abs(jbold[0]*y31 + jbold[1]*x13) + abs(Ub[1]*y31 + Ub[2]*x13) +
-												   abs(jbold[0]*y12 + jbold[1]*x21) + abs(Ub[2]*y12 + Ub[2]*x21)));
+		r = g*Ub[0];
+		
+		tauSUGN1 = (r>=0) ? 1.0/(second*invArea*sqrt(r)*(abs(jbold[0]*y23 + jbold[1]*x32) + abs(Ub[1]*y23 + Ub[2]*x32) +
+		                                                 abs(jbold[0]*y31 + jbold[1]*x13) + abs(Ub[1]*y31 + Ub[2]*x13) +
+												         abs(jbold[0]*y12 + jbold[1]*x21) + abs(Ub[2]*y12 + Ub[2]*x21))) : 0.0;
 		tauSUGN2 = delta_t/2.0;
 
-		tau = 1.0/sqrt(1.0/(tauSUGN1*tauSUGN1) + 1.0/(tauSUGN2*tauSUGN2));
-		if (tau < 0.0)
-			tau = 0.0;
+		tau = (tauSUGN1>=0 && tauSUGN2>=0) ? 1.0/sqrt(1.0/(tauSUGN1*tauSUGN1) + 1.0/(tauSUGN2*tauSUGN2)) : 0.0;
 
 		delta = FemFunctions->ShockCapture(Ub, gradUx, gradUy, A1, A2, Sb, y23, y31, y12, x32, x13, x21, twoArea, tau, g);
 
@@ -572,7 +565,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 				DeUe[i] += De[i][j]*Ue[j];
 				Ae[i][j] = Me[i][j] + alpha*delta_t*De[i][j];
 			}
-			Re[i] = Fe[i] - MedUe[i] - DeUe[i];
+			Re[i] = - MedUe[i] - DeUe[i];  // F já está sendo adicionado ao R via F_assembly() com tratamento de contorno
 		}
 
 		for (i=0; i<9; i++)
