@@ -31,17 +31,18 @@ double delta91_MOD(double Ub[3], double gradUx[3], double gradUy[3], double A1[3
 	     	  R[1]*(R[0]*a12 + R[1]) +
 		 	  R[2]*(R[0]*a13 + R[2]);
 	Rn = (r>=0) ? sqrt(r) : 0.0;
+
 	gradUn = (gradUx[0] + gradUy[0])*((gradUx[0] + gradUy[0])*a11 + (gradUx[1] + gradUy[1])*a12 + (gradUx[2] + gradUy[2])*a13) +
 	     	 (gradUx[1] + gradUy[1])*((gradUx[0] + gradUy[0])*a12 + (gradUx[1] + gradUy[1])) +
 		     (gradUx[2] + gradUy[2])*((gradUx[0] + gradUy[0])*a13 + (gradUx[2] + gradUy[2]));
-	delta_tau = (gradUn>=0) ? (Rn*tau)/gradUn : 0.0;
+	delta_tau = (gradUn>0) ? (Rn*tau)/gradUn : 0.0;
 
 	r = (y31*gradUx[0] + x13*gradUy[0])*((y31*gradUx[0] + x13*gradUy[0])*a11 + (y31*gradUx[1] + x13*gradUy[1])*a12 + (y31*gradUx[2] + x13*gradUy[2])*a13) +
-	     	         (y31*gradUx[1] + x13*gradUy[1])*((y31*gradUx[0] + x13*gradUy[0])*a12 + (y31*gradUx[1] + x13*gradUy[1])) +
-		             (y31*gradUx[2] + x13*gradUy[2])*((y31*gradUx[0] + x13*gradUy[0])*a13 + (y31*gradUx[2] + x13*gradUy[2])) +
-				     (y12*gradUx[0] + x21*gradUy[0])*((y12*gradUx[0] + x21*gradUy[0])*a11 + (y12*gradUx[1] + x21*gradUy[1])*a12 + (y12*gradUx[2] + x21*gradUy[2])*a13) +
-	     	         (y12*gradUx[1] + x21*gradUy[1])*((y12*gradUx[0] + x21*gradUy[0])*a12 + (y12*gradUx[1] + x21*gradUy[1])) +
-		             (y12*gradUx[2] + x21*gradUy[2])*((y12*gradUx[0] + x21*gradUy[0])*a13 + (y12*gradUx[2] + x21*gradUy[2]));
+	    (y31*gradUx[1] + x13*gradUy[1])*((y31*gradUx[0] + x13*gradUy[0])*a12 + (y31*gradUx[1] + x13*gradUy[1])) +
+		(y31*gradUx[2] + x13*gradUy[2])*((y31*gradUx[0] + x13*gradUy[0])*a13 + (y31*gradUx[2] + x13*gradUy[2])) +
+		(y12*gradUx[0] + x21*gradUy[0])*((y12*gradUx[0] + x21*gradUy[0])*a11 + (y12*gradUx[1] + x21*gradUy[1])*a12 + (y12*gradUx[2] + x21*gradUy[2])*a13) +
+	    (y12*gradUx[1] + x21*gradUy[1])*((y12*gradUx[0] + x21*gradUy[0])*a12 + (y12*gradUx[1] + x21*gradUy[1])) +
+		(y12*gradUx[2] + x21*gradUy[2])*((y12*gradUx[0] + x21*gradUy[0])*a13 + (y12*gradUx[2] + x21*gradUy[2]));
 	delta_91 = (r>0) ? Rn/sqrt(r) : 0.0;
 
 	delta = max(0, delta_91 - delta_tau);

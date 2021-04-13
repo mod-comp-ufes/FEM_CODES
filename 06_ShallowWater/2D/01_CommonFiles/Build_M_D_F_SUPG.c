@@ -161,7 +161,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		a22[1][2] = A2[1][0] + A2[1][1]*A2[2][0] + A2[2][1]*A2[2][2];
 		a22[2][0] = A2[2][0];
 		a22[2][1] = 0.0;
-		a12[2][2] = A2[2][0] + A2[2][2]*A2[2][2];
+		a22[2][2] = A2[2][0] + A2[2][2]*A2[2][2];
 
 		// Source
 
@@ -319,29 +319,12 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		Me[8][4] = Me[8][1] = Mg2 + tau*sixth*ms3[2][1];
 		Me[8][5] = Me[8][2] = Mg2 + tau*sixth*ms3[2][2];
 
-
 		// *** Matriz de Conveccao de Galerkin
-		double d12[2][2], d13[2][2], d21[2][2], d23[2][2];
+		double d12, d13, d23;
 
-		d12[0][0] = 0.0;
-		d12[0][1] =                  x32*x13*mu/rho;
-		d12[1][0] = y23*y31*mu/rho;
-		d12[1][1] = y23*y31*mu/rho + x32*x13*mu/rho;
-
-		d13[0][0] = 0.0;
-		d13[0][1] =                  x32*x21*mu/rho;
-		d13[1][0] = y23*y12*mu/rho;
-		d13[1][1] = y23*y12*mu/rho + x32*x21*mu/rho;
-
-		d21[0][0] = 0.0;
-		d21[0][1] =                  x13*x32*mu/rho;
-		d21[1][0] = y31*y23*mu/rho;
-		d21[1][1] = y31*y23*mu/rho + x13*x32*mu/rho;
-
-		d23[0][0] = 0.0;
-		d23[0][1] =                  x13*x21*mu/rho;
-		d23[1][0] = y31*y12*mu/rho;
-		d23[1][1] = y31*y12*mu/rho + x13*x21*mu/rho;
+		d12 = forth*invArea*(y23*y31*mu/rho + x32*x13*mu/rho);
+		d13 = forth*invArea*(y23*y12*mu/rho + x32*x21*mu/rho);
+		d23 = forth*invArea*(y31*y12*mu/rho + x13*x21*mu/rho);
 
 		// *** Matriz de Conveccao do SUPG
 		double ds11[3][3], ds12[3][3], ds13[3][3], ds21[3][3], ds22[3][3], ds23[3][3], ds31[3][3], ds32[3][3], ds33[3][3];
@@ -436,7 +419,6 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		ds33[2][1] = y12*(y12*a11[2][1] + x21*a21[2][1]) + x21*(y12*a12[2][1] + x21*a22[2][1]);
 		ds33[2][2] = y12*(y12*a11[2][2] + x21*a21[2][2]) + x21*(y12*a12[2][2] + x21*a22[2][2]);
 
-
 		// *** Matriz de Conveccao da captura de choque
 		double sh12, sh13, sh23;
 
@@ -446,96 +428,95 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 
 		// *** Coeficientes da Matriz de Rigidez [De]
 
-		De[0][0] = sixth*ms1[0][0] + forth*invArea*(-d12[0][0] -d13[0][0]) + tau*forth*invArea*ds11[0][0] + delta*forth*invArea*(-sh12 -sh13);
-		De[0][1] = sixth*ms1[0][1] + forth*invArea*(-d12[0][1] -d13[0][1]) + tau*forth*invArea*ds11[0][1] + delta*forth*invArea*(-sh12 -sh13);
-		De[0][2] = sixth*ms1[0][2] + forth*invArea*(-d12[0][2] -d13[0][2]) + tau*forth*invArea*ds11[0][2] + delta*forth*invArea*(-sh12 -sh13);
-		De[1][0] = sixth*ms1[1][0] + forth*invArea*(-d12[1][0] -d13[1][0]) + tau*forth*invArea*ds11[1][0] + delta*forth*invArea*(-sh12 -sh13);
-		De[1][1] = sixth*ms1[1][1] + forth*invArea*(-d12[1][1] -d13[1][1]) + tau*forth*invArea*ds11[1][1] + delta*forth*invArea*(-sh12 -sh13);
-		De[1][2] = sixth*ms1[1][2] + forth*invArea*(-d12[1][2] -d13[1][2]) + tau*forth*invArea*ds11[1][2] + delta*forth*invArea*(-sh12 -sh13);
-		De[2][0] = sixth*ms1[2][0] + forth*invArea*(-d12[2][0] -d13[2][0]) + tau*forth*invArea*ds11[2][0] + delta*forth*invArea*(-sh12 -sh13);
-		De[2][1] = sixth*ms1[2][1] + forth*invArea*(-d12[2][1] -d13[2][1]) + tau*forth*invArea*ds11[2][1] + delta*forth*invArea*(-sh12 -sh13);
-		De[2][2] = sixth*ms1[2][2] + forth*invArea*(-d12[2][2] -d13[2][2]) + tau*forth*invArea*ds11[2][2] + delta*forth*invArea*(-sh12 -sh13);
+		De[0][0] = sixth*ms1[0][0]                 + tau*forth*invArea*ds11[0][0] + delta*forth*invArea*(-sh12 -sh13);
+		De[0][1] = sixth*ms1[0][1]                 + tau*forth*invArea*ds11[0][1] + delta*forth*invArea*(-sh12 -sh13);
+		De[0][2] = sixth*ms1[0][2]                 + tau*forth*invArea*ds11[0][2] + delta*forth*invArea*(-sh12 -sh13);
+		De[1][0] = sixth*ms1[1][0]                 + tau*forth*invArea*ds11[1][0] + delta*forth*invArea*(-sh12 -sh13);
+		De[1][1] = sixth*ms1[1][1] + (- d12 - d13) + tau*forth*invArea*ds11[1][1] + delta*forth*invArea*(-sh12 -sh13);
+		De[1][2] = sixth*ms1[1][2]                 + tau*forth*invArea*ds11[1][2] + delta*forth*invArea*(-sh12 -sh13);
+		De[2][0] = sixth*ms1[2][0]                 + tau*forth*invArea*ds11[2][0] + delta*forth*invArea*(-sh12 -sh13);
+		De[2][1] = sixth*ms1[2][1]                 + tau*forth*invArea*ds11[2][1] + delta*forth*invArea*(-sh12 -sh13);
+		De[2][2] = sixth*ms1[2][2] + (- d12 - d13) + tau*forth*invArea*ds11[2][2] + delta*forth*invArea*(-sh12 -sh13);
 
-		De[0][3] = sixth*ms2[0][0] + forth*invArea*d12[0][0] + tau*forth*invArea*ds12[0][0] + delta*forth*invArea*sh12;
-		De[0][4] = sixth*ms2[0][1] + forth*invArea*d12[0][1] + tau*forth*invArea*ds12[0][1] + delta*forth*invArea*sh12;
-		De[0][5] = sixth*ms2[0][2] + forth*invArea*d12[0][2] + tau*forth*invArea*ds12[0][2] + delta*forth*invArea*sh12;
-		De[1][3] = sixth*ms2[1][0] + forth*invArea*d12[1][0] + tau*forth*invArea*ds12[1][0] + delta*forth*invArea*sh12;
-		De[1][4] = sixth*ms2[1][1] + forth*invArea*d12[1][1] + tau*forth*invArea*ds12[1][1] + delta*forth*invArea*sh12;
-		De[1][5] = sixth*ms2[1][2] + forth*invArea*d12[1][2] + tau*forth*invArea*ds12[1][2] + delta*forth*invArea*sh12;
-		De[2][3] = sixth*ms2[2][0] + forth*invArea*d12[2][0] + tau*forth*invArea*ds12[2][0] + delta*forth*invArea*sh12;
-		De[2][4] = sixth*ms2[2][1] + forth*invArea*d12[2][1] + tau*forth*invArea*ds12[2][1] + delta*forth*invArea*sh12;
-		De[2][5] = sixth*ms2[2][2] + forth*invArea*d12[2][2] + tau*forth*invArea*ds12[2][2] + delta*forth*invArea*sh12;
+		De[0][3] = sixth*ms2[0][0]       + tau*forth*invArea*ds12[0][0] + delta*forth*invArea*sh12;
+		De[0][4] = sixth*ms2[0][1]       + tau*forth*invArea*ds12[0][1] + delta*forth*invArea*sh12;
+		De[0][5] = sixth*ms2[0][2]       + tau*forth*invArea*ds12[0][2] + delta*forth*invArea*sh12;
+		De[1][3] = sixth*ms2[1][0]       + tau*forth*invArea*ds12[1][0] + delta*forth*invArea*sh12;
+		De[1][4] = sixth*ms2[1][1] + d12 + tau*forth*invArea*ds12[1][1] + delta*forth*invArea*sh12;
+		De[1][5] = sixth*ms2[1][2]       + tau*forth*invArea*ds12[1][2] + delta*forth*invArea*sh12;
+		De[2][3] = sixth*ms2[2][0]       + tau*forth*invArea*ds12[2][0] + delta*forth*invArea*sh12;
+		De[2][4] = sixth*ms2[2][1]       + tau*forth*invArea*ds12[2][1] + delta*forth*invArea*sh12;
+		De[2][5] = sixth*ms2[2][2] + d12 + tau*forth*invArea*ds12[2][2] + delta*forth*invArea*sh12;
 
-		De[0][6] = sixth*ms3[0][0] + forth*invArea*d13[0][0] + tau*forth*invArea*ds13[0][0] + delta*forth*invArea*sh13;
-		De[0][7] = sixth*ms3[0][1] + forth*invArea*d13[0][1] + tau*forth*invArea*ds13[0][1] + delta*forth*invArea*sh13;
-		De[0][8] = sixth*ms3[0][2] + forth*invArea*d13[0][2] + tau*forth*invArea*ds13[0][2] + delta*forth*invArea*sh13;
-		De[1][6] = sixth*ms3[1][0] + forth*invArea*d13[1][0] + tau*forth*invArea*ds13[1][0] + delta*forth*invArea*sh13;
-		De[1][7] = sixth*ms3[1][1] + forth*invArea*d13[1][1] + tau*forth*invArea*ds13[1][1] + delta*forth*invArea*sh13;
-		De[1][8] = sixth*ms3[1][2] + forth*invArea*d13[1][2] + tau*forth*invArea*ds13[1][2] + delta*forth*invArea*sh13;
-		De[2][6] = sixth*ms3[2][0] + forth*invArea*d13[2][0] + tau*forth*invArea*ds13[2][0] + delta*forth*invArea*sh13;
-		De[2][7] = sixth*ms3[2][1] + forth*invArea*d13[2][1] + tau*forth*invArea*ds13[2][1] + delta*forth*invArea*sh13;
-		De[2][8] = sixth*ms3[2][2] + forth*invArea*d13[2][2] + tau*forth*invArea*ds13[2][2] + delta*forth*invArea*sh13;
+		De[0][6] = sixth*ms3[0][0]       + tau*forth*invArea*ds13[0][0] + delta*forth*invArea*sh13;
+		De[0][7] = sixth*ms3[0][1]       + tau*forth*invArea*ds13[0][1] + delta*forth*invArea*sh13;
+		De[0][8] = sixth*ms3[0][2]       + tau*forth*invArea*ds13[0][2] + delta*forth*invArea*sh13;
+		De[1][6] = sixth*ms3[1][0]       + tau*forth*invArea*ds13[1][0] + delta*forth*invArea*sh13;
+		De[1][7] = sixth*ms3[1][1] + d13 + tau*forth*invArea*ds13[1][1] + delta*forth*invArea*sh13;
+		De[1][8] = sixth*ms3[1][2]       + tau*forth*invArea*ds13[1][2] + delta*forth*invArea*sh13;
+		De[2][6] = sixth*ms3[2][0]       + tau*forth*invArea*ds13[2][0] + delta*forth*invArea*sh13;
+		De[2][7] = sixth*ms3[2][1]       + tau*forth*invArea*ds13[2][1] + delta*forth*invArea*sh13;
+		De[2][8] = sixth*ms3[2][2] + d13 + tau*forth*invArea*ds13[2][2] + delta*forth*invArea*sh13;
 
-		De[3][0] = sixth*ms1[0][0] + forth*invArea*ds21[0][0] + tau*forth*invArea*ds12[0][0] + delta*forth*invArea*sh12;
-		De[3][1] = sixth*ms1[0][1] + forth*invArea*ds21[0][1] + tau*forth*invArea*ds12[0][1] + delta*forth*invArea*sh12;
-		De[3][2] = sixth*ms1[0][2] + forth*invArea*ds21[0][2] + tau*forth*invArea*ds12[0][2] + delta*forth*invArea*sh12;
-		De[4][0] = sixth*ms1[1][0] + forth*invArea*ds21[1][0] + tau*forth*invArea*ds12[1][0] + delta*forth*invArea*sh12;
-		De[4][1] = sixth*ms1[1][1] + forth*invArea*ds21[1][1] + tau*forth*invArea*ds12[1][1] + delta*forth*invArea*sh12;
-		De[4][2] = sixth*ms1[1][2] + forth*invArea*ds21[1][2] + tau*forth*invArea*ds12[1][2] + delta*forth*invArea*sh12;
-		De[5][0] = sixth*ms1[2][0] + forth*invArea*ds21[2][0] + tau*forth*invArea*ds12[2][0] + delta*forth*invArea*sh12;
-		De[5][1] = sixth*ms1[2][1] + forth*invArea*ds21[2][1] + tau*forth*invArea*ds12[2][1] + delta*forth*invArea*sh12;
-		De[5][2] = sixth*ms1[2][2] + forth*invArea*ds21[2][2] + tau*forth*invArea*ds12[2][2] + delta*forth*invArea*sh12;
+		De[3][0] = sixth*ms1[0][0]       + tau*forth*invArea*ds12[0][0] + delta*forth*invArea*sh12;
+		De[3][1] = sixth*ms1[0][1]       + tau*forth*invArea*ds12[0][1] + delta*forth*invArea*sh12;
+		De[3][2] = sixth*ms1[0][2]       + tau*forth*invArea*ds12[0][2] + delta*forth*invArea*sh12;
+		De[4][0] = sixth*ms1[1][0]       + tau*forth*invArea*ds12[1][0] + delta*forth*invArea*sh12;
+		De[4][1] = sixth*ms1[1][1] + d13 + tau*forth*invArea*ds12[1][1] + delta*forth*invArea*sh12;
+		De[4][2] = sixth*ms1[1][2]       + tau*forth*invArea*ds12[1][2] + delta*forth*invArea*sh12;
+		De[5][0] = sixth*ms1[2][0]       + tau*forth*invArea*ds12[2][0] + delta*forth*invArea*sh12;
+		De[5][1] = sixth*ms1[2][1]       + tau*forth*invArea*ds12[2][1] + delta*forth*invArea*sh12;
+		De[5][2] = sixth*ms1[2][2] + d13 + tau*forth*invArea*ds12[2][2] + delta*forth*invArea*sh12;
 
-		De[3][3] = sixth*ms2[3][3] + forth*invArea*(-d21[3][3] -d23[3][3]) + tau*forth*invArea*ds22[3][3] + delta*forth*invArea*(-sh12 -sh23);
-		De[3][4] = sixth*ms2[3][4] + forth*invArea*(-d21[3][4] -d23[3][4]) + tau*forth*invArea*ds22[3][4] + delta*forth*invArea*(-sh12 -sh23);
-		De[3][5] = sixth*ms2[3][5] + forth*invArea*(-d21[3][5] -d23[3][5]) + tau*forth*invArea*ds22[3][5] + delta*forth*invArea*(-sh12 -sh23);
-		De[4][3] = sixth*ms2[4][3] + forth*invArea*(-d21[4][3] -d23[4][3]) + tau*forth*invArea*ds22[4][3] + delta*forth*invArea*(-sh12 -sh23);
-		De[4][4] = sixth*ms2[4][4] + forth*invArea*(-d21[4][4] -d23[4][4]) + tau*forth*invArea*ds22[4][4] + delta*forth*invArea*(-sh12 -sh23);
-		De[4][5] = sixth*ms2[4][5] + forth*invArea*(-d21[4][5] -d23[4][5]) + tau*forth*invArea*ds22[4][5] + delta*forth*invArea*(-sh12 -sh23);
-		De[5][3] = sixth*ms2[5][3] + forth*invArea*(-d21[5][3] -d23[5][3]) + tau*forth*invArea*ds22[5][3] + delta*forth*invArea*(-sh12 -sh23);
-		De[5][4] = sixth*ms2[5][4] + forth*invArea*(-d21[5][4] -d23[5][4]) + tau*forth*invArea*ds22[5][4] + delta*forth*invArea*(-sh12 -sh23);
-		De[5][5] = sixth*ms2[5][5] + forth*invArea*(-d21[5][5] -d23[5][5]) + tau*forth*invArea*ds22[5][5] + delta*forth*invArea*(-sh12 -sh23);
+		De[3][3] = sixth*ms2[0][0]                 + tau*forth*invArea*ds22[0][0] + delta*forth*invArea*(-sh12 -sh23);
+		De[3][4] = sixth*ms2[0][1]                 + tau*forth*invArea*ds22[0][1] + delta*forth*invArea*(-sh12 -sh23);
+		De[3][5] = sixth*ms2[0][2]                 + tau*forth*invArea*ds22[0][2] + delta*forth*invArea*(-sh12 -sh23);
+		De[4][3] = sixth*ms2[1][0]                 + tau*forth*invArea*ds22[1][0] + delta*forth*invArea*(-sh12 -sh23);
+		De[4][4] = sixth*ms2[1][1] + (- d12 - d13) + tau*forth*invArea*ds22[1][1] + delta*forth*invArea*(-sh12 -sh23);
+		De[4][5] = sixth*ms2[1][2]                 + tau*forth*invArea*ds22[1][2] + delta*forth*invArea*(-sh12 -sh23);
+		De[5][3] = sixth*ms2[2][0]                 + tau*forth*invArea*ds22[2][0] + delta*forth*invArea*(-sh12 -sh23);
+		De[5][4] = sixth*ms2[2][1]                 + tau*forth*invArea*ds22[2][1] + delta*forth*invArea*(-sh12 -sh23);
+		De[5][5] = sixth*ms2[2][2] + (- d12 - d13) + tau*forth*invArea*ds22[2][2] + delta*forth*invArea*(-sh12 -sh23);
 
-		De[3][6] = sixth*ms3[0][0] + forth*invArea*d23[0][0] + tau*forth*invArea*ds23[0][0] + delta*forth*invArea*sh23;
-		De[3][7] = sixth*ms3[0][1] + forth*invArea*d23[0][1] + tau*forth*invArea*ds23[0][1] + delta*forth*invArea*sh23;
-		De[3][8] = sixth*ms3[0][2] + forth*invArea*d23[0][2] + tau*forth*invArea*ds23[0][2] + delta*forth*invArea*sh23;
-		De[4][6] = sixth*ms3[1][0] + forth*invArea*d23[1][0] + tau*forth*invArea*ds23[1][0] + delta*forth*invArea*sh23;
-		De[4][7] = sixth*ms3[1][1] + forth*invArea*d23[1][1] + tau*forth*invArea*ds23[1][1] + delta*forth*invArea*sh23;
-		De[4][8] = sixth*ms3[1][2] + forth*invArea*d23[1][2] + tau*forth*invArea*ds23[1][2] + delta*forth*invArea*sh23;
-		De[5][6] = sixth*ms3[2][0] + forth*invArea*d23[2][0] + tau*forth*invArea*ds23[2][0] + delta*forth*invArea*sh23;
-		De[5][7] = sixth*ms3[2][1] + forth*invArea*d23[2][1] + tau*forth*invArea*ds23[2][1] + delta*forth*invArea*sh23;
-		De[5][8] = sixth*ms3[2][2] + forth*invArea*d23[2][2] + tau*forth*invArea*ds23[2][2] + delta*forth*invArea*sh23;
+		De[3][6] = sixth*ms3[0][0]       + tau*forth*invArea*ds23[0][0] + delta*forth*invArea*sh23;
+		De[3][7] = sixth*ms3[0][1]       + tau*forth*invArea*ds23[0][1] + delta*forth*invArea*sh23;
+		De[3][8] = sixth*ms3[0][2]       + tau*forth*invArea*ds23[0][2] + delta*forth*invArea*sh23;
+		De[4][6] = sixth*ms3[1][0]       + tau*forth*invArea*ds23[1][0] + delta*forth*invArea*sh23;
+		De[4][7] = sixth*ms3[1][1] + d23 + tau*forth*invArea*ds23[1][1] + delta*forth*invArea*sh23;
+		De[4][8] = sixth*ms3[1][2]       + tau*forth*invArea*ds23[1][2] + delta*forth*invArea*sh23;
+		De[5][6] = sixth*ms3[2][0]       + tau*forth*invArea*ds23[2][0] + delta*forth*invArea*sh23;
+		De[5][7] = sixth*ms3[2][1]       + tau*forth*invArea*ds23[2][1] + delta*forth*invArea*sh23;
+		De[5][8] = sixth*ms3[2][2] + d23 + tau*forth*invArea*ds23[2][2] + delta*forth*invArea*sh23;
 
-		De[6][0] = sixth*ms1[0][0] + forth*invArea*d13[0][0] + tau*forth*invArea*ds31[0][0] + delta*forth*invArea*sh13;
-		De[6][1] = sixth*ms1[0][1] + forth*invArea*d13[0][1] + tau*forth*invArea*ds31[0][1] + delta*forth*invArea*sh13;
-		De[6][2] = sixth*ms1[0][2] + forth*invArea*d13[0][2] + tau*forth*invArea*ds31[0][2] + delta*forth*invArea*sh13;
-		De[7][0] = sixth*ms1[1][0] + forth*invArea*d13[1][0] + tau*forth*invArea*ds31[1][0] + delta*forth*invArea*sh13;
-		De[7][1] = sixth*ms1[1][1] + forth*invArea*d13[1][1] + tau*forth*invArea*ds31[1][1] + delta*forth*invArea*sh13;
-		De[7][2] = sixth*ms1[1][2] + forth*invArea*d13[1][2] + tau*forth*invArea*ds31[1][2] + delta*forth*invArea*sh13;
-		De[8][0] = sixth*ms1[2][0] + forth*invArea*d13[2][0] + tau*forth*invArea*ds31[2][0] + delta*forth*invArea*sh13;
-		De[8][1] = sixth*ms1[2][1] + forth*invArea*d13[2][1] + tau*forth*invArea*ds31[2][1] + delta*forth*invArea*sh13;
-		De[8][2] = sixth*ms1[2][2] + forth*invArea*d13[2][2] + tau*forth*invArea*ds31[2][2] + delta*forth*invArea*sh13;
+		De[6][0] = sixth*ms1[0][0]       + tau*forth*invArea*ds31[0][0] + delta*forth*invArea*sh13;
+		De[6][1] = sixth*ms1[0][1]       + tau*forth*invArea*ds31[0][1] + delta*forth*invArea*sh13;
+		De[6][2] = sixth*ms1[0][2]       + tau*forth*invArea*ds31[0][2] + delta*forth*invArea*sh13;
+		De[7][0] = sixth*ms1[1][0]       + tau*forth*invArea*ds31[1][0] + delta*forth*invArea*sh13;
+		De[7][1] = sixth*ms1[1][1] + d13 + tau*forth*invArea*ds31[1][1] + delta*forth*invArea*sh13;
+		De[7][2] = sixth*ms1[1][2]       + tau*forth*invArea*ds31[1][2] + delta*forth*invArea*sh13;
+		De[8][0] = sixth*ms1[2][0]       + tau*forth*invArea*ds31[2][0] + delta*forth*invArea*sh13;
+		De[8][1] = sixth*ms1[2][1]       + tau*forth*invArea*ds31[2][1] + delta*forth*invArea*sh13;
+		De[8][2] = sixth*ms1[2][2] + d13 + tau*forth*invArea*ds31[2][2] + delta*forth*invArea*sh13;
 
-		De[6][3] = sixth*ms2[0][0] + forth*invArea*d23[0][0] + tau*forth*invArea*ds32[0][0] + delta*forth*invArea*sh23;
-		De[6][4] = sixth*ms2[0][1] + forth*invArea*d23[0][1] + tau*forth*invArea*ds32[0][1] + delta*forth*invArea*sh23;
-		De[6][5] = sixth*ms2[0][2] + forth*invArea*d23[0][2] + tau*forth*invArea*ds32[0][2] + delta*forth*invArea*sh23;
-		De[7][3] = sixth*ms2[1][0] + forth*invArea*d23[1][0] + tau*forth*invArea*ds32[1][0] + delta*forth*invArea*sh23;
-		De[7][4] = sixth*ms2[1][1] + forth*invArea*d23[1][1] + tau*forth*invArea*ds32[1][1] + delta*forth*invArea*sh23;
-		De[7][5] = sixth*ms2[1][2] + forth*invArea*d23[1][2] + tau*forth*invArea*ds32[1][2] + delta*forth*invArea*sh23;
-		De[8][3] = sixth*ms2[2][0] + forth*invArea*d23[2][0] + tau*forth*invArea*ds32[2][0] + delta*forth*invArea*sh23;
-		De[8][4] = sixth*ms2[2][1] + forth*invArea*d23[2][1] + tau*forth*invArea*ds32[2][1] + delta*forth*invArea*sh23;
-		De[8][5] = sixth*ms2[2][2] + forth*invArea*d23[2][2] + tau*forth*invArea*ds32[2][2] + delta*forth*invArea*sh23;
+		De[6][3] = sixth*ms2[0][0]       + tau*forth*invArea*ds32[0][0] + delta*forth*invArea*sh23;
+		De[6][4] = sixth*ms2[0][1]       + tau*forth*invArea*ds32[0][1] + delta*forth*invArea*sh23;
+		De[6][5] = sixth*ms2[0][2]       + tau*forth*invArea*ds32[0][2] + delta*forth*invArea*sh23;
+		De[7][3] = sixth*ms2[1][0]       + tau*forth*invArea*ds32[1][0] + delta*forth*invArea*sh23;
+		De[7][4] = sixth*ms2[1][1] + d23 + tau*forth*invArea*ds32[1][1] + delta*forth*invArea*sh23;
+		De[7][5] = sixth*ms2[1][2]       + tau*forth*invArea*ds32[1][2] + delta*forth*invArea*sh23;
+		De[8][3] = sixth*ms2[2][0]       + tau*forth*invArea*ds32[2][0] + delta*forth*invArea*sh23;
+		De[8][4] = sixth*ms2[2][1]       + tau*forth*invArea*ds32[2][1] + delta*forth*invArea*sh23;
+		De[8][5] = sixth*ms2[2][2] + d23 + tau*forth*invArea*ds32[2][2] + delta*forth*invArea*sh23;
 
-		De[6][6] = sixth*ms3[6][6] + forth*invArea*(-d21[6][6] -d23[6][6]) + tau*forth*invArea*ds33[6][6] + delta*forth*invArea*(-sh13 -sh23);
-		De[6][7] = sixth*ms3[6][7] + forth*invArea*(-d21[6][7] -d23[6][7]) + tau*forth*invArea*ds33[6][7] + delta*forth*invArea*(-sh13 -sh23);
-		De[6][8] = sixth*ms3[6][8] + forth*invArea*(-d21[6][8] -d23[6][8]) + tau*forth*invArea*ds33[6][8] + delta*forth*invArea*(-sh13 -sh23);
-		De[7][6] = sixth*ms3[7][6] + forth*invArea*(-d21[7][6] -d23[7][6]) + tau*forth*invArea*ds33[7][6] + delta*forth*invArea*(-sh13 -sh23);
-		De[7][7] = sixth*ms3[7][7] + forth*invArea*(-d21[7][7] -d23[7][7]) + tau*forth*invArea*ds33[7][7] + delta*forth*invArea*(-sh13 -sh23);
-		De[7][8] = sixth*ms3[7][8] + forth*invArea*(-d21[7][8] -d23[7][8]) + tau*forth*invArea*ds33[7][8] + delta*forth*invArea*(-sh13 -sh23);
-		De[8][6] = sixth*ms3[8][6] + forth*invArea*(-d21[8][6] -d23[8][6]) + tau*forth*invArea*ds33[8][6] + delta*forth*invArea*(-sh13 -sh23);
-		De[8][7] = sixth*ms3[8][7] + forth*invArea*(-d21[8][7] -d23[8][7]) + tau*forth*invArea*ds33[8][7] + delta*forth*invArea*(-sh13 -sh23);
-		De[8][8] = sixth*ms3[8][8] + forth*invArea*(-d21[8][8] -d23[8][8]) + tau*forth*invArea*ds33[8][8] + delta*forth*invArea*(-sh13 -sh23);
-
+		De[6][6] = sixth*ms3[0][0]                 + tau*forth*invArea*ds33[0][0] + delta*forth*invArea*(-sh13 -sh23);
+		De[6][7] = sixth*ms3[0][1]                 + tau*forth*invArea*ds33[0][1] + delta*forth*invArea*(-sh13 -sh23);
+		De[6][8] = sixth*ms3[0][2]                 + tau*forth*invArea*ds33[0][2] + delta*forth*invArea*(-sh13 -sh23);
+		De[7][6] = sixth*ms3[1][0]                 + tau*forth*invArea*ds33[1][0] + delta*forth*invArea*(-sh13 -sh23);
+		De[7][7] = sixth*ms3[1][1] + (- d12 - d23) + tau*forth*invArea*ds33[1][1] + delta*forth*invArea*(-sh13 -sh23);
+		De[7][8] = sixth*ms3[1][2]                 + tau*forth*invArea*ds33[1][2] + delta*forth*invArea*(-sh13 -sh23);
+		De[8][6] = sixth*ms3[2][0]                 + tau*forth*invArea*ds33[2][0] + delta*forth*invArea*(-sh13 -sh23);
+		De[8][7] = sixth*ms3[2][1]                 + tau*forth*invArea*ds33[2][1] + delta*forth*invArea*(-sh13 -sh23);
+		De[8][8] = sixth*ms3[2][2] + (- d12 - d23) + tau*forth*invArea*ds33[2][2] + delta*forth*invArea*(-sh13 -sh23);
 
 		// *** Matriz do termo fonte
 
@@ -549,7 +530,6 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		Fe[7] = Area*twelve*(S1[1] + S2[1] + 2*S3[1]) + tau*second*(ms3[1][0]*Sb[0] + ms3[1][1]*Sb[1] + ms3[1][2]*Sb[2]);
 		Fe[8] = Area*twelve*(S1[2] + S2[2] + 2*S3[2]) + tau*second*(ms3[2][0]*Sb[0] + ms3[2][1]*Sb[1] + ms3[2][2]*Sb[2]);
 
-
 		F_assembly(e, Fe, De, FemFunctions, FemStructs, neq);
 
 		//*****************************************
@@ -557,7 +537,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		//Fill local Re and Global R
 		double Ae[9][9], Re[9], MedUe[9], DeUe[9];
 		
-		for (i=0; i<9; i++){
+		for(i=0; i<9; i++){
 			MedUe[i] = 0;
 			DeUe[i] = 0;
 			for (j=0; j<9; j++){

@@ -37,9 +37,8 @@ int pgmres (ParametersType *Parameters,	MatrixDataType *MatrixData, FemStructsTy
 	c = (double*) mycalloc("c of 'gmres'",kmax+1,sizeof(double));
 	s = (double*) mycalloc("s of 'gmres'",kmax+1,sizeof(double));
 	y = (double*) mycalloc("y of 'gmres'",kmax+1,sizeof(double));
-	v = (double*) mycalloc("z of 'gmres'",neq + 1,sizeof(double));
-	z = (double*) mycalloc("z of 'gmres'",neq + 1,sizeof(double));
-
+	v = (double*) mycalloc("z of 'gmres'",neq+1,sizeof(double));
+	z = (double*) mycalloc("z of 'gmres'",neq+1,sizeof(double));
 
 	// Inicializa matrizes e vetores com zero
 	dzero(neq, X);
@@ -56,9 +55,6 @@ int pgmres (ParametersType *Parameters,	MatrixDataType *MatrixData, FemStructsTy
 
 	do
 	{
-
-	//	printf("Entrou no primeiro DO!\n");
-
 		i = 0;
 		for(j = 0; j < kmax; j++)
 			dzero(neq, u[j]);
@@ -187,7 +183,8 @@ int pgmres (ParametersType *Parameters,	MatrixDataType *MatrixData, FemStructsTy
 	}while((rho > eps)&&(l<lmax));
 
 	//#ifdef debug
-	//	printf(" Iteracoes GMRES: %d \n", cont);
+	printf(" Iteracoes GMRES: %d \n", cont);
+	getchar();
 	//#endif
 	Parameters->ResGMRES = rho;
 	Parameters->ContGMRES = cont;
@@ -197,7 +194,7 @@ int pgmres (ParametersType *Parameters,	MatrixDataType *MatrixData, FemStructsTy
 		printf("\n Total iteration in this execution GMRES: %d\n", cont); 
 	#endif
 
-	FemFunctions->precondR (Parameters, MatrixData, FemStructs, X, X);
+	FemFunctions->precondR(Parameters, MatrixData, FemStructs, X, X);
 
 	myfree(u_aux);
 	myfree(u);

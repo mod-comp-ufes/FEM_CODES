@@ -42,7 +42,7 @@ int PredictorMulticorrector(ParametersType *Parameters, MatrixDataType *MatrixDa
 	
 	do{
 		steps++;
-		printf("\n*Predictor Steps: %d\n", steps);
+		//printf("\n*Predictor Steps: %d\n", steps);
 		t += dt;
 		Parameters->CurrentTime = t; 
 		
@@ -66,7 +66,7 @@ int PredictorMulticorrector(ParametersType *Parameters, MatrixDataType *MatrixDa
 		// MULTICORRECAO
 		do{
 			i++;
-			printf("\n--Multicorrection: %d\n", i); 
+			//printf("\n--Multicorrection: %d\n", i); 
 
 			//FemOtherFunctions->Build(Parameters, MatrixData, FemStructs, FemFunctions);
 			Build_M_D_F_SUPG(Parameters, MatrixData, FemStructs, FemFunctions);
@@ -89,8 +89,8 @@ int PredictorMulticorrector(ParametersType *Parameters, MatrixDataType *MatrixDa
 				double normR, tol_correction;
 				normR = sqrt(ddot(neq, R, R));
 				tol_correction = Parameters->NonLinearTolerance;
-				printf("\n     Tol_correction = %e \t Tol*norm_a = %e \t Norm a = %e \t Norm Da = %e \t Norm_Res =%e \t i = %d \n", 
-					tol_correction, tol_correction*norm_a, norm_a, norm_Da, normR, i);
+				//printf("\n     Tol_correction = %e \t Tol*norm_a = %e \t Norm a = %e \t Norm Da = %e \t Norm_Res =%e \t i = %d \n", 
+				//	tol_correction, tol_correction*norm_a, norm_a, norm_Da, normR, i);
 				//getchar();
 			//#endif
 			
@@ -104,10 +104,10 @@ int PredictorMulticorrector(ParametersType *Parameters, MatrixDataType *MatrixDa
 			normDiff = sqrt(ddot(neq, diff, diff));
 			normU = sqrt(ddot(neq, u, u));
 			tol_time = Parameters->TimeIntegrationTolerance;
-			printf("\n     Tol_time = %e \t Tol*norm_u = %e \t Norm U = %e \t NormDiff =%e \t t = %lf \n", 
-					tol_time, tol_time*normU, normU, normDiff,t);
+			//printf("\n     Tol_time = %e \t Tol*norm_u = %e \t Norm U = %e \t NormDiff =%e \t t = %lf \n", 
+			//		tol_time, tol_time*normU, normU, normDiff,t);
 			//getchar();
-			printf("\n"); 
+			//printf("\n"); 
 		//#endif
 		
 	}while(!FemFunctions->StopTimeIntegration(Parameters,u,u_old,t)); // end while time 
