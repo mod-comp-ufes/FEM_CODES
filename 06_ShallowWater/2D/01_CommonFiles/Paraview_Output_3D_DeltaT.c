@@ -41,7 +41,7 @@ int Paraview_Output_3D_DeltaT(double *U, NodeType *Node, ElementType *Element, P
 			qy[I] = qypresc(X, Y);
 
 	}
-	sprintf(FileName,"../03_output/%s_%s_%s_%s_%s_%s_%s_N%d_E%d_T%lf_3D.vtu", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture,
+	sprintf(FileName,"%s%s_%s_%s_%s_%s_%s_%s_N%d_E%d_T%lf_3D.vtu", Parameters->outPath, Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture,
 			Parameters->TimeIntegration,Parameters->MatrixVectorProductScheme, Parameters->Preconditioner, Parameters->nnodes, Parameters->nel, t);
 	OutFile = myfopen(FileName,"w");
 

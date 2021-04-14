@@ -34,8 +34,8 @@ SRC = $(wildcard *.c) \
 ../../../00_CommonFiles/C_Operations/memsetzero.c \
 ../../../00_CommonFiles/Allocation_Operations/mycalloc.c \
 ../../../00_CommonFiles/Reordering/reordering.c \
-../../../00_CommonFiles/Reordering/symrcm.c \
-../../../00_CommonFiles/Time_Integration/Criteria.c #\
+../../../00_CommonFiles/Reordering/symrcm.c #\
+../../../00_CommonFiles/Time_Integration/Criteria.c \
 ../../../00_CommonFiles/Time_Integration/Predictor_Old.c \
 ../../../00_CommonFiles/Time_Integration/Predictor_Old_BDF.c \
 ../../../00_CommonFiles/Time_Integration/Predictor_Old_TRBDF2.c \

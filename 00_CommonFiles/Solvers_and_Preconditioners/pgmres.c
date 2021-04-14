@@ -1,5 +1,7 @@
 #include "solvers.h"
 #include "preconditioners.h"
+#include "../Reordering/reordering.h"
+
 
 int pgmres (ParametersType *Parameters,	MatrixDataType *MatrixData, FemStructsType *FemStructs,
 			FemFunctionsType *FemFunctions, double *B, double *X)
@@ -183,8 +185,8 @@ int pgmres (ParametersType *Parameters,	MatrixDataType *MatrixData, FemStructsTy
 	}while((rho > eps)&&(l<lmax));
 
 	//#ifdef debug
-	printf(" Iteracoes GMRES: %d \n", cont);
-	getchar();
+	//printf(" Iteracoes GMRES: %d \n", cont);
+	//getchar();
 	//#endif
 	Parameters->ResGMRES = rho;
 	Parameters->ContGMRES = cont;

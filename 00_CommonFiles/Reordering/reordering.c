@@ -1,5 +1,6 @@
 #include "reordering.h"
 
+
 void reordering(ParametersType *Parameters, int *JA, int *IA, int *perm, int *PermCSR)
 {
 	Parameters->bandwidth_bef = MATRIX_bandwidth(Parameters,JA,IA);

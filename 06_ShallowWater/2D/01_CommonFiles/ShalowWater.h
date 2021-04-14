@@ -53,6 +53,7 @@ typedef struct
 	char StopMulticorrection[200];         // Fala se o loop espacial para pela norma ou por um numero fixo de iteracao - NORM: para pela norma; ITERATION: para pela iteracao
 	char reordering[200];			       // Reordering for CSR (NOT, Spectral, Weigthed Spectral (WSO) or RCM)
 	char StopAtSteadyState[200];		   // YES or NO if you want to stop in steady state or final time
+	char outPath[200];
 	double SolverTolerance;                // Tolerance for the solution method
 	double NonLinearTolerance;             // Tolerance for the loop of correction
 	double TimeIntegrationTolerance;       // Tolerance for the loop of time integration
@@ -215,5 +216,15 @@ void F_assembly(int e, double Fe[9], double De[9][9], FemFunctionsType *FemFunct
 
 int PredictorMulticorrector(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs,
 		FemFunctionsType *FemFunctions, FemOtherFunctionsType *FemOtherFunctions);
+
+void setStopCriteria(ParametersType *, FemFunctionsType *);
+
+int StopByIterations(ParametersType *, double, double, int);
+
+int StopByNorm(ParametersType *, double, double, int);
+
+int StopBySteadyState(ParametersType *, double *, double *, double);
+
+int StopByTime(ParametersType *, double *, double *, double);
 
 #endif

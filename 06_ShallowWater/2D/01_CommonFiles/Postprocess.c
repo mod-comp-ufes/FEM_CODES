@@ -48,7 +48,7 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 		Parameters->FinalTime, Parameters->StopAtSteadyState, Parameters->CurrentTime);
 	printf("\n========================================================================\n\n");
 
-	sprintf(FileName,"../../../../OUTPUT_DATA/%s_%s_%s_%s_%s_%s_%s_N%d_E%d.txt", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture,
+	sprintf(FileName,"%s%s_%s_%s_%s_%s_%s_%s_N%d_E%d.txt", Parameters->outPath, Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture,
 			Parameters->TimeIntegration, Parameters->MatrixVectorProductScheme, Parameters->Preconditioner, Parameters->nnodes, Parameters->nel);
 
 	OutFile = myfopen(FileName,"w");
@@ -106,7 +106,8 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 
 	}
 
-	if ((strcasecmp(Parameters->Preconditioner,"Jacobi")==0)||(strncmp(Parameters->Preconditioner,"SOR",3)==0)){
+	if((strcasecmp(Parameters->Preconditioner,"Jacobi")==0)||(strncmp(Parameters->Preconditioner,"SOR",3)==0))
+	{
 		myfree(MatrixData->invDe);
 		myfree(MatrixData->invDeaux);
 	}

@@ -10,13 +10,13 @@ void eval_U_dU(ParametersType *Parameters,FemStructsType *FemStructs, FemFunctio
 	double *du = FemStructs->du;
 	NodeType *Node = FemStructs->Node;
 
-	for (I=0; I<nnodes; I++)
+	for(I=0; I<nnodes; I++)
 	{
 		x = Node[I].x;
 		y = Node[I].y;
 
 		// height
-		if (Node[I].id[0] >= 0)
+		if(Node[I].id[0] >= 0)
 		{
 			U[3*I] = u[Node[I].id[0]];
 			dU[3*I] = du[Node[I].id[0]];
@@ -28,7 +28,7 @@ void eval_U_dU(ParametersType *Parameters,FemStructsType *FemStructs, FemFunctio
 		}
 		
 		// discharge in x
-		if (Node[I].id[1] >= 0)
+		if(Node[I].id[1] >= 0)
 		{
 			U[3*I+1] = u[Node[I].id[1]];
 			dU[3*I+1] = du[Node[I].id[1]];
@@ -40,7 +40,7 @@ void eval_U_dU(ParametersType *Parameters,FemStructsType *FemStructs, FemFunctio
 		}
 
 		// discharge in y
-		if (Node[I].id[2] >= 0)
+		if(Node[I].id[2] >= 0)
 		{
 			U[3*I+2] = u[Node[I].id[2]];
 			dU[3*I+2] = du[Node[I].id[2]];

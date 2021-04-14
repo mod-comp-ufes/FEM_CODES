@@ -66,10 +66,9 @@ int PredictorMulticorrector(ParametersType *Parameters, MatrixDataType *MatrixDa
 		// MULTICORRECAO
 		do{
 			i++;
-			//printf("\n--Multicorrection: %d\n", i); 
+			// printf("\n--Multicorrection: %d\n", i); 
 
-			//FemOtherFunctions->Build(Parameters, MatrixData, FemStructs, FemFunctions);
-			Build_M_D_F_SUPG(Parameters, MatrixData, FemStructs, FemFunctions);
+			FemOtherFunctions->Build(Parameters, MatrixData, FemStructs, FemFunctions);
 
 			FemFunctions->scaling(Parameters, MatrixData, FemStructs);
 
@@ -108,6 +107,7 @@ int PredictorMulticorrector(ParametersType *Parameters, MatrixDataType *MatrixDa
 			//		tol_time, tol_time*normU, normU, normDiff,t);
 			//getchar();
 			//printf("\n"); 
+			printf("t = %lf \n",t);
 		//#endif
 		
 	}while(!FemFunctions->StopTimeIntegration(Parameters,u,u_old,t)); // end while time 
@@ -121,4 +121,56 @@ int PredictorMulticorrector(ParametersType *Parameters, MatrixDataType *MatrixDa
 }
 
 
+int StopByIterations(ParametersType *Parameters, double norm_a, double norm_Da, int i)
+{
+	if (i>=Parameters->NonLinearMaxIter)
+		return 1;
+	else
+		return 0;
+}
 
+
+int StopByNorm(ParametersType *Parameters, double norm_a, double norm_Da, int i)
+{
+	if (norm_Da < (Parameters->NonLinearTolerance)*norm_a || i>=Parameters->NonLinearMaxIter)
+		return 1;
+	else
+		return 0;
+}
+
+
+int StopBySteadyState(ParametersType *Parameters, double *u, double *u_old, double t)
+{
+	int i, neq;
+	double norm_diff, norm_u;
+	double *diff = mycalloc("diff of 'StopBySteadyState'",Parameters->neq,sizeof(double));
+	
+	neq = Parameters->neq;
+
+	for (i=0; i<neq; i++)
+		diff[i] = u[i] - u_old[i];
+
+	norm_diff = sqrt(ddot(neq, diff, diff)); 
+	norm_u = sqrt(ddot(neq,u,u));	
+
+	free(diff);
+
+	if ((Parameters->TimeIntegrationTolerance)*norm_u > norm_diff || fabs(Parameters->FinalTime-t) < Parameters->DeltaT){
+		Parameters->CurrentTime = t;	
+		return 1;
+	}
+	else
+		return 0;
+}
+
+
+int StopByTime(ParametersType *Parameters, double *u, double *u_old, double t)
+{
+	if(t >= Parameters->FinalTime)
+	{
+		Parameters->CurrentTime = t;	
+		return 1;
+	}
+	else
+		return 0;
+}

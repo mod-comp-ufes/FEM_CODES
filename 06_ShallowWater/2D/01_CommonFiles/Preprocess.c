@@ -65,6 +65,8 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->nnodes), label);
 	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->nel), label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", FileName, label);
+	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->outPath, label);
+
 	fclose(InFile);
 
 	/* **************************************************************************************************************************** */

@@ -6,7 +6,7 @@ double delta91_MOD(double Ub[3], double gradUx[3], double gradUy[3], double A1[3
                    double y23, double y31, double y12, double x32, double x13, double x21, double twoArea, 
 				   double tau, double g)
 {
-	int r;
+	double r;
 	double h = Ub[0], u = Ub[1]/Ub[0], v = Ub[2]/Ub[0];
 	double delta = 0.0, delta_91, delta_tau;
 	double A1gradUx[3], A2gradUy[3], gradksiUx[3], gradksiUy[3], R[3], Rn, gradUn;

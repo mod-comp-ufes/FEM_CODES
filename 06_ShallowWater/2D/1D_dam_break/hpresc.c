@@ -1,6 +1,4 @@
-double hpresc(double x, double y) {
-    if(x<0)
-        return 2.0;
-    else
-        return 1.0;
+double hpresc(double x, double y)
+{
+    return (x<0) ? 2.0 : 1.0;
 }

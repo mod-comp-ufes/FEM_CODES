@@ -42,7 +42,7 @@ int Paraview_Output_3D(ParametersType *Parameters, FemStructsType *FemStructs, F
 			qy[I] = FemFunctions->qypresc(X, Y);
 
 	}
-	sprintf(FileName,"../../../../OUTPUT_DATA/%s_%s_%s_%s_%s_%s_%s_N%d_E%d_3D.vtu", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture,
+	sprintf(FileName,"%s%s_%s_%s_%s_%s_%s_%s_N%d_E%d_3D.vtu", Parameters->outPath, Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture,
 			Parameters->TimeIntegration,Parameters->MatrixVectorProductScheme, Parameters->Preconditioner, Parameters->nnodes, Parameters->nel);
 	OutFile = myfopen(FileName,"w");
 
