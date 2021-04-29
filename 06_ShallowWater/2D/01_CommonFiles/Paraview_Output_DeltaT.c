@@ -41,8 +41,8 @@ int Paraview_Output_DeltaT(double *U, NodeType *Node, ElementType *Element, Para
 			qy[I] = qypresc(X, Y);
 
 	}
-	sprintf(FileName,"%s%s_%s_%s_%s_%s_%s_%s_N%d_E%d_T%lf.vtu", Parameters->outPath, Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture,
-			Parameters->TimeIntegration,Parameters->MatrixVectorProductScheme, Parameters->Preconditioner, Parameters->nnodes, Parameters->nel, t);
+	sprintf(FileName,"%s%s_%s_%s_%s_%s_N%d_E%d_T%lf.vtu", Parameters->outPath, Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, 
+			Parameters->MatrixVectorProductScheme, Parameters->nnodes, Parameters->nel, t);
 	OutFile = myfopen(FileName,"w");
 
 	fprintf(OutFile,"<VTKFile type=\"UnstructuredGrid\" version=\"0.1\" byte_order=\"BigEndian\">\n");

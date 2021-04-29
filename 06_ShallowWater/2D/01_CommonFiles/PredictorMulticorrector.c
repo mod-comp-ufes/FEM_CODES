@@ -15,6 +15,7 @@ int PredictorMulticorrector(ParametersType *Parameters, MatrixDataType *MatrixDa
 
 {
 	int I, i;
+	int tag = 1;
 	int neq, nnodes, steps;
 	double t, dt, alpha, norm_a, norm_Da;
 	double *a, *Da, *u, *u_old, *R; //Parametros do Preditor
@@ -27,89 +28,63 @@ int PredictorMulticorrector(ParametersType *Parameters, MatrixDataType *MatrixDa
 	Da = (double*) mycalloc("Da of 'PreditorMulticorrector'", neq + 1, sizeof(double));
 	u_old = (double*) mycalloc("u_old of 'PreditorMulticorrector'", neq + 1, sizeof(double));
 
+	dzero(neq + 1, a);
+	dzero(neq + 1, Da);
+
 	dt = Parameters->DeltaT;
 	alpha = Parameters->Alpha;
 	u = FemStructs->u;
 	R = FemStructs->F;
 	FemStructs->du = a;
-	
+
 	t = 0.0;
 	Parameters->CurrentTime = 0.0;
 	steps = 0;
-	int tag = 1;
-	
+
 	FemFunctions->InitialSolution(Parameters, FemStructs);
 	
 	do{
+		printf("t = %lf \n",t);
+		//printU(Parameters, FemStructs, FemFunctions);
+		//checknull(Parameters, FemStructs, FemFunctions);
+
 		steps++;
-		//printf("\n*Predictor Steps: %d\n", steps);
 		t += dt;
 		Parameters->CurrentTime = t; 
 		
-		//PREDICAO
+		// PREDICAO
 		i = 0;
-
-		for(I = 0; I < neq; I++)
+		for(I=0; I<neq; I++)
 		{
 			u_old[I] = u[I];
 			u[I] += (1.0 - alpha)*dt*a[I];
 			a[I] = 0.0;
 		}
 
-		/*for(I = 0; I < neq; I++){
-			printf("uOld[%d] = %lf\n",I, u_old[I]);
-			printf("u[%d] = %lf\n",I, u[I]);
-			printf("a[%d] = %lf\n\n",I, a[I]);
-		}
-		getchar();*/
-
 		// MULTICORRECAO
 		do{
 			i++;
-			// printf("\n--Multicorrection: %d\n", i); 
-
+			//printf("MULTICORRECAO\n");
+			//printU(Parameters, FemStructs, FemFunctions);
 			FemOtherFunctions->Build(Parameters, MatrixData, FemStructs, FemFunctions);
-
-			FemFunctions->scaling(Parameters, MatrixData, FemStructs);
+			//getchar();
+			//FemFunctions->scaling(Parameters, MatrixData, FemStructs);
+			//printU(Parameters, FemStructs, FemFunctions);
 
 			FemFunctions->precond_setup(Parameters, MatrixData, FemStructs, tag++, R);
 
 			FemOtherFunctions->solver(Parameters, MatrixData, FemStructs, FemFunctions, R, Da);
-
-			FemFunctions->unscaling(Parameters, MatrixData, FemStructs, Da);
+			//printf("%d\n", Parameters->ContGMRES);
+			//FemFunctions->unscaling(Parameters, MatrixData, FemStructs, Da);
 
 			daxpy(neq, 1, Da, a); // a = a + Da
 			daxpy(neq, alpha*dt, Da, u); // u = u + alpha*dt*Da
 			
 			norm_a = sqrt(ddot(neq, a, a));
 			norm_Da = sqrt(ddot(neq, Da, Da));
-			
-			//#ifdef debug
-				double normR, tol_correction;
-				normR = sqrt(ddot(neq, R, R));
-				tol_correction = Parameters->NonLinearTolerance;
-				//printf("\n     Tol_correction = %e \t Tol*norm_a = %e \t Norm a = %e \t Norm Da = %e \t Norm_Res =%e \t i = %d \n", 
-				//	tol_correction, tol_correction*norm_a, norm_a, norm_Da, normR, i);
-				//getchar();
-			//#endif
-			
+
 		}while(!FemFunctions->StopCriteria(Parameters,norm_a,norm_Da,i)); // end while multicorrection
 
-		//#ifdef debug
-			double diff[neq], normDiff, normU, tol_time;
-			for(I = 0; I < neq; I++){
-				diff[I] = u_old[i] - u[i];
-			}
-			normDiff = sqrt(ddot(neq, diff, diff));
-			normU = sqrt(ddot(neq, u, u));
-			tol_time = Parameters->TimeIntegrationTolerance;
-			//printf("\n     Tol_time = %e \t Tol*norm_u = %e \t Norm U = %e \t NormDiff =%e \t t = %lf \n", 
-			//		tol_time, tol_time*normU, normU, normDiff,t);
-			//getchar();
-			//printf("\n"); 
-			printf("t = %lf \n",t);
-		//#endif
-		
 	}while(!FemFunctions->StopTimeIntegration(Parameters,u,u_old,t)); // end while time 
 
 	myfree(a);

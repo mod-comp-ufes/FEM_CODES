@@ -52,7 +52,13 @@ void calculateTime(double Preprocess_Time, double Process_Time, double Postproce
 		sprintf(FileName,"../03_Output/%s_%s_%s_%s_N%d_E%d.txt", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm,
 		Parameters->MatrixVectorProductScheme, Parameters->nnodes, Parameters->nel);
 	#endif
+
+	#ifdef ShalowWater
+		sprintf(FileName,"%s%s_%s_%s_%s_%s_N%d_E%d_TIME.txt", Parameters->outPath, Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, 
+			Parameters->MatrixVectorProductScheme, Parameters->nnodes, Parameters->nel);
+	#endif
 	
+
 	OutFile = myfopen(FileName,"a");
 	fprintf(OutFile,"\n============================ Processing Time ============================\n\n");
 	fprintf(OutFile,"\nPreprocess Time: %lf\n", Preprocess_Time);	
@@ -67,5 +73,5 @@ void calculateTime(double Preprocess_Time, double Process_Time, double Postproce
 	printf("\nPostprocess Time: %lf\n", Postprocess_Time);	
 	printf("\nTOTAL TIME: %lf (%dh %dm %lfs)\n", Total_Time, h, m, s);
 	printf("\n=========================================================================\n\n");
-	
+
 }

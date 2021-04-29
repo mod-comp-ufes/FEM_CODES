@@ -134,7 +134,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 		Diag = (double*) mycalloc("Diag of 'Preprocess'", neq+1, sizeof(double));
 		invDiag = (double*) mycalloc("invDiag of 'Preprocess'", neq+1, sizeof(double));
 		
-		printf("nnzero=%d\n",Parameters->nnzero);
+		// printf("nnzero=%d\n",Parameters->nnzero);
 
 		MatrixData->AA = AA;
 		MatrixData->JA = JA;
@@ -164,6 +164,10 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	*FemStructs_out = FemStructs;
 	*FemFunctions_out = FemFunctions;
 	*FemOtherFunctions_out = FemOtherFunctions;
+
+	//MatrixData->G = (double*) mycalloc("G of 'Preprocess'", neq+1, sizeof(double));
+	//for(I = 0; I < (neq+1); I++)
+	//	MatrixData->G[I] = (double*) mycalloc("G of 'Preprocess'", neq+1, sizeof(double));
 
 	if (tag < 0)
 	{

@@ -43,9 +43,6 @@ SRC = $(wildcard *.c) \
 all: $(SRC)
 	gcc -o $(EXE) $^ $(CFLAGS) -DonlyCompile
 
-clean:
-	-rm *.o
-
 
 1DDamBreak: $(wildcard ../1D_dam_break/*.c) $(SRC) # ../1D_dam_break/ is the path do implemented functions
 	gcc -o $(EXE) $^ $(CFLAGS)

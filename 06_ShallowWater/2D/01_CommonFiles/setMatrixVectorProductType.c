@@ -16,7 +16,7 @@ int setMatrixVectorProductType(ParametersType *Parameters, FemFunctionsType *Fem
 {
 	FemFunctions->assembly = csr_assembly;
 	FemFunctions->ProductMatrixVector = csrmv;
-	//FemFunctions->mv = csrmv;
+	FemFunctions->mv = csrmv;
 	FemFunctions->unscaling = NO_unscaling;
 	FemFunctions->scaling = NO_scaling;
 

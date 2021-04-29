@@ -15,7 +15,7 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 	Paraview_Output_3D(Parameters, FemStructs, FemFunctions);
 	/*************************************************************/
 
-
+	
 	/****************************************************************************************/
 	// 			Printing final result
 	/****************************************************************************************/
@@ -47,9 +47,9 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 	printf("Alpha: %lf\t Step time: %E\t Final Time: %lf - Stopped at Steady State? %s (Current Time: %lf)\n", Parameters->Alpha, Parameters->DeltaT,
 		Parameters->FinalTime, Parameters->StopAtSteadyState, Parameters->CurrentTime);
 	printf("\n========================================================================\n\n");
-
-	sprintf(FileName,"%s%s_%s_%s_%s_%s_%s_%s_N%d_E%d.txt", Parameters->outPath, Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture,
-			Parameters->TimeIntegration, Parameters->MatrixVectorProductScheme, Parameters->Preconditioner, Parameters->nnodes, Parameters->nel);
+	
+	sprintf(FileName,"%s%s_%s_%s_%s_%s_N%d_E%d.txt", Parameters->outPath, Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, 
+			Parameters->MatrixVectorProductScheme, Parameters->nnodes, Parameters->nel);
 
 	OutFile = myfopen(FileName,"w");
 	fprintf(OutFile, "\n\n======================= PROBLEM CHARACTERISTICS ========================\n\n");

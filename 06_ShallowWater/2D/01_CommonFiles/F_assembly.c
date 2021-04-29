@@ -1,7 +1,7 @@
 #include "ShalowWater.h"
 
 
-void F_assembly(int e, double Fe[9], double De[9][9], FemFunctionsType *FemFunctions, FemStructsType *FemStructs, int neq)
+void F_assembly(int e, double *Fe, double (*De)[9], FemFunctionsType *FemFunctions, FemStructsType *FemStructs, int neq)
 {
 	int i, **lm, J1, J2, J3;
 	double *F;
@@ -68,7 +68,7 @@ void F_assembly(int e, double Fe[9], double De[9][9], FemFunctionsType *FemFunct
 	
 	for(i=0; i<9; i++)
 	{
-		Fe[i] -= De[i][0]*g[0] + De[i][1]*g[1] + De[i][2]*g[2] + De[i][3]*g[3] + De[i][4]*g[4] + De[i][5]*g[5] + De[i][6]*g[6] + De[i][7]*g[7] + De[i][8]*g[8];
+		Fe[i] -= (De[i][0]*g[0] + De[i][1]*g[1] + De[i][2]*g[2] + De[i][3]*g[3] + De[i][4]*g[4] + De[i][5]*g[5] + De[i][6]*g[6] + De[i][7]*g[7] + De[i][8]*g[8]);
 		
 		// preenchendo vetor fonte F
 		F[lm[e][i]] += Fe[i];

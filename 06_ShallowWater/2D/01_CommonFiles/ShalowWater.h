@@ -14,6 +14,7 @@
 #define NNOEL 3           // number of nodes per element
 #define NDOF 3            // number of degrees of freedom
 #define PI 3.14159265359
+#define TOL 1e-12         // tolerance
 
 typedef struct
 {
@@ -107,6 +108,7 @@ typedef struct
 	int *Perm;
 	int *invPerm;
 	AMG_precond_data *amg_precond_data;
+	double **G;
 } MatrixDataType;
 
 typedef struct{
@@ -138,10 +140,12 @@ typedef struct
 	double (*qxpresc)(double, double);
 	double (*qypresc)(double, double);
 	double (*zb)(double, double);
+	double (*gammaBed)(double, double, double);
 	int (*InitialSolution)(ParametersType *, FemStructsType *);
 
-	double (*ShockCapture)(double *, double *, double *, double (*)[3], double (*)[3], double *, 
-                           double, double, double, double, double, double, double, double, double);
+	double (*ShockCapture)(double *, double *, double *, double *, 
+                           double, double, double, double, double, double, double, 
+				           double, double);
 	int (*StopCriteria)(ParametersType *, double, double, int);
 	int (*StopTimeIntegration)(ParametersType *, double *, double *, double);
 
@@ -173,9 +177,9 @@ void csr_assembly(ParametersType *Parameters, MatrixDataType *MatrixData, FemStr
 void csr_Initialization(ParametersType *Parameters, NodeType *Node, int **JA_out, int **IA_out, int **perm_out, int  **invperm_out,
 			int ***lm_out, int **lmaux_out, int ***CSR_by_Element_out);
 
-double delta91_MOD(double Ub[3], double gradUx[3], double gradUy[3], double A1[3][3], double A2[3][3], double Sb[3], 
-                   double y23, double y31, double y12, double x32, double x13, double x21, double twoArea, 
-				   double tau, double g);
+double deltaCAU(double *Ub, double *R, double *gradUx, double *gradUy, 
+                double y23, double y31, double y12, double x32, double x13, double x21, double invtwoArea, 
+				double tau, double g);
 
 void eval_U_dU(ParametersType *Parameters,FemStructsType *FemStructs, FemFunctionsType *FemFunctions, double *U,double *dU);
 
@@ -212,7 +216,7 @@ int setStabilizationForm(ParametersType *Parameters,FemFunctionsType *FemFunctio
 
 int setzeros(ParametersType *Parameters, MatrixDataType *MatrixData);
 
-void F_assembly(int e, double Fe[9], double De[9][9], FemFunctionsType *FemFunctions, FemStructsType *FemStructs, int neq);
+void F_assembly(int e, double *Fe, double (*De)[9], FemFunctionsType *FemFunctions, FemStructsType *FemStructs, int neq);
 
 int PredictorMulticorrector(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs,
 		FemFunctionsType *FemFunctions, FemOtherFunctionsType *FemOtherFunctions);
@@ -226,5 +230,12 @@ int StopByNorm(ParametersType *, double, double, int);
 int StopBySteadyState(ParametersType *, double *, double *, double);
 
 int StopByTime(ParametersType *, double *, double *, double);
+
+
+void printU(ParametersType *Parameters, FemStructsType *FemStructs, FemFunctionsType *FemFunctions);
+
+void checknull(ParametersType *Parameters, FemStructsType *FemStructs, FemFunctionsType *FemFunctions);
+
+int AssemblyGlobalMatrix(MatrixDataType *MatrixData, FemStructsType *FemStructs, int e, double (*Me)[3], int neq);
 
 #endif

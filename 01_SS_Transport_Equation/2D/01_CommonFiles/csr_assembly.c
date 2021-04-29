@@ -5,7 +5,7 @@ void csr_assembly(ParametersType *Parameters, MatrixDataType *MatrixData, FemStr
 	double *K;
 	int *CSR_by_Element;
 	int nnzero = Parameters->nnzero;
-	 
+
 	K = MatrixData->AA;	
 	CSR_by_Element = MatrixData->Scheme_by_Element[E];
 	
@@ -18,7 +18,7 @@ void csr_assembly(ParametersType *Parameters, MatrixDataType *MatrixData, FemStr
 	K[CSR_by_Element[6]] += ke[2][0];
 	K[CSR_by_Element[7]] += ke[2][1];
 	K[CSR_by_Element[8]] += ke[2][2];
- 
+
 	K[nnzero] = 0;
 
 }
