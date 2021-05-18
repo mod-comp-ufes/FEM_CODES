@@ -7,8 +7,7 @@ int setStabilizationForm(ParametersType *Parameters,FemFunctionsType *FemFunctio
 	if (strcasecmp(Parameters->StabilizationForm,"SUPG")==0)
 	{
 		FemOtherFunctions->Build = Build_M_D_F_SUPG;
-		if (strcasecmp(Parameters->TimeIntegration,"Predictor")==0)
-		{		
+		if (strcasecmp(Parameters->TimeIntegration,"Predictor")==0) {
 			*TimeIntegration = PredictorMulticorrector;
 			setStopCriteria(Parameters, FemFunctions);
 		}

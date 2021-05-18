@@ -2,9 +2,13 @@
 
 
 int setzeros(ParametersType *Parameters, MatrixDataType *MatrixData)
-{
-	if (strcasecmp(Parameters->MatrixVectorProductScheme,"CSR") == 0)
+{	
+	if (strcasecmp(Parameters->MatrixVectorProductScheme,"CSR")==0)
 		memset(MatrixData->AA,0,(Parameters->nnzero)*sizeof(double));
-
+	else if (strncmp(Parameters->MatrixVectorProductScheme,"EBE",3)==0) {
+		int size = NDOF*NNOEL;
+		int size2 = size*size;
+		memset(MatrixData->Aaux,0,Parameters->nel*size2*sizeof(double));
+	}
 	return 0;
 }

@@ -34,7 +34,7 @@ int PredictorMulticorrector(ParametersType *Parameters, MatrixDataType *MatrixDa
 	dt = Parameters->DeltaT;
 	alpha = Parameters->Alpha;
 	u = FemStructs->u;
-	R = FemStructs->F;
+	R = FemStructs->R;
 	FemStructs->du = a;
 
 	t = 0.0;

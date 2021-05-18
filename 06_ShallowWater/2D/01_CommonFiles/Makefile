@@ -28,6 +28,7 @@ SRC = $(wildcard *.c) \
 ../../../00_CommonFiles/BLAS_Operations/dzero.c \
 ../../../00_CommonFiles/BLAS_Operations/izero.c \
 ../../../00_CommonFiles/MatrixVector_Operations/CSR/csrmv.c \
+../../../00_CommonFiles/MatrixVector_Operations/EBE/ebemvNDOF3.c \
 ../../../00_CommonFiles/CPU_Time_Operations/calculateTime.c \
 ../../../00_CommonFiles/IO_Operations/myfopen.c \
 ../../../00_CommonFiles/C_Operations/dmemcpy.c \

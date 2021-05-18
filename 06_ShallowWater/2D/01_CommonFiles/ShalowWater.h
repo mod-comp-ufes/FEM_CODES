@@ -126,6 +126,7 @@ typedef struct
 	NodeType *Node;
 	ElementType *Element;
 	double *F;
+	double *R;
 	double *u;
 	double *du;
 	double *delta_old;
@@ -173,6 +174,8 @@ void A1_A2_calculations(double Ub[3], double (*A1)[3], double (*A2)[3], double g
 int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs, FemFunctionsType *FemFunctions);
 
 void csr_assembly(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs, int E, double (*Me)[9]);
+
+void ebe_assembly(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs, int E, double (*Me)[9]);
 
 void csr_Initialization(ParametersType *Parameters, NodeType *Node, int **JA_out, int **IA_out, int **perm_out, int  **invperm_out,
 			int ***lm_out, int **lmaux_out, int ***CSR_by_Element_out);
@@ -236,6 +239,10 @@ void printU(ParametersType *Parameters, FemStructsType *FemStructs, FemFunctions
 
 void checknull(ParametersType *Parameters, FemStructsType *FemStructs, FemFunctionsType *FemFunctions);
 
-int AssemblyGlobalMatrix(MatrixDataType *MatrixData, FemStructsType *FemStructs, int e, double (*Me)[3], int neq);
+int AssemblyGlobalMatrix(MatrixDataType *MatrixData, FemStructsType *FemStructs, int e, double (*Me)[9], int neq);
+
+void print_CSR(MatrixDataType *MatrixData, ParametersType *Parameters);
+
+void print_EBE(MatrixDataType *MatrixData, ParametersType *Parameters, int E);
 
 #endif

@@ -8,6 +8,7 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 	FILE *OutFile;
 	char FileName[2000];
 
+
 	/*************************************************************/
 	//		Paraview output to file
 	/************************************************************/
@@ -91,8 +92,6 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 		myfree(MatrixData->AA);
 		myfree(MatrixData->JA);
 		myfree(MatrixData->IA);
-		myfree(MatrixData->Diag);
-		myfree(MatrixData->invDiag);
 		for (I = 0; I < nel; I++)
 			myfree(MatrixData->Scheme_by_Element[I]);
 		myfree(MatrixData->Scheme_by_Element);
@@ -105,6 +104,12 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 		}
 
 	}
+	else if (strncmp(Parameters->MatrixVectorProductScheme,"EBE",3) == 0) {
+		myfree(MatrixData->A);
+		myfree(MatrixData->Aaux);
+		myfree(FemStructs->lmaux);
+		myfree(FemStructs->lm);
+	}
 
 	if((strcasecmp(Parameters->Preconditioner,"Jacobi")==0)||(strncmp(Parameters->Preconditioner,"SOR",3)==0))
 	{
@@ -116,6 +121,7 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 	myfree(FemStructs->Node);
 	myfree(FemStructs->Element);
 	myfree(FemStructs->F);
+	myfree(FemStructs->R);
 	myfree(FemStructs->u);
 	myfree(FemStructs);
 	myfree(FemFunctions);

@@ -29,13 +29,15 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 	double S1[3], S2[3], S3[3], Sb[3], Fe[9], gradzbx, gradzby;
 	double alpha = Parameters->Alpha;
 	double delta_t = Parameters->DeltaT;
-	double *R = FemStructs->F;
+	double *F = FemStructs->F;
+	double *R = FemStructs->R;
 	int **lm = FemStructs->lm;
 	double A1[3][3], A2[3][3];
+	double Ae[9][9], Re[9], MedUe[9], DeUe[9];
 
 	// Auxiliars
 	double r;
-	double Mg1, Mg2;
+	double Mg1[3][3], Mg2[3][3];
 	double sh12[3][3], sh13[3][3], sh23[3][3];
 	double tauSUGN1, tauSUGN2;
 	double gradEta[2], normgradEta;
@@ -50,6 +52,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 	nel = Parameters->nel;
 	neq = Parameters->neq;
 
+	dzero(neq+1, F);
 	dzero(neq+1, R);
 	setzeros(Parameters, MatrixData);
 
@@ -220,7 +223,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		Sb[0] = third*(S1[0] + S2[0] + S3[0]);
 		Sb[1] = third*(S1[1] + S2[2] + S3[1]);
 		Sb[2] = third*(S1[2] + S2[2] + S3[2]);
-		printf("(%.2lf, %.2lf)\t(%.2lf, %.2lf)\t(%.2lf, %.2lf)\n", x1, y1, x2, y2, x3, y3);
+
 		// Parametro de estabilizacao (tau) do SUPG
 		gradEta[0] = (y23*(Ue[0] + zb1) + y31*(Ue[3] + zb2) + y12*(Ue[6] + zb3))*invtwoArea;
 		gradEta[1] = (x32*(Ue[0] + zb1) + x13*(Ue[3] + zb2) + x21*(Ue[6] + zb3))*invtwoArea;
@@ -256,8 +259,14 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		delta = FemFunctions->ShockCapture(Ub, Rbold, gradUx, gradUy, y23, y31, y12, x32, x13, x21, invtwoArea, tau, g);
 
 		// Matriz de Massa do Galerkin
-		Mg1 = Area*sixth;
-		Mg2 = Area*twelve;
+		for(i = 0; i < 3; i++) {
+			for(j = 0; j < 3; j++) {
+				Mg1[i][j] = 0.0;
+				Mg2[i][j] = 0.0;
+			}
+			Mg1[i][i] = Area*sixth;
+			Mg2[i][i] = Area*twelve;
+		}
 
 		// Matriz de Massa do SUPG
 		for(i = 0; i < 3; i++)
@@ -271,17 +280,17 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		for(i=0; i<3; i++)
 			for(j=0; j<3; j++)
 			{
-				Me[  i][  j] = Mg1 + tau*sixth*ms1[i][j];
-				Me[3+i][3+j] = Mg1 + tau*sixth*ms2[i][j];
-				Me[6+i][6+j] = Mg1 + tau*sixth*ms3[i][j];
+				Me[  i][  j] = Mg1[i][j] + tau*sixth*ms1[i][j];
+				Me[3+i][3+j] = Mg1[i][j] + tau*sixth*ms2[i][j];
+				Me[6+i][6+j] = Mg1[i][j] + tau*sixth*ms3[i][j];
 
-				Me[  i][3+j] = Mg2 + tau*sixth*ms1[i][j];
-				Me[3+i][  j] = Mg2 + tau*sixth*ms2[i][j];
-				Me[6+i][  j] = Mg2 + tau*sixth*ms3[i][j];
+				Me[  i][3+j] = Mg2[i][j] + tau*sixth*ms1[i][j];
+				Me[3+i][  j] = Mg2[i][j] + tau*sixth*ms2[i][j];
+				Me[6+i][  j] = Mg2[i][j] + tau*sixth*ms3[i][j];
 
-				Me[  i][6+j] = Mg2 + tau*sixth*ms1[i][j];
-				Me[3+i][6+j] = Mg2 + tau*sixth*ms2[i][j];
-				Me[6+i][3+j] = Mg2 + tau*sixth*ms3[i][j];
+				Me[  i][6+j] = Mg2[i][j] + tau*sixth*ms1[i][j];
+				Me[3+i][6+j] = Mg2[i][j] + tau*sixth*ms2[i][j];
+				Me[6+i][3+j] = Mg2[i][j] + tau*sixth*ms3[i][j];
 			}
 
 		// Matriz de Conveccao de Galerkin
@@ -343,32 +352,28 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		// Matriz do termo fonte
 		for(i=0; i<3; i++)
 		{
-			Fe[  i] = Area*twelve*(2*S1[i] + S2[i] + S3[i]) + tau*sixth*(ms1[i][0]*Sb[0] + ms1[i][1]*Sb[1] + ms1[i][2]*Sb[2]);
-			Fe[3+i] = Area*twelve*(S1[i] + 2*S2[i] + S3[i]) + tau*sixth*(ms2[i][0]*Sb[0] + ms2[i][1]*Sb[1] + ms2[i][2]*Sb[2]);
-			Fe[6+i] = Area*twelve*(S1[i] + S2[i] + 2*S3[i]) + tau*sixth*(ms3[i][0]*Sb[0] + ms3[i][1]*Sb[1] + ms3[i][2]*Sb[2]);
+			Fe[  i] = Area*twelve*(2*S1[i] + S2[i] + S3[i]) + tau*second*(ms1[i][0]*Sb[0] + ms1[i][1]*Sb[1] + ms1[i][2]*Sb[2]);
+			Fe[3+i] = Area*twelve*(S1[i] + 2*S2[i] + S3[i]) + tau*second*(ms2[i][0]*Sb[0] + ms2[i][1]*Sb[1] + ms2[i][2]*Sb[2]);
+			Fe[6+i] = Area*twelve*(S1[i] + S2[i] + 2*S3[i]) + tau*second*(ms3[i][0]*Sb[0] + ms3[i][1]*Sb[1] + ms3[i][2]*Sb[2]);
 		}
 		F_assembly(e, Fe, De, FemFunctions, FemStructs, neq);
 
 		//Fill local Re and Global R
-		double Ae[9][9], Re[9], MedUe[9], DeUe[9];
-		
 		for(i=0; i<9; i++)
 		{
-			MedUe[i] = 0;
-			DeUe[i] = 0;
+			MedUe[i] = 0.0;
+			DeUe[i] = 0.0;
 			for(j=0; j<9; j++)
 			{
 				MedUe[i] += Me[i][j]*dUe[j];
 				DeUe[i] += De[i][j]*Ue[j];
 				Ae[i][j] = Me[i][j] + alpha*delta_t*De[i][j];
 			}
-			Re[i] = - MedUe[i] - DeUe[i];  // F já está sendo adicionado ao R via F_assembly() com tratamento de contorno
-		}
-
-		for (i=0; i<9; i++)
+			Re[i] = F[lm[e][i]] - MedUe[i] - DeUe[i];
 			R[lm[e][i]] += Re[i];
-		R[neq] = 0;
-
+		}
+		R[neq] = 0.0;
+		
 		FemFunctions->assembly(Parameters, MatrixData, FemStructs, e, Ae);
 	}
 

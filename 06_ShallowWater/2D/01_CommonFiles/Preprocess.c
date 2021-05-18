@@ -1,5 +1,6 @@
 #include "ShalowWater.h"
 #include "../../../00_CommonFiles/Allocation_Operations/allocations.h"
+#include "../../../00_CommonFiles/BLAS_operations/ourBLAS.h"
 #include "../../../00_CommonFiles/IO_Operations/io.h"
 
 
@@ -10,7 +11,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	int **lm, *lmaux;
 	int size = NDOF*NNOEL;
 	int size2 = size*size;
-	double *F, *u;
+	double *F, *R, *u;
 	char FileName[2000], label[2000];
 	FILE *InFile;
 	NodeType *Node;
@@ -79,9 +80,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	tag = fscanf(InFile, "%d", &nnodes);
 	Node = (NodeType*) mycalloc("Node of 'Preprocess'", nnodes, sizeof(NodeType));
 	for (I = 0; I < nnodes; I++)
-	{
 		tag = fscanf(InFile, "%lf%lf%d%d%d", &(Node[I].x), &(Node[I].y), &(Node[I].hType), &(Node[I].qxType), &(Node[I].qyType));
-	}
 	Fill_ID(&neq, Node, nnodes);
 	
 	/* **************************************************************************************************************************** */
@@ -109,8 +108,8 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	Parameters->nnodes = nnodes;
 	Parameters->iterations = 0;
 
-	MatrixData = (MatrixDataType *) mycalloc("MatrixData of 'Preprocess'", 1, sizeof(MatrixDataType));
 	F = (double*) mycalloc("F of 'Preprocess'", neq+1, sizeof(double));
+	R = (double*) mycalloc("R of 'Preprocess'", neq+1, sizeof(double));
 	u = (double*) mycalloc("u of 'Preprocess'", neq+1, sizeof(double));
 	lm = (int**) mycalloc("lm of 'Preprocess'", nel, sizeof(int*));
 	lmaux = (int*) mycalloc("lmaux of 'Preprocess'", nel*size, sizeof(int));
@@ -131,8 +130,6 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 		csr_Initialization(Parameters, Node, &JA, &IA, &perm, &invperm, &lm, &lmaux, &CSR_by_Element);
 		
 		AA = (double*) mycalloc("AA of 'Preprocess'", Parameters->nnzero+1, sizeof(double));
-		Diag = (double*) mycalloc("Diag of 'Preprocess'", neq+1, sizeof(double));
-		invDiag = (double*) mycalloc("invDiag of 'Preprocess'", neq+1, sizeof(double));
 		
 		// printf("nnzero=%d\n",Parameters->nnzero);
 
@@ -146,6 +143,18 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 		MatrixData->invPerm = invperm;
 
 	}
+	else if (strncmp(Parameters->MatrixVectorProductScheme,"EBE",3) == 0){
+		double **M, *Maux;
+
+		M = (double**) mycalloc("M of 'Preprocess'", nel, sizeof(double));
+		Maux = (double*) mycalloc("Maux of 'Preprocess'", nel*size2,sizeof(double));
+		
+		for (I = 0; I < nel; I++)
+			M[I] = &Maux[I*size2];
+
+		MatrixData->A = M;
+		MatrixData->Aaux = Maux;
+	}
 	else
 	{
 		printf("Matrix vector product scheme is not defined correctly!\n\n");
@@ -157,6 +166,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	FemStructs->Node = Node;
 	FemStructs->Element = Element;
 	FemStructs->F = F;
+	FemStructs->R = R;
 	FemStructs->u = u;
 	
 	*Parameters_out = Parameters;
@@ -164,10 +174,6 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	*FemStructs_out = FemStructs;
 	*FemFunctions_out = FemFunctions;
 	*FemOtherFunctions_out = FemOtherFunctions;
-
-	//MatrixData->G = (double*) mycalloc("G of 'Preprocess'", neq+1, sizeof(double));
-	//for(I = 0; I < (neq+1); I++)
-	//	MatrixData->G[I] = (double*) mycalloc("G of 'Preprocess'", neq+1, sizeof(double));
 
 	if (tag < 0)
 	{
