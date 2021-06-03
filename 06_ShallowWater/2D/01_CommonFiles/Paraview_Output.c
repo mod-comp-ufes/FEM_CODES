@@ -3,6 +3,10 @@
 #include "../../../00_CommonFiles/Allocation_Operations/allocations.h"
 
 
+double analitical_h(double x, double y, ParametersType *Parameters);
+double analitical_qx(double x, double y, ParametersType *Parameters);
+
+
 int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemFunctionsType *FemFunctions)
 {
 	int I, eq1, eq2, eq3, nnodes, nel;
@@ -67,9 +71,14 @@ int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemF
 		fprintf(OutFile,"\t\t\t\t   %.12lf\n", qy[I]);
 	fprintf(OutFile,"\t\t\t\t</DataArray>\n");
 
-	fprintf(OutFile,"\t\t\t\t<DataArray type=\"Float32\" Name=\"Velocity\" NumberOfComponents=\"3\" Format=\"ascii\">\n");
+	fprintf(OutFile,"\t\t\t\t<DataArray type=\"Float32\" Name=\"H Exact\" Format=\"ascii\">\n");
 	for (I = 0; I < nnodes; I++)
-		fprintf(OutFile,"\t\t\t\t   %.12lf\t%.12lf\t%.12lf\n", qx[I], qy[I], 0.0);
+		fprintf(OutFile,"\t\t\t\t   %.12lf\n", analitical_h(Node[I].x, Node[I].y, Parameters));
+	fprintf(OutFile,"\t\t\t\t</DataArray>\n");
+
+	fprintf(OutFile,"\t\t\t\t<DataArray type=\"Float32\" Name=\"Flux Exact\" Format=\"ascii\">\n");
+	for (I = 0; I < nnodes; I++)
+		fprintf(OutFile,"\t\t\t\t   %.12lf\n", analitical_qx(Node[I].x, Node[I].y, Parameters));
 	fprintf(OutFile,"\t\t\t\t</DataArray>\n");
 
 	fprintf(OutFile,"\t\t\t</PointData>\n");
@@ -110,6 +119,78 @@ int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemF
 	myfree(h); 
 	myfree(qx);
 	myfree(qy);
-		
+
 	return 0;
+}
+
+double analitical_h(double x, double y, ParametersType *Parameters)
+{
+    double ksi = 4.183;
+	double x13, x32, x20, 
+           h0 = 1.0, h1 = 2.0, h2, h3,
+           c0, c1, c2, c3,
+           u0 = 0.0, u1 = 0.0, u2, u3;
+
+    c0 = sqrt(9.81*h0);
+    c1 = sqrt(9.81*h1);
+	c2 = c0*sqrt(0.5*sqrt(1 + 8*(ksi/c0)*(ksi/c0)) - 0.5);
+	c3 = 1.0/3.0*(2*c1 - x/Parameters->FinalTime);
+
+	h2 = c2*c2/9.81;
+	h3 = c3*c3/9.81;
+
+    u2 = ksi - c0*c0/(4*ksi)*(1 + sqrt(1+8*(ksi/c0)*(ksi/c0)));
+    u3 = 2.0/3.0*(2*c1 + x/Parameters->FinalTime);
+
+	x13 = -c1*Parameters->FinalTime;
+	x32 = (u2 - c2)*Parameters->FinalTime;
+	x20 = ksi*Parameters->FinalTime;
+	
+	if(x < x13)
+	    return h1;
+	else if(x < x32)
+		return h3;
+	else if(x < x20)
+		return h2;
+	else
+	    return h0;
+}
+
+double analitical_qx(double x, double y, ParametersType *Parameters)
+{
+    double ksi = 4.183;
+	double x13, x32, x20, 
+           h0 = 1.0, h1 = 2.0, h2, h3,
+           c0, c1, c2, c3,
+           u0 = 0.0, u1 = 0.0, u2, u3,
+		   q0, q1, q2, q3;
+
+    c0 = sqrt(9.81*h0);
+    c1 = sqrt(9.81*h1);
+	c2 = c0*sqrt(0.5*sqrt(1+8*(ksi/c0)*(ksi/c0))- 0.5);
+	c3 = 1/3*(2*c1 - x/Parameters->FinalTime);
+
+	h2 = c2*c2/9.81;
+	h3 = c3*c3/9.81;
+
+    u2 = ksi - c0*c0/(4*ksi)*(1 + sqrt(1+8*(ksi/c0)*(ksi/c0)));
+    u3 = 2/3*(2*c1 + x/Parameters->FinalTime);
+
+	x13 = -c1*Parameters->FinalTime;
+	x32 = (u2 - c2)*Parameters->FinalTime;
+	x20 = ksi*Parameters->FinalTime;
+
+	q0 = h0*u0;
+	q1 = h1*u1;
+	q2 = h2*u2;
+	q3 = h3*u3;
+	
+	if(x < x13)
+	    return q1;
+	else if(x < x32)
+		return q3;
+	else if(x < x20)
+		return q2;
+	else
+	    return q0;
 }

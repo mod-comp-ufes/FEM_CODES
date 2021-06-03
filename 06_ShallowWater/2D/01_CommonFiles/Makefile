@@ -47,3 +47,6 @@ all: $(SRC)
 
 1DDamBreak: $(wildcard ../1D_dam_break/*.c) $(SRC) # ../1D_dam_break/ is the path do implemented functions
 	gcc -o $(EXE) $^ $(CFLAGS)
+
+transcritical_flow: $(wildcard ../transcritical_flow/*.c) $(SRC) # ../transcritical_flow/ is the path do implemented functions
+	gcc -o $(EXE) $^ $(CFLAGS)

@@ -43,18 +43,20 @@ typedef struct Node_List NodeListType;
 
 typedef struct
 {
+	char outPath[200];
 	char ProblemTitle[300];                // Problem name to be solved
+	char Experiments[200];
+	int Friction;						   // 1 friction, 0 frictionless
+	double Viscosity;
 	char Solver[200];                      // type of method used in the solution
 	char TimeIntegration[200];             // Time integration method
 	char MatrixVectorProductScheme[200];   // The global matrix storage form
 	char StabilizationForm[200];           // Type of stabilization method
 	char ShockCapture[200];                // Type discontinuities capture Operator
 	char Preconditioner[200];              // Preconditioners: yes - use or not - don't use
-	char Experiments[200];
 	char StopMulticorrection[200];         // Fala se o loop espacial para pela norma ou por um numero fixo de iteracao - NORM: para pela norma; ITERATION: para pela iteracao
 	char reordering[200];			       // Reordering for CSR (NOT, Spectral, Weigthed Spectral (WSO) or RCM)
 	char StopAtSteadyState[200];		   // YES or NO if you want to stop in steady state or final time
-	char outPath[200];
 	double SolverTolerance;                // Tolerance for the solution method
 	double NonLinearTolerance;             // Tolerance for the loop of correction
 	double TimeIntegrationTolerance;       // Tolerance for the loop of time integration
@@ -141,12 +143,12 @@ typedef struct
 	double (*qxpresc)(double, double);
 	double (*qypresc)(double, double);
 	double (*zb)(double, double);
-	double (*gammaBed)(double, double, double);
 	int (*InitialSolution)(ParametersType *, FemStructsType *);
 
-	double (*ShockCapture)(double *, double *, double *, double *, 
-                           double, double, double, double, double, double, double, 
-				           double, double);
+	double (*ShockCapture)(double *, double *, double *, double *, double *,
+                           double (*)[3], double (*)[3],
+                           double, double, double, double, double, double, double,
+                           double, double, double, double, double);
 	int (*StopCriteria)(ParametersType *, double, double, int);
 	int (*StopTimeIntegration)(ParametersType *, double *, double *, double);
 
@@ -180,9 +182,15 @@ void ebe_assembly(ParametersType *Parameters, MatrixDataType *MatrixData, FemStr
 void csr_Initialization(ParametersType *Parameters, NodeType *Node, int **JA_out, int **IA_out, int **perm_out, int  **invperm_out,
 			int ***lm_out, int **lmaux_out, int ***CSR_by_Element_out);
 
-double deltaCAU(double *Ub, double *R, double *gradUx, double *gradUy, 
-                double y23, double y31, double y12, double x32, double x13, double x21, double invtwoArea, 
-				double tau, double g);
+double deltaCAU(double *Ub, double *Sb, double *gradEta, double *gradUx, double *gradUy,
+                double (*A1)[3], double (*A2)[3],
+                double y23, double y31, double y12, double x32, double x13, double x21, double twoArea,
+                double invhRef, double invqxRef, double invqyRef, double tau, double g);
+
+double deltaYZB(double *Ub, double *Sb, double *gradEta, double *gradUx, double *gradUy,
+                double (*A1)[3], double (*A2)[3],
+                double y23, double y31, double y12, double x32, double x13, double x21, double twoArea,
+                double invhRef, double invqxRef, double invqyRef, double tau, double g);
 
 void eval_U_dU(ParametersType *Parameters,FemStructsType *FemStructs, FemFunctionsType *FemFunctions, double *U,double *dU);
 
@@ -214,8 +222,7 @@ int setProblem(ParametersType *Parameters, FemFunctionsType *FemFunctions);
 
 int setSolver(ParametersType *Parameters, FemOtherFunctionsType *FemOtherFunctions);
 
-int setStabilizationForm(ParametersType *Parameters,FemFunctionsType *FemFunctions, FemOtherFunctionsType *FemOtherFunctions,
-						 int (**Predictor)(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *, FemOtherFunctionsType *));
+int setStabilizationForm(ParametersType *Parameters,FemFunctionsType *FemFunctions, FemOtherFunctionsType *FemOtherFunctions);
 
 int setzeros(ParametersType *Parameters, MatrixDataType *MatrixData);
 
@@ -244,5 +251,7 @@ int AssemblyGlobalMatrix(MatrixDataType *MatrixData, FemStructsType *FemStructs,
 void print_CSR(MatrixDataType *MatrixData, ParametersType *Parameters);
 
 void print_EBE(MatrixDataType *MatrixData, ParametersType *Parameters, int E);
+
+double analitical(double x, double y, ParametersType *Parameters);
 
 #endif

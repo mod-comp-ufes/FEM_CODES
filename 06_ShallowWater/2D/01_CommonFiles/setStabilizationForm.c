@@ -1,16 +1,13 @@
 #include "ShalowWater.h"
 
 
-int setStabilizationForm(ParametersType *Parameters,FemFunctionsType *FemFunctions, FemOtherFunctionsType *FemOtherFunctions,
-						int (**TimeIntegration)(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *, FemOtherFunctionsType *))
+int setStabilizationForm(ParametersType *Parameters,FemFunctionsType *FemFunctions, FemOtherFunctionsType *FemOtherFunctions)
 {
 	if (strcasecmp(Parameters->StabilizationForm,"SUPG")==0)
 	{
 		FemOtherFunctions->Build = Build_M_D_F_SUPG;
-		if (strcasecmp(Parameters->TimeIntegration,"Predictor")==0) {
-			*TimeIntegration = PredictorMulticorrector;
+		if (strcasecmp(Parameters->TimeIntegration,"Predictor")==0)
 			setStopCriteria(Parameters, FemFunctions);
-		}
 		else
 		{
 			printf("Time integration method is not defined correctly!\n");
@@ -19,6 +16,8 @@ int setStabilizationForm(ParametersType *Parameters,FemFunctionsType *FemFunctio
 
 		if (strcasecmp(Parameters->ShockCapture,"CAU")==0)
 			FemFunctions->ShockCapture = deltaCAU;
+		else if (strcasecmp(Parameters->ShockCapture,"YZB")==0)
+			FemFunctions->ShockCapture = deltaYZB;
 		else{
 			printf("Shock capture is not defined correctly!\n");
 			exit(1);

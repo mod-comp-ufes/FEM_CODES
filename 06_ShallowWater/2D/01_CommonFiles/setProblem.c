@@ -16,7 +16,6 @@ int setProblem(ParametersType *Parameters, FemFunctionsType *FemFunctions)
 		FemFunctions->qxpresc = qxpresc;
 		FemFunctions->qypresc = qypresc;
 		FemFunctions->zb = zb;
-		FemFunctions->gammaBed = gammaBed;
 		FemFunctions->InitialSolution = InitialSolution;
 
 	#endif

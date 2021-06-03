@@ -12,9 +12,9 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 	// Constants
 	double g = 9.81;
 	double n = 0.018;
-	double mu = 0.001;
+	double mu = 0.001;//Parameters->Viscosity;
 	double rho = 1000;
-	double tau, delta, Cf;
+	double tau, delta;
 	double second = 0.5, third = 1.0/3.0, forth = 0.25, sixth = 1.0/6.0, twelve = 1.0/12.0;
 
 	// Geometry
@@ -25,18 +25,19 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 	// Variables
 	double h, u, v;	// baricentro
 	double *U, *dU;
-	double Me[9][9], De[9][9], Ue[9], dUe[9], Ub[3], dUb[3], Fb[3], gradUx[3], gradUy[3], Rbold[3];
+	double Cf[3], normq[3], gammaBed[3];
+	double Me[9][9], De[9][9], Ue[9], dUe[9], Ub[3], dUb[3], Fb[3], gradUx[3], gradUy[3];
 	double S1[3], S2[3], S3[3], Sb[3], Fe[9], gradzbx, gradzby;
 	double alpha = Parameters->Alpha;
 	double delta_t = Parameters->DeltaT;
 	double *F = FemStructs->F;
 	double *R = FemStructs->R;
 	int **lm = FemStructs->lm;
+	int fric = Parameters->Friction;
 	double A1[3][3], A2[3][3];
 	double Ae[9][9], Re[9], MedUe[9], DeUe[9];
 
 	// Auxiliars
-	double r;
 	double Mg1[3][3], Mg2[3][3];
 	double sh12[3][3], sh13[3][3], sh23[3][3];
 	double tauSUGN1, tauSUGN2;
@@ -71,7 +72,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		x1 = Node[J1].x;
 		x2 = Node[J2].x;
 		x3 = Node[J3].x;
-		
+
 		y1 = Node[J1].y;
 		y2 = Node[J2].y;
 		y3 = Node[J3].y;
@@ -84,14 +85,13 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		x13 = x1 - x3;
 		x21 = x2 - x1;
 
-		// Area do elemento
+		// area do elemento
 		twoArea = fabs(x21*y31 - x13*y12);
 		Area = 0.5*twoArea;
 		invArea = 1.0/Area;
 		invtwoArea = 1.0/twoArea;
 
-		// Fill 'Ue' with the values ​​of the previous solution or workaround for each degree of liberty of the element node
-		// height
+		// altura
 		Ue[0] = U[3*J1];
 		Ue[3] = U[3*J2];
 		Ue[6] = U[3*J3];
@@ -100,7 +100,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		dUe[3] = dU[3*J2];
 		dUe[6] = dU[3*J3];
 
-		// discharge in X
+		// fluxo em X
 		Ue[1] = U[3*J1+1];
 		Ue[4] = U[3*J2+1];
 		Ue[7] = U[3*J3+1];
@@ -109,7 +109,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		dUe[4] = dU[3*J2+1];
 		dUe[7] = dU[3*J3+1];
 
-		// discharge in Y
+		// fluxo em Y
 		Ue[2] = U[3*J1+2];
 		Ue[5] = U[3*J2+2];
 		Ue[8] = U[3*J3+2];
@@ -120,16 +120,16 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 
 		for(i=0; i<3; i++)
 		{
-			// Baricentro do triangulo
+			// baricentro do triangulo
 			Ub[i] = (Ue[i] + Ue[i+3] + Ue[i+6])*third;
 			dUb[i] = (dUe[i] + dUe[i+3] + dUe[i+6])*third;
 
-			// Calculo do Gradiente
+			// gradiente
 			gradUx[i] = (Ue[i]*y23 + Ue[i+3]*y31 + Ue[i+6]*y12)*invtwoArea;
 			gradUy[i] = (Ue[i]*x32 + Ue[i+3]*x13 + Ue[i+6]*x21)*invtwoArea;
 		}
 
-		// Baricentro do triangulo
+		// baricentro do triangulo
 		h = Ub[0];
 		u = Ub[1]/h;
 		v = Ub[2]/h;
@@ -145,7 +145,6 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		A1[2][1] = v;
 		A1[2][2] = u;
 
-		// A2 coefficients
 		A2[0][0] = 0.0;
 		A2[0][1] = 0.0;
 		A2[0][2] = 1.0;
@@ -196,7 +195,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		a22[2][1] = 0.0;
 		a22[2][2] = A2[2][0] + A2[2][2]*A2[2][2];
 
-		// Source
+		// fonte
 		zb1 = FemFunctions->zb(x1, y1);
 		zb2 = FemFunctions->zb(x2, y2);
 		zb3 = FemFunctions->zb(x3, y3);
@@ -204,44 +203,47 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		gradzbx = (zb1*y23 + zb2*y31 + zb3*y12)*invtwoArea;
 		gradzby = (zb1*x32 + zb2*x13 + zb3*x21)*invtwoArea;
 
-		Cf = g*n*n*pow(Ub[0], -7/3);
+		for(i=0; i<3; i++) {
+			gammaBed[i] = g*n*n*pow(Ue[3*i], -7/3)*sqrt(Ue[3*i+1]*Ue[3*i+1] + Ue[3*i+2]+Ue[3*i+1]);
+			gammaBed[i] = (isnan(gammaBed[i]) || isinf(gammaBed[i])) ? 0.0 : gammaBed[i];
+		}
 
 		S1[0] = 0.0;
 		S2[0] = 0.0;
 		S3[0] = 0.0;
 
-		r = FemFunctions->gammaBed(Cf, x2, y2);
-		S1[1] = -g*gradzbx*Ue[0] - r*Ue[1];
-		S2[1] = -g*gradzbx*Ue[3] - r*Ue[4];
-		S3[1] = -g*gradzbx*Ue[6] - r*Ue[7];
+		S1[1] = -g*gradzbx*Ue[0] - fric*Ue[1]*gammaBed[0];
+		S2[1] = -g*gradzbx*Ue[3] - fric*Ue[4]*gammaBed[1];
+		S3[1] = -g*gradzbx*Ue[6] - fric*Ue[7]*gammaBed[2];
 
-		r = FemFunctions->gammaBed(Cf, x3, y3);
-		S1[2] = -g*gradzby*Ue[0] - r*Ue[2];
-		S2[2] = -g*gradzby*Ue[3] - r*Ue[5];
-		S3[2] = -g*gradzby*Ue[6] - r*Ue[8];
+		S1[2] = -g*gradzby*Ue[0] - fric*Ue[1]*gammaBed[0];
+		S2[2] = -g*gradzby*Ue[3] - fric*Ue[4]*gammaBed[1];
+		S3[2] = -g*gradzby*Ue[6] - fric*Ue[7]*gammaBed[2];
 
 		Sb[0] = third*(S1[0] + S2[0] + S3[0]);
 		Sb[1] = third*(S1[1] + S2[2] + S3[1]);
 		Sb[2] = third*(S1[2] + S2[2] + S3[2]);
 
-		// Parametro de estabilizacao (tau) do SUPG
+		// parametro de estabilizacao (tau) do SUPG
 		gradEta[0] = (y23*(Ue[0] + zb1) + y31*(Ue[3] + zb2) + y12*(Ue[6] + zb3))*invtwoArea;
 		gradEta[1] = (x32*(Ue[0] + zb1) + x13*(Ue[3] + zb2) + x21*(Ue[6] + zb3))*invtwoArea;
 		normgradEta = sqrt(gradEta[0]*gradEta[0] + gradEta[1]*gradEta[1]);
 
-		if(fabs(normgradEta) >= TOL) {
+		if(fabs(normgradEta) >= TOL)
+		{
 			gradEta[0] /= normgradEta;
 			gradEta[1] /= normgradEta;
 		}
-		else {
+		else
+		{
 			gradEta[0] = 0.0;
 			gradEta[1] = 0.0;
 		}
 
-		r = sqrt(g*Ue[0])*fabs(gradEta[0]*y23 + gradEta[1]*x32) + fabs(u*y23 + v*x32) +
-		    sqrt(g*Ue[3])*fabs(gradEta[0]*y31 + gradEta[1]*x13) + fabs(u*y31 + v*x13) +
-			sqrt(g*Ue[6])*fabs(gradEta[0]*y12 + gradEta[1]*x21) + fabs(u*y12 + v*x21);
-		tauSUGN1 = (fabs(r) >= 1e-12) ? twoArea/r : 0.0;
+		tauSUGN1 = sqrt(g*Ue[0])*fabs(gradEta[0]*y23 + gradEta[1]*x32) + fabs(u*y23 + v*x32) +
+		           sqrt(g*Ue[3])*fabs(gradEta[0]*y31 + gradEta[1]*x13) + fabs(u*y31 + v*x13) +
+			       sqrt(g*Ue[6])*fabs(gradEta[0]*y12 + gradEta[1]*x21) + fabs(u*y12 + v*x21);
+		tauSUGN1 = (fabs(tauSUGN1) >= 1e-12) ? twoArea/tauSUGN1 : 0.0;
 
 		tauSUGN2 = delta_t/2.0;
 
@@ -250,15 +252,12 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		else
 			tau = 1.0/sqrt(1.0/(tauSUGN2*tauSUGN2));
 
-		for(i=0; i<3; i++)
-		{
-			// Calculo de R = AxgradUx + AygradUy - S
-			Rbold[i] = A1[i][0]*gradUx[0] + A1[i][1]*gradUx[1] + A1[i][2]*gradUx[2] + 
-			           A2[i][0]*gradUy[0] + A2[i][1]*gradUy[1] + A2[i][2]*gradUy[2] - Sb[i];
-		}
-		delta = FemFunctions->ShockCapture(Ub, Rbold, gradUx, gradUy, y23, y31, y12, x32, x13, x21, invtwoArea, tau, g);
+		delta = FemFunctions->ShockCapture(Ub, Sb, gradEta, gradUx, gradUy,
+                A1, A2,
+                y23, y31, y12, x32, x13, x21, twoArea,
+                1.0/2.0, 1.0/(2.0*sqrt(g*2.0)), 1e-10, tau, g);
 
-		// Matriz de Massa do Galerkin
+		// matriz de massa do Galerkin
 		for(i = 0; i < 3; i++) {
 			for(j = 0; j < 3; j++) {
 				Mg1[i][j] = 0.0;
@@ -268,7 +267,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 			Mg2[i][i] = Area*twelve;
 		}
 
-		// Matriz de Massa do SUPG
+		// matriz de massa do SUPG
 		for(i = 0; i < 3; i++)
 			for(j = 0; j < 3; j++) {
 				ms1[i][j] = y23*A1[i][j] + x32*A2[i][j];
@@ -276,7 +275,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 				ms3[i][j] = y12*A1[i][j] + x21*A2[i][j];
 			}
 
-		// Coeficientes da Matriz de Massa [Me]
+		// coeficientes da matriz de Massa [Me]
 		for(i=0; i<3; i++)
 			for(j=0; j<3; j++)
 			{
@@ -293,21 +292,24 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 				Me[6+i][3+j] = Mg2[i][j] + tau*sixth*ms3[i][j];
 			}
 
-		// Matriz de Conveccao de Galerkin
-		for(i=0; i<3; i++) {
-			for(j=0; j<3; j++) {
+		// matriz de conveccao de Galerkin
+		for(i=0; i<3; i++)
+		{
+			for(j=0; j<3; j++)
+			{
 				d12[i][j] = 0.0;
 				d13[i][j] = 0.0;
 				d23[i][j] = 0.0;
 			}
-			if(i>0) {
+			if(i>0)
+			{
 				d12[i][i] = y23*y31*mu/rho + x32*x13*mu/rho;
 				d13[i][i] = y23*y12*mu/rho + x32*x21*mu/rho;
 				d23[i][i] = y31*y12*mu/rho + x13*x21*mu/rho;
 			}
 		}
 
-		// Matriz de Conveccao do SUPG
+		// matriz de conveccao do SUPG
 		for(i=0; i<3; i++)
 			for(j=0; j<3; j++)
 			{
@@ -322,9 +324,11 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 				ds33[i][j] = y12*(y12*a11[i][j] + x21*a21[i][j]) + x21*(y12*a12[i][j] + x21*a22[i][j]);
 			}
 
-		// Matriz de Conveccao da captura de choque
-		for(i=0; i<3; i++) {
-			for(j=0; j<3; j++) {
+		// matriz de conveccao da captura de choque
+		for(i=0; i<3; i++)
+		{
+			for(j=0; j<3; j++) 
+			{
 				sh12[i][j] = 0.0;
 				sh13[i][j] = 0.0;
 				sh23[i][j] = 0.0;
@@ -334,7 +338,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 			sh23[i][i] = y31*y12 + x13*x21;
 		}
 
-		// Coeficientes da Matriz de Rigidez [De]	
+		// coeficientes da matriz de rigidez [De]	
 		for(i=0; i<3; i++)
 			for(j=0; j<3; j++)
 			{
@@ -349,7 +353,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 				De[6+i][6+j] = sixth*ms3[i][j] + forth*invArea*(-d13[i][j] -d23[i][j]) + tau*forth*invArea*ds33[i][j] + delta*forth*invArea*(-sh13[i][j] -sh23[i][j]);
 			}
 
-		// Matriz do termo fonte
+		// matriz do termo fonte
 		for(i=0; i<3; i++)
 		{
 			Fe[  i] = Area*twelve*(2*S1[i] + S2[i] + S3[i]) + tau*second*(ms1[i][0]*Sb[0] + ms1[i][1]*Sb[1] + ms1[i][2]*Sb[2]);
@@ -358,7 +362,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		}
 		F_assembly(e, Fe, De, FemFunctions, FemStructs, neq);
 
-		//Fill local Re and Global R
+		// local Re e Global R
 		for(i=0; i<9; i++)
 		{
 			MedUe[i] = 0.0;

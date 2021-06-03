@@ -1,5 +1,6 @@
 #include "ShalowWater.h"
 #include "../../../00_CommonFiles/Allocation_Operations/allocations.h"
+#include "../../../00_CommonFiles/IO_Operations/io.h"
 #include "../../../00_CommonFiles/BLAS_Operations/ourBLAS.h"
 
 /*
@@ -20,6 +21,8 @@ int PredictorMulticorrector(ParametersType *Parameters, MatrixDataType *MatrixDa
 	double t, dt, alpha, norm_a, norm_Da;
 	double *a, *Da, *u, *u_old, *R; //Parametros do Preditor
 	double kx, ky, kz;
+	char FileName[2000];
+	FILE *OutFile;
 	
 	neq = Parameters->neq;
 	nnodes = Parameters->nnodes;
@@ -40,13 +43,17 @@ int PredictorMulticorrector(ParametersType *Parameters, MatrixDataType *MatrixDa
 	t = 0.0;
 	Parameters->CurrentTime = 0.0;
 	steps = 0;
-
+/*
+	sprintf(FileName,"%s%s_%s_%s_%s_%s_N%d_E%d_BDF.txt", Parameters->outPath, Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, 
+			Parameters->MatrixVectorProductScheme, Parameters->nnodes, Parameters->nel);
+	OutFile = myfopen(FileName,"w");
+	fprintf(OutFile, "\n\n======================= PreditorMulticorrector ========================\n\n");
+*/
 	FemFunctions->InitialSolution(Parameters, FemStructs);
 	
 	do{
-		printf("t = %lf \n",t);
-		//printU(Parameters, FemStructs, FemFunctions);
-		//checknull(Parameters, FemStructs, FemFunctions);
+		printf("t = %lf\n",t);
+		//fprintf(OutFile, "\nt = %lf \n",t);
 
 		steps++;
 		t += dt;
@@ -64,17 +71,16 @@ int PredictorMulticorrector(ParametersType *Parameters, MatrixDataType *MatrixDa
 		// MULTICORRECAO
 		do{
 			i++;
-			//printf("MULTICORRECAO\n");
-			//printU(Parameters, FemStructs, FemFunctions);
 			FemOtherFunctions->Build(Parameters, MatrixData, FemStructs, FemFunctions);
-			//getchar();
+
 			//FemFunctions->scaling(Parameters, MatrixData, FemStructs);
-			//printU(Parameters, FemStructs, FemFunctions);
 
 			FemFunctions->precond_setup(Parameters, MatrixData, FemStructs, tag++, R);
 
 			FemOtherFunctions->solver(Parameters, MatrixData, FemStructs, FemFunctions, R, Da);
-			//printf("%d\n", Parameters->ContGMRES);
+
+			//fprintf(OutFile, "MULTICORRECAO(%d) | iter GMRES=%d\n", i, Parameters->ContGMRES);
+
 			//FemFunctions->unscaling(Parameters, MatrixData, FemStructs, Da);
 
 			daxpy(neq, 1, Da, a); // a = a + Da
@@ -90,6 +96,7 @@ int PredictorMulticorrector(ParametersType *Parameters, MatrixDataType *MatrixDa
 	myfree(a);
 	myfree(Da);
 	myfree(u_old);
+	//fclose(OutFile);
 
 	return 0;
 

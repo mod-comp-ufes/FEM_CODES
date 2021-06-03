@@ -45,6 +45,8 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	InFile = myfopen(arguments[1], "r");
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->Experiments, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->ProblemTitle, label);
+	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->Viscosity), label);
+	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->Friction), label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->MatrixVectorProductScheme, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->StabilizationForm, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->ShockCapture, label);

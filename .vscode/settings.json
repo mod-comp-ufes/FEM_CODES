@@ -4,6 +4,8 @@
         "1d_dam_break.h": "c",
         "gmsh2mesh.h": "c",
         "ourblas.h": "c",
-        "solvers.h": "c"
+        "solvers.h": "c",
+        "allocations.h": "c",
+        "cmath": "c"
     }
 }
