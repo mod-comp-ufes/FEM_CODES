@@ -50,3 +50,6 @@ all: $(SRC)
 
 transcritical_flow: $(wildcard ../transcritical_flow/*.c) $(SRC) # ../transcritical_flow/ is the path do implemented functions
 	gcc -o $(EXE) $^ $(CFLAGS)
+
+DamBreakBumps: $(wildcard ../DamBreakBumps/*.c) $(SRC) # ../DamBreakBumps/ is the path do implemented functions
+	gcc -o $(EXE) $^ $(CFLAGS)

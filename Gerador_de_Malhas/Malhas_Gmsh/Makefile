@@ -24,6 +24,9 @@ validacao:
 1DDamBreak:
 	gcc problems/1D_dam_break/setmark.c gmsh_4_1_2D.c -o $(EXE)
 
+DamBreakBumps:
+	gcc problems/DamBreakBumps/setmark.c gmsh_4_1_2D.c -o $(EXE)
+
 
 clean:
 	rm $(EXE)

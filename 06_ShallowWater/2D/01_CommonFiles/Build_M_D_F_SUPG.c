@@ -12,7 +12,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 	// Constants
 	double g = 9.81;
 	double n = 0.018;
-	double mu = 0.001;//Parameters->Viscosity;
+	double mu = Parameters->Viscosity;
 	double rho = 1000;
 	double tau, delta;
 	double second = 0.5, third = 1.0/3.0, forth = 0.25, sixth = 1.0/6.0, twelve = 1.0/12.0;
@@ -240,9 +240,9 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 			gradEta[1] = 0.0;
 		}
 
-		tauSUGN1 = sqrt(g*Ue[0])*fabs(gradEta[0]*y23 + gradEta[1]*x32) + fabs(u*y23 + v*x32) +
-		           sqrt(g*Ue[3])*fabs(gradEta[0]*y31 + gradEta[1]*x13) + fabs(u*y31 + v*x13) +
-			       sqrt(g*Ue[6])*fabs(gradEta[0]*y12 + gradEta[1]*x21) + fabs(u*y12 + v*x21);
+		tauSUGN1 = sqrt(g*Ue[0])*fabs(gradEta[0]*y23 + gradEta[1]*x32) + fabs(Ue[1]/Ue[0]*y23 + Ue[2]/Ue[0]*x32) +
+		           sqrt(g*Ue[3])*fabs(gradEta[0]*y31 + gradEta[1]*x13) + fabs(Ue[4]/Ue[3]*y31 + Ue[5]/Ue[3]*x13) +
+			       sqrt(g*Ue[6])*fabs(gradEta[0]*y12 + gradEta[1]*x21) + fabs(Ue[7]/Ue[6]*y12 + Ue[8]/Ue[6]*x21);
 		tauSUGN1 = (fabs(tauSUGN1) >= 1e-12) ? twoArea/tauSUGN1 : 0.0;
 
 		tauSUGN2 = delta_t/2.0;
@@ -252,11 +252,12 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		else
 			tau = 1.0/sqrt(1.0/(tauSUGN2*tauSUGN2));
 
-		delta = FemFunctions->ShockCapture(Ub, Sb, gradEta, gradUx, gradUy,
-                A1, A2,
+		delta = FemFunctions->ShockCapture(Ub, Sb, gradEta, gradUx, gradUy, A1, A2,
                 y23, y31, y12, x32, x13, x21, twoArea,
-                1.0/2.0, 1.0/(2.0*sqrt(g*2.0)), 1e-10, tau, g);
-
+                0.0, 0.0, 0.0, tau, g);
+		//tau = 0.0;
+		//delta = 0.0;
+		//printf("%.4lf\t%.4lf\n", tau, delta);
 		// matriz de massa do Galerkin
 		for(i = 0; i < 3; i++) {
 			for(j = 0; j < 3; j++) {

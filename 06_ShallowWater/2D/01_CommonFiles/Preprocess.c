@@ -69,7 +69,6 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->nel), label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", FileName, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->outPath, label);
-
 	fclose(InFile);
 
 	/* **************************************************************************************************************************** */
@@ -84,7 +83,6 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	for (I = 0; I < nnodes; I++)
 		tag = fscanf(InFile, "%lf%lf%d%d%d", &(Node[I].x), &(Node[I].y), &(Node[I].hType), &(Node[I].qxType), &(Node[I].qyType));
 	Fill_ID(&neq, Node, nnodes);
-	
 	/* **************************************************************************************************************************** */
 
 

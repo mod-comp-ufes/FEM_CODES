@@ -79,7 +79,7 @@ int PredictorMulticorrector(ParametersType *Parameters, MatrixDataType *MatrixDa
 
 			FemOtherFunctions->solver(Parameters, MatrixData, FemStructs, FemFunctions, R, Da);
 
-			//fprintf(OutFile, "MULTICORRECAO(%d) | iter GMRES=%d\n", i, Parameters->ContGMRES);
+			//printf("MULTICORRECAO(%d) | iter GMRES=%d\n", i, Parameters->ContGMRES);
 
 			//FemFunctions->unscaling(Parameters, MatrixData, FemStructs, Da);
 
@@ -114,8 +114,10 @@ int StopByIterations(ParametersType *Parameters, double norm_a, double norm_Da, 
 
 int StopByNorm(ParametersType *Parameters, double norm_a, double norm_Da, int i)
 {
-	if (norm_Da < (Parameters->NonLinearTolerance)*norm_a || i>=Parameters->NonLinearMaxIter)
+	if (norm_Da < (Parameters->NonLinearTolerance)*norm_a || i>=Parameters->NonLinearMaxIter) {
+		//printf("%d\n", i);
 		return 1;
+	}
 	else
 		return 0;
 }
@@ -137,7 +139,7 @@ int StopBySteadyState(ParametersType *Parameters, double *u, double *u_old, doub
 
 	free(diff);
 
-	if ((Parameters->TimeIntegrationTolerance)*norm_u > norm_diff || fabs(Parameters->FinalTime-t) < Parameters->DeltaT){
+	if((Parameters->TimeIntegrationTolerance)*norm_u > norm_diff || t >= Parameters->FinalTime){
 		Parameters->CurrentTime = t;	
 		return 1;
 	}
