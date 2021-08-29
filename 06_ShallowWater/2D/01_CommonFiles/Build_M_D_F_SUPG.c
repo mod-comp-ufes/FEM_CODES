@@ -10,12 +10,8 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 	int e, i, j;
 
 	// Constants
-	double g = 9.81;
-	double n = 0.018;
 	double mu = Parameters->Viscosity;
-	double rho = 1000;
 	double tau, delta;
-	double second = 0.5, third = 1.0/3.0, forth = 0.25, sixth = 1.0/6.0, twelve = 1.0/12.0;
 
 	// Geometry
 	int J1, J2, J3, nel, neq;
@@ -121,8 +117,8 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		for(i=0; i<3; i++)
 		{
 			// baricentro do triangulo
-			Ub[i] = (Ue[i] + Ue[i+3] + Ue[i+6])*third;
-			dUb[i] = (dUe[i] + dUe[i+3] + dUe[i+6])*third;
+			Ub[i] = (Ue[i] + Ue[i+3] + Ue[i+6])*THIRD;
+			dUb[i] = (dUe[i] + dUe[i+3] + dUe[i+6])*THIRD;
 
 			// gradiente
 			gradUx[i] = (Ue[i]*y23 + Ue[i+3]*y31 + Ue[i+6]*y12)*invtwoArea;
@@ -138,7 +134,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		A1[0][0] = 0.0;
 		A1[0][1] = 1.0;
 		A1[0][2] = 0.0;
-		A1[1][0] = g*h - u*u;
+		A1[1][0] = GRAVITY*h - u*u;
 		A1[1][1] = 2.0*u;
 		A1[1][2] = 0.0;
 		A1[2][0] = -u*v;
@@ -151,7 +147,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		A2[1][0] = -u*v;
 		A2[1][1] = v;
 		A2[1][2] = u;
-		A2[2][0] = g*h - v*v;
+		A2[2][0] = GRAVITY*h - v*v;
 		A2[2][1] = 0.0;
 		A2[2][2] = 2*v;
 
@@ -204,7 +200,7 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		gradzby = (zb1*x32 + zb2*x13 + zb3*x21)*invtwoArea;
 
 		for(i=0; i<3; i++) {
-			gammaBed[i] = g*n*n*pow(Ue[3*i], -7/3)*sqrt(Ue[3*i+1]*Ue[3*i+1] + Ue[3*i+2]+Ue[3*i+1]);
+			gammaBed[i] = GRAVITY*0.018*0.018*pow(Ue[3*i], -7/3)*sqrt(Ue[3*i+1]*Ue[3*i+1] + Ue[3*i+2]+Ue[3*i+1]);
 			gammaBed[i] = (isnan(gammaBed[i]) || isinf(gammaBed[i])) ? 0.0 : gammaBed[i];
 		}
 
@@ -212,17 +208,17 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		S2[0] = 0.0;
 		S3[0] = 0.0;
 
-		S1[1] = -g*gradzbx*Ue[0] - fric*Ue[1]*gammaBed[0];
-		S2[1] = -g*gradzbx*Ue[3] - fric*Ue[4]*gammaBed[1];
-		S3[1] = -g*gradzbx*Ue[6] - fric*Ue[7]*gammaBed[2];
+		S1[1] = -GRAVITY*gradzbx*Ue[0] - fric*Ue[1]*gammaBed[0];
+		S2[1] = -GRAVITY*gradzbx*Ue[3] - fric*Ue[4]*gammaBed[1];
+		S3[1] = -GRAVITY*gradzbx*Ue[6] - fric*Ue[7]*gammaBed[2];
 
-		S1[2] = -g*gradzby*Ue[0] - fric*Ue[1]*gammaBed[0];
-		S2[2] = -g*gradzby*Ue[3] - fric*Ue[4]*gammaBed[1];
-		S3[2] = -g*gradzby*Ue[6] - fric*Ue[7]*gammaBed[2];
+		S1[2] = -GRAVITY*gradzby*Ue[0] - fric*Ue[1]*gammaBed[0];
+		S2[2] = -GRAVITY*gradzby*Ue[3] - fric*Ue[4]*gammaBed[1];
+		S3[2] = -GRAVITY*gradzby*Ue[6] - fric*Ue[7]*gammaBed[2];
 
-		Sb[0] = third*(S1[0] + S2[0] + S3[0]);
-		Sb[1] = third*(S1[1] + S2[2] + S3[1]);
-		Sb[2] = third*(S1[2] + S2[2] + S3[2]);
+		Sb[0] = THIRD*(S1[0] + S2[0] + S3[0]);
+		Sb[1] = THIRD*(S1[1] + S2[2] + S3[1]);
+		Sb[2] = THIRD*(S1[2] + S2[2] + S3[2]);
 
 		// parametro de estabilizacao (tau) do SUPG
 		gradEta[0] = (y23*(Ue[0] + zb1) + y31*(Ue[3] + zb2) + y12*(Ue[6] + zb3))*invtwoArea;
@@ -240,9 +236,9 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 			gradEta[1] = 0.0;
 		}
 
-		tauSUGN1 = sqrt(g*Ue[0])*fabs(gradEta[0]*y23 + gradEta[1]*x32) + fabs(Ue[1]/Ue[0]*y23 + Ue[2]/Ue[0]*x32) +
-		           sqrt(g*Ue[3])*fabs(gradEta[0]*y31 + gradEta[1]*x13) + fabs(Ue[4]/Ue[3]*y31 + Ue[5]/Ue[3]*x13) +
-			       sqrt(g*Ue[6])*fabs(gradEta[0]*y12 + gradEta[1]*x21) + fabs(Ue[7]/Ue[6]*y12 + Ue[8]/Ue[6]*x21);
+		tauSUGN1 = sqrt(GRAVITY*Ue[0])*fabs(gradEta[0]*y23 + gradEta[1]*x32) + fabs(Ue[1]/Ue[0]*y23 + Ue[2]/Ue[0]*x32) +
+		           sqrt(GRAVITY*Ue[3])*fabs(gradEta[0]*y31 + gradEta[1]*x13) + fabs(Ue[4]/Ue[3]*y31 + Ue[5]/Ue[3]*x13) +
+			       sqrt(GRAVITY*Ue[6])*fabs(gradEta[0]*y12 + gradEta[1]*x21) + fabs(Ue[7]/Ue[6]*y12 + Ue[8]/Ue[6]*x21);
 		tauSUGN1 = (fabs(tauSUGN1) >= 1e-12) ? twoArea/tauSUGN1 : 0.0;
 
 		tauSUGN2 = delta_t/2.0;
@@ -253,19 +249,16 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 			tau = 1.0/sqrt(1.0/(tauSUGN2*tauSUGN2));
 
 		delta = FemFunctions->ShockCapture(Ub, Sb, gradEta, gradUx, gradUy, A1, A2,
-                y23, y31, y12, x32, x13, x21, twoArea,
-                0.0, 0.0, 0.0, tau, g);
-		//tau = 0.0;
-		//delta = 0.0;
-		//printf("%.4lf\t%.4lf\n", tau, delta);
+                y23, y31, y12, x32, x13, x21, twoArea, tau, Parameters);
+
 		// matriz de massa do Galerkin
 		for(i = 0; i < 3; i++) {
 			for(j = 0; j < 3; j++) {
 				Mg1[i][j] = 0.0;
 				Mg2[i][j] = 0.0;
 			}
-			Mg1[i][i] = Area*sixth;
-			Mg2[i][i] = Area*twelve;
+			Mg1[i][i] = Area*SIXTH;
+			Mg2[i][i] = Area*TWELVE;
 		}
 
 		// matriz de massa do SUPG
@@ -280,17 +273,17 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		for(i=0; i<3; i++)
 			for(j=0; j<3; j++)
 			{
-				Me[  i][  j] = Mg1[i][j] + tau*sixth*ms1[i][j];
-				Me[3+i][3+j] = Mg1[i][j] + tau*sixth*ms2[i][j];
-				Me[6+i][6+j] = Mg1[i][j] + tau*sixth*ms3[i][j];
+				Me[  i][  j] = Mg1[i][j] + tau*SIXTH*ms1[i][j];
+				Me[3+i][3+j] = Mg1[i][j] + tau*SIXTH*ms2[i][j];
+				Me[6+i][6+j] = Mg1[i][j] + tau*SIXTH*ms3[i][j];
 
-				Me[  i][3+j] = Mg2[i][j] + tau*sixth*ms1[i][j];
-				Me[3+i][  j] = Mg2[i][j] + tau*sixth*ms2[i][j];
-				Me[6+i][  j] = Mg2[i][j] + tau*sixth*ms3[i][j];
+				Me[  i][3+j] = Mg2[i][j] + tau*SIXTH*ms1[i][j];
+				Me[3+i][  j] = Mg2[i][j] + tau*SIXTH*ms2[i][j];
+				Me[6+i][  j] = Mg2[i][j] + tau*SIXTH*ms3[i][j];
 
-				Me[  i][6+j] = Mg2[i][j] + tau*sixth*ms1[i][j];
-				Me[3+i][6+j] = Mg2[i][j] + tau*sixth*ms2[i][j];
-				Me[6+i][3+j] = Mg2[i][j] + tau*sixth*ms3[i][j];
+				Me[  i][6+j] = Mg2[i][j] + tau*SIXTH*ms1[i][j];
+				Me[3+i][6+j] = Mg2[i][j] + tau*SIXTH*ms2[i][j];
+				Me[6+i][3+j] = Mg2[i][j] + tau*SIXTH*ms3[i][j];
 			}
 
 		// matriz de conveccao de Galerkin
@@ -304,9 +297,9 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 			}
 			if(i>0)
 			{
-				d12[i][i] = y23*y31*mu/rho + x32*x13*mu/rho;
-				d13[i][i] = y23*y12*mu/rho + x32*x21*mu/rho;
-				d23[i][i] = y31*y12*mu/rho + x13*x21*mu/rho;
+				d12[i][i] = y23*y31*mu/RHO + x32*x13*mu/RHO;
+				d13[i][i] = y23*y12*mu/RHO + x32*x21*mu/RHO;
+				d23[i][i] = y31*y12*mu/RHO + x13*x21*mu/RHO;
 			}
 		}
 
@@ -343,23 +336,23 @@ int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		for(i=0; i<3; i++)
 			for(j=0; j<3; j++)
 			{
-				De[  i][  j] = sixth*ms1[i][j] + forth*invArea*(-d12[i][j] -d13[i][j]) + tau*forth*invArea*ds11[i][j] + delta*forth*invArea*(-sh12[i][j] -sh13[i][j]);
-				De[  i][3+j] = sixth*ms2[i][j] + forth*invArea*  d12[i][j]             + tau*forth*invArea*ds12[i][j] + delta*forth*invArea*sh12[i][j];
-				De[  i][6+j] = sixth*ms3[i][j] + forth*invArea*  d13[i][j]             + tau*forth*invArea*ds13[i][j] + delta*forth*invArea*sh13[i][j];
-				De[3+i][  j] = sixth*ms1[i][j] + forth*invArea*  d12[i][j]             + tau*forth*invArea*ds21[i][j] + delta*forth*invArea*sh12[i][j];
-				De[3+i][3+j] = sixth*ms2[i][j] + forth*invArea*(-d12[i][j] -d23[i][j]) + tau*forth*invArea*ds22[i][j] + delta*forth*invArea*(-sh12[i][j] -sh23[i][j]);
-				De[3+i][6+j] = sixth*ms3[i][j] + forth*invArea*  d23[i][j]             + tau*forth*invArea*ds23[i][j] + delta*forth*invArea*sh23[i][j];
-				De[6+i][  j] = sixth*ms1[i][j] + forth*invArea*  d13[i][j]             + tau*forth*invArea*ds31[i][j] + delta*forth*invArea*sh13[i][j];
-				De[6+i][3+j] = sixth*ms2[i][j] + forth*invArea*  d23[i][j]             + tau*forth*invArea*ds32[i][j] + delta*forth*invArea*sh23[i][j];
-				De[6+i][6+j] = sixth*ms3[i][j] + forth*invArea*(-d13[i][j] -d23[i][j]) + tau*forth*invArea*ds33[i][j] + delta*forth*invArea*(-sh13[i][j] -sh23[i][j]);
+				De[  i][  j] = SIXTH*ms1[i][j] + FORTH*invArea*(-d12[i][j] -d13[i][j]) + tau*FORTH*invArea*ds11[i][j] + delta*FORTH*invArea*(-sh12[i][j] -sh13[i][j]);
+				De[  i][3+j] = SIXTH*ms2[i][j] + FORTH*invArea*  d12[i][j]             + tau*FORTH*invArea*ds12[i][j] + delta*FORTH*invArea*sh12[i][j];
+				De[  i][6+j] = SIXTH*ms3[i][j] + FORTH*invArea*  d13[i][j]             + tau*FORTH*invArea*ds13[i][j] + delta*FORTH*invArea*sh13[i][j];
+				De[3+i][  j] = SIXTH*ms1[i][j] + FORTH*invArea*  d12[i][j]             + tau*FORTH*invArea*ds21[i][j] + delta*FORTH*invArea*sh12[i][j];
+				De[3+i][3+j] = SIXTH*ms2[i][j] + FORTH*invArea*(-d12[i][j] -d23[i][j]) + tau*FORTH*invArea*ds22[i][j] + delta*FORTH*invArea*(-sh12[i][j] -sh23[i][j]);
+				De[3+i][6+j] = SIXTH*ms3[i][j] + FORTH*invArea*  d23[i][j]             + tau*FORTH*invArea*ds23[i][j] + delta*FORTH*invArea*sh23[i][j];
+				De[6+i][  j] = SIXTH*ms1[i][j] + FORTH*invArea*  d13[i][j]             + tau*FORTH*invArea*ds31[i][j] + delta*FORTH*invArea*sh13[i][j];
+				De[6+i][3+j] = SIXTH*ms2[i][j] + FORTH*invArea*  d23[i][j]             + tau*FORTH*invArea*ds32[i][j] + delta*FORTH*invArea*sh23[i][j];
+				De[6+i][6+j] = SIXTH*ms3[i][j] + FORTH*invArea*(-d13[i][j] -d23[i][j]) + tau*FORTH*invArea*ds33[i][j] + delta*FORTH*invArea*(-sh13[i][j] -sh23[i][j]);
 			}
 
 		// matriz do termo fonte
 		for(i=0; i<3; i++)
 		{
-			Fe[  i] = Area*twelve*(2*S1[i] + S2[i] + S3[i]) + tau*second*(ms1[i][0]*Sb[0] + ms1[i][1]*Sb[1] + ms1[i][2]*Sb[2]);
-			Fe[3+i] = Area*twelve*(S1[i] + 2*S2[i] + S3[i]) + tau*second*(ms2[i][0]*Sb[0] + ms2[i][1]*Sb[1] + ms2[i][2]*Sb[2]);
-			Fe[6+i] = Area*twelve*(S1[i] + S2[i] + 2*S3[i]) + tau*second*(ms3[i][0]*Sb[0] + ms3[i][1]*Sb[1] + ms3[i][2]*Sb[2]);
+			Fe[  i] = Area*TWELVE*(2*S1[i] + S2[i] + S3[i]) + tau*SECOND*(ms1[i][0]*Sb[0] + ms1[i][1]*Sb[1] + ms1[i][2]*Sb[2]);
+			Fe[3+i] = Area*TWELVE*(S1[i] + 2*S2[i] + S3[i]) + tau*SECOND*(ms2[i][0]*Sb[0] + ms2[i][1]*Sb[1] + ms2[i][2]*Sb[2]);
+			Fe[6+i] = Area*TWELVE*(S1[i] + S2[i] + 2*S3[i]) + tau*SECOND*(ms3[i][0]*Sb[0] + ms3[i][1]*Sb[1] + ms3[i][2]*Sb[2]);
 		}
 		F_assembly(e, Fe, De, FemFunctions, FemStructs, neq);
 

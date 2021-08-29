@@ -3,7 +3,7 @@
 #include "../../../00_CommonFiles/Allocation_Operations/allocations.h"
 
 
-int Paraview_Output_3D(ParametersType *Parameters, FemStructsType *FemStructs, FemFunctionsType *FemFunctions)
+int Paraview_Output_3D(ParametersType *Parameters, FemStructsType *FemStructs, FemFunctionsType *FemFunctions, double t)
 {
 	int I, eq1, eq2, eq3, nnodes, nel;
 	char FileName[2000];
@@ -42,7 +42,7 @@ int Paraview_Output_3D(ParametersType *Parameters, FemStructsType *FemStructs, F
 			qy[I] = FemFunctions->qypresc(X, Y);
 
 	}
-	sprintf(FileName,"%s%s_%s_%s_%s_%s_N%d_E%d_3D.vtu", Parameters->outPath, Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, 
+	sprintf(FileName,"%s%lf_%s_%s_%s_%s_%s_N%d_E%d_3D.vtu", Parameters->outPath, t, Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, 
 			Parameters->MatrixVectorProductScheme, Parameters->nnodes, Parameters->nel);
 	OutFile = myfopen(FileName,"w");
 

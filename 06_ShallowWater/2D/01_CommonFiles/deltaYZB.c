@@ -3,11 +3,14 @@
 
 double deltaYZB(double *Ub, double *Sb, double *gradEta, double *gradUx, double *gradUy,
                 double (*A1)[3], double (*A2)[3],
-                double y23, double y31, double y12, double x32, double x13, double x21, double twoArea,
-                double invhRef, double invqxRef, double invqyRef, double tau, double g)
+                double y23, double y31, double y12, double x32, double x13, double x21, double twoArea, 
+                double tau, ParametersType *Parameters)
 {
 	int i;
 	double AgradU[3], hshock, deltashock1, deltashock2, delta;
+    double invhRef = 1.0/Parameters->href, 
+           invqxRef = 1.0/Parameters->qxref,
+           invqyRef = 1.0/Parameters->qyref;
 
     hshock = fabs(gradEta[0]*y23 + gradEta[1]*x32) +
 		     fabs(gradEta[0]*y31 + gradEta[1]*x13) +

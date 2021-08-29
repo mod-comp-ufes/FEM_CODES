@@ -12,7 +12,7 @@ int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemF
 	int I, eq1, eq2, eq3, nnodes, nel;
 	char FileName[2000];
 	FILE *OutFile;
-	double *h, *qx, *qy, X, Y;
+	double *h, *qx, *qy, *zb, X, Y;
 	NodeType *Node = FemStructs->Node;
 	ElementType *Element = FemStructs->Element;
 	double *U = FemStructs->u;
@@ -23,6 +23,7 @@ int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemF
 	h = (double*) mycalloc("h of 'Paraview_Output'", nnodes, sizeof(double));
 	qx = (double*) mycalloc("qx of 'Paraview_Output'", nnodes, sizeof(double));
 	qy = (double*) mycalloc("qy of 'Paraview_Output'", nnodes, sizeof(double));
+	zb = (double*) mycalloc("zb of 'Paraview_Output'", nnodes, sizeof(double));
 	
 	for (I = 0; I < nnodes; I++){
 		eq1 = Node[I].id[0];
@@ -45,6 +46,8 @@ int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemF
 	   		qy[I] = U[eq3];
 	   	else
 			qy[I] = FemFunctions->qypresc(X, Y);
+		
+		zb[I] = FemFunctions->zb(X, Y);
 
 	}
 	sprintf(FileName,"%s%s_%s_%s_%s_%s_N%d_E%d.vtu", Parameters->outPath, Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, 
@@ -58,29 +61,36 @@ int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemF
 	fprintf(OutFile,"\t\t\t<PointData Scalars=\"scalars\" Vectors = \"Velocity\">\n");	
 	fprintf(OutFile,"\t\t\t\t<DataArray type=\"Float32\" Name=\"Height\" Format=\"ascii\">\n");
 	for (I = 0; I < nnodes; I++)
-		fprintf(OutFile,"\t\t\t\t   %.12lf\n", h[I]);
+		fprintf(OutFile,"\t\t\t\t   %.12lf\n", zb[I]+h[I]);
 	fprintf(OutFile,"\t\t\t\t</DataArray>\n");
 	
-	fprintf(OutFile,"\t\t\t\t<DataArray type=\"Float32\" Name=\"XDischarges\" Format=\"ascii\">\n");
+	fprintf(OutFile,"\t\t\t\t<DataArray type=\"Float32\" Name=\"Flux in X\" Format=\"ascii\">\n");
 	for (I = 0; I < nnodes; I++)
 		fprintf(OutFile,"\t\t\t\t   %.12lf\n", qx[I]);
 	fprintf(OutFile,"\t\t\t\t</DataArray>\n");
 
-	fprintf(OutFile,"\t\t\t\t<DataArray type=\"Float32\" Name=\"YDischarges\" Format=\"ascii\">\n");
+
+	fprintf(OutFile,"\t\t\t\t<DataArray type=\"Float32\" Name=\"Flux in Y\" Format=\"ascii\">\n");
 	for (I = 0; I < nnodes; I++)
 		fprintf(OutFile,"\t\t\t\t   %.12lf\n", qy[I]);
 	fprintf(OutFile,"\t\t\t\t</DataArray>\n");
 
+	fprintf(OutFile,"\t\t\t\t<DataArray type=\"Float32\" Name=\"Zb\" Format=\"ascii\">\n");
+	for (I = 0; I < nnodes; I++)
+		fprintf(OutFile,"\t\t\t\t   %.12lf\n", zb[I]);
+	fprintf(OutFile,"\t\t\t\t</DataArray>\n");
 
-	fprintf(OutFile,"\t\t\t\t<DataArray type=\"Float32\" Name=\"H Exact\" Format=\"ascii\">\n");
+
+	fprintf(OutFile,"\t\t\t\t<DataArray type=\"Float32\" Name=\"Height Exact\" Format=\"ascii\">\n");
 	for (I = 0; I < nnodes; I++)
 		fprintf(OutFile,"\t\t\t\t   %.12lf\n", analitical_h(Node[I].x, Node[I].y, Parameters, FemFunctions));
 	fprintf(OutFile,"\t\t\t\t</DataArray>\n");
 
-	fprintf(OutFile,"\t\t\t\t<DataArray type=\"Float32\" Name=\"Flux Exact\" Format=\"ascii\">\n");
+	fprintf(OutFile,"\t\t\t\t<DataArray type=\"Float32\" Name=\"Flux in X Exact\" Format=\"ascii\">\n");
 	for (I = 0; I < nnodes; I++)
 		fprintf(OutFile,"\t\t\t\t   %.12lf\n", analitical_qx(Node[I].x, Node[I].y, Parameters, FemFunctions));
 	fprintf(OutFile,"\t\t\t\t</DataArray>\n");
+
 
 	fprintf(OutFile,"\t\t\t</PointData>\n");
 	fprintf(OutFile,"\t\t\t<Points>\n");

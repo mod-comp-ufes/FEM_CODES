@@ -13,7 +13,7 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 	//		Paraview output to file
 	/************************************************************/
 	Paraview_Output(Parameters, FemStructs, FemFunctions);
-	Paraview_Output_3D(Parameters, FemStructs, FemFunctions);
+	Paraview_Output_3D(Parameters, FemStructs, FemFunctions, Parameters->FinalTime);
 	/*************************************************************/
 
 	

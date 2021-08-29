@@ -50,6 +50,9 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->MatrixVectorProductScheme, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->StabilizationForm, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->ShockCapture, label);
+	tag = fscanf(InFile, "%lf\t:%[^\n]", &Parameters->href, label);
+	tag = fscanf(InFile, "%lf\t:%[^\n]", &Parameters->qxref, label);
+	tag = fscanf(InFile, "%lf\t:%[^\n]", &Parameters->qyref, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->Solver, label);
 	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->SolverMaxIter), label);
 	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->KrylovBasisVectorsQuantity), label);

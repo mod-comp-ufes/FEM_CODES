@@ -1,10 +1,10 @@
 #include "ShalowWater.h"
 
 
-double normA0invtilde(double *R, double g, double h, double u, double v)
+double normA0invtilde(double *R, double h, double u, double v)
 {
 	double r;
-	r = 1/h*(R[0]*(R[0]*(g*h + u*u + v*v) - R[1]*u - R[2]*v) +
+	r = 1/h*(R[0]*(R[0]*(GRAVITY*h + u*u + v*v) - R[1]*u - R[2]*v) +
 	         R[1]*(-R[0]*u + R[1]) +
 		     R[2]*(-R[0]*v + R[2]));
 
@@ -13,8 +13,8 @@ double normA0invtilde(double *R, double g, double h, double u, double v)
 
 double deltaCAU(double *Ub, double *Sb, double *gradEta, double *gradUx, double *gradUy,
                 double (*A1)[3], double (*A2)[3],
-                double y23, double y31, double y12, double x32, double x13, double x21, double twoArea,
-                double invhRef, double invqxRef, double invqyRef, double tau, double g)
+                double y23, double y31, double y12, double x32, double x13, double x21, double twoArea, 
+                double tau, ParametersType *Parameters)
 {
 	int i;
 	double h = Ub[0], u = Ub[1]/Ub[0], v = Ub[2]/Ub[0];
@@ -32,9 +32,9 @@ double deltaCAU(double *Ub, double *Sb, double *gradEta, double *gradUx, double 
 		gradksiUy[i] = (y12*gradUx[i] + x21*gradUy[i])/twoArea;
 	}
 
-	normgradksiU = sqrt(normA0invtilde(gradksiUx, g, h, u, v) + normA0invtilde(gradksiUy, g, h, u, v));
-	normgradU = normA0invtilde(gradUx, g, h, u, v) + normA0invtilde(gradUy, g, h, u, v);
-	normR = sqrt(normA0invtilde(R, g, h, u, v));
+	normgradksiU = sqrt(normA0invtilde(gradksiUx, h, u, v) + normA0invtilde(gradksiUy, h, u, v));
+	normgradU = normA0invtilde(gradUx, h, u, v) + normA0invtilde(gradUy, h, u, v);
+	normR = sqrt(normA0invtilde(R, h, u, v));
 
 	delta_91 = (fabs(normgradksiU) >= TOL) ? normR/normgradksiU : 0.0;
 	delta_tau = (fabs(normgradU) >= TOL) ? tau*normR/normgradU : 0.0;

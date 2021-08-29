@@ -24,8 +24,17 @@ validacao:
 1DDamBreak:
 	gcc problems/1D_dam_break/setmark.c gmsh_4_1_2D.c -o $(EXE)
 
+circular_dam_break:
+	gcc problems/circular_dam_break/setmark.c gmsh_4_1_2D.c -o $(EXE)
+
+transcritical_flow:
+	gcc problems/transcritical_flow/setmark.c gmsh_4_1_2D.c -o $(EXE)
+
 DamBreakBumps:
 	gcc problems/DamBreakBumps/setmark.c gmsh_4_1_2D.c -o $(EXE)
+
+OndaDeGravidade:
+	gcc problems/OndaDeGravidade/setmark.c gmsh_4_1_2D.c -o $(EXE) -lm
 
 
 clean:

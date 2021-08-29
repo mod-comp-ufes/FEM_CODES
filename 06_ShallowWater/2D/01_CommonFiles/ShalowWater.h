@@ -14,7 +14,16 @@
 #define NNOEL 3           // number of nodes per element
 #define NDOF 3            // number of degrees of freedom
 #define PI 3.14159265359
-#define TOL 1e-12         // tolerance
+#define TOL 1e-12
+
+#define GRAVITY 9.81
+#define RHO 1000
+#define SECOND 0.5
+#define THIRD 1.0/3.0
+#define FORTH 0.25
+#define SIXTH 1.0/6.0
+#define TWELVE 1.0/12.0
+
 
 typedef struct
 {
@@ -53,6 +62,9 @@ typedef struct
 	char MatrixVectorProductScheme[200];   // The global matrix storage form
 	char StabilizationForm[200];           // Type of stabilization method
 	char ShockCapture[200];                // Type discontinuities capture Operator
+	double href;						   // h_ref from YZB
+	double qxref;						   // qx_ref from YZB
+	double qyref;						   // qy_ref from YZB
 	char Preconditioner[200];              // Preconditioners: yes - use or not - don't use
 	char StopMulticorrection[200];         // Fala se o loop espacial para pela norma ou por um numero fixo de iteracao - NORM: para pela norma; ITERATION: para pela iteracao
 	char reordering[200];			       // Reordering for CSR (NOT, Spectral, Weigthed Spectral (WSO) or RCM)
@@ -82,6 +94,7 @@ typedef struct
 	int ResGMRES;
 	int ContGMRES;
 } ParametersType;
+
 
 typedef struct
 {
@@ -146,9 +159,9 @@ typedef struct
 	int (*InitialSolution)(ParametersType *, FemStructsType *);
 
 	double (*ShockCapture)(double *, double *, double *, double *, double *,
-                           double (*)[3], double (*)[3],
-                           double, double, double, double, double, double, double,
-                           double, double, double, double, double);
+        double (*)[3], double (*)[3],
+        double, double, double, double, double, double, double, 
+        double, ParametersType *);
 	int (*StopCriteria)(ParametersType *, double, double, int);
 	int (*StopTimeIntegration)(ParametersType *, double *, double *, double);
 
@@ -171,8 +184,6 @@ typedef struct
 } FemOtherFunctionsType;
 
 
-void A1_A2_calculations(double Ub[3], double (*A1)[3], double (*A2)[3], double g);
-
 int Build_M_D_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs, FemFunctionsType *FemFunctions);
 
 void csr_assembly(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs, int E, double (*Me)[9]);
@@ -182,15 +193,15 @@ void ebe_assembly(ParametersType *Parameters, MatrixDataType *MatrixData, FemStr
 void csr_Initialization(ParametersType *Parameters, NodeType *Node, int **JA_out, int **IA_out, int **perm_out, int  **invperm_out,
 			int ***lm_out, int **lmaux_out, int ***CSR_by_Element_out);
 
-double deltaCAU(double *Ub, double *Sb, double *gradEta, double *gradUx, double *gradUy,
-                double (*A1)[3], double (*A2)[3],
-                double y23, double y31, double y12, double x32, double x13, double x21, double twoArea,
-                double invhRef, double invqxRef, double invqyRef, double tau, double g);
+double deltaCAU(double *, double *, double *, double *, double *,
+        double (*)[3], double (*)[3],
+        double, double, double, double, double, double, double, 
+        double, ParametersType *);
 
-double deltaYZB(double *Ub, double *Sb, double *gradEta, double *gradUx, double *gradUy,
-                double (*A1)[3], double (*A2)[3],
-                double y23, double y31, double y12, double x32, double x13, double x21, double twoArea,
-                double invhRef, double invqxRef, double invqyRef, double tau, double g);
+double deltaYZB(double *, double *, double *, double *, double *,
+        double (*)[3], double (*)[3],
+        double, double, double, double, double, double, double, 
+        double, ParametersType *);
 
 void eval_U_dU(ParametersType *Parameters,FemStructsType *FemStructs, FemFunctionsType *FemFunctions, double *U,double *dU);
 
@@ -198,13 +209,7 @@ int Fill_ID(int *neq_out, NodeType *Node, int nnodes);
 
 int Fill_LM(int neq, int nel, int **lm, NodeType *Node, ElementType *Element);
 
-int Paraview_Output_3D_DeltaT(double *U, NodeType *Node, ElementType *Element, ParametersType *Parameters, 
-                              double (*hpresc)(double, double), double (*qxpresc)(double, double), double (*qypresc)(double, double), double t);
-
-int Paraview_Output_3D(ParametersType *Parameters, FemStructsType *FemStructs, FemFunctionsType *FemFunctions);
-
-int Paraview_Output_DeltaT(double *U, NodeType *Node, ElementType *Element, ParametersType *Parameters, 
-                           double (*hpresc)(double, double), double (*qxpresc)(double, double), double (*qypresc)(double, double), double t);
+int Paraview_Output_3D(ParametersType *Parameters, FemStructsType *FemStructs, FemFunctionsType *FemFunctions, double t);
 
 int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemFunctionsType *FemFunctions);
 
