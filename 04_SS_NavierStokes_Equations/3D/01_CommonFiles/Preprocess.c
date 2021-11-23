@@ -1,4 +1,4 @@
-#include "NavierStokesEquations.h"
+#include "SS_NavierStokesEquations3D.h"
 #include "../../../00_CommonFiles/Allocation_Operations/allocations.h"
 #include "../../../00_CommonFiles/IO_Operations/io.h"
 
@@ -27,7 +27,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	/* **************************************************************************************************************************** */
 	if (narg!=2)
 	{
-		printf("Use ./NavierStokesEquations2D <Parameters file according README>\n");
+		printf("Use ./SS_NavierStokesEquations3D <Parameters file according README>\n");
 		exit(1);
 	}
 	/* **************************************************************************************************************************** */
@@ -41,35 +41,31 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	FemStructs   = mycalloc("FemStructs of 'Preprocess'",1,sizeof(FemStructsType));
 	FemFunctions = mycalloc("FemFunctions of 'Preprocess'",1,sizeof(FemFunctionsType));
 	FemOtherFunctions = mycalloc("FemOtherFunctions of 'Preprocess'",1,sizeof(FemOtherFunctionsType));
+	F = (double*) mycalloc("F of 'Preprocess'", neq+1, sizeof(double));
+	u = (double*) mycalloc("u of 'Preprocess'", neq+1, sizeof(double));
 
 	InFile = myfopen(arguments[1], "r");
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->Experiments, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->ProblemTitle, label);
-	tag = fscanf(InFile, "%lf\t:%[^\n]", &Parameters->ReynoldsNumber, label);
-	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->SolverTolerance), label);
-	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->SolverToleranceCase), label);
-	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->CorrectionTolerance), label);
-	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->TimeIntegrationTolerance), label);
-	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->CoefficientTolerance), label);
-	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->LinearMaxIter), label);
-	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->KrylovBasisVectorsQuantity), label);
+	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->ExactSolution, label);
+	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->ReynoldsNumber), label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->Solver, label);
+	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->KrylovBasisVectorsQuantity), label);
+	tag = fscanf(InFile, "%d\t:%[^\n]", &Parameters->SolverMaxIter, label);
+	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->SolverTolerance), label);
+	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->StopMulticorrection, label);
+	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->NonLinearTolerance), label);
+	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->NonLinearMaxIter), label);
+	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->TimeIntegration, label);
+	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->TimeIntegrationTolerance), label);
+	tag = fscanf(InFile, "%lf\t:%[^\n]", &Parameters->DeltaT, label);
+	tag = fscanf(InFile, "%lf\t:%[^\n]", &Parameters->FinalTime, label);
+	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->StopAtSteadyState, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->Preconditioner, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->reordering, label);
-	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->TimeIntegration, label);
-	tag = fscanf(InFile, "%lf\t:%[^\n]", &Parameters->Alpha, label);
-	tag = fscanf(InFile, "%lf\t:%[^\n]", &Parameters->DeltaT, label);
-	tag = fscanf(InFile, "%lf\t:%[^\n]", &Parameters->FinalT, label);
-	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->Dimensionless, label);
-	tag = fscanf(InFile, "%d\t:%[^\n]", &Parameters->NumberCorrection, label);
-	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->StopMulticorrection, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->MatrixVectorProductScheme, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->StabilizationForm, label);
-//	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->ShockCapture, label);
-//	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->invY[0]), label);
-//	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->invY[1]), label);
-//	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->invY[2]), label);
-//	tag = fscanf(InFile, "%lf\t:%[^\n]", &(Parameters->invY[3]), label);
+	tag = fscanf(InFile, "%lf\t:%[^\n]", &Parameters->TurbulentNuTolerance, label);
 	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->nnodes), label);
 	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->nel), label);
 	fclose(InFile);
@@ -80,15 +76,34 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	/* **************************************************************************************************************************** */
 	//						Reading nodes
 	/* **************************************************************************************************************************** */
-	sprintf(FileName,"../02_mesh/%s_%d_%d.dat", Parameters->ProblemTitle, Parameters->nnodes, Parameters->nel);
+	sprintf(FileName,"../02_Mesh/%s_%d_%d.dat", Parameters->ProblemTitle, Parameters->nnodes, Parameters->nel);
 	InFile = myfopen(FileName, "r");
 	tag = fscanf(InFile, "%d", &nnodes);
 	Node = (NodeType*) mycalloc("Node of 'Preprocess'", nnodes, sizeof(NodeType));
 	for (I = 0; I < nnodes; I++)
 	{
-		tag = fscanf(InFile, "%lf%lf%d%d%d", &(Node[I].x), &(Node[I].y), &(Node[I].v1Type), &(Node[I].v2Type), &(Node[I].pType));
+		//tag = fscanf(InFile, "%lf%lf%lf%d%d%d%d", &(Node[I].x), &(Node[I].y), &(Node[I].z), &(Node[I].v1Type), &(Node[I].v2Type), &(Node[I].v3Type), &(Node[I].pType));
+		tag = fscanf(InFile, "%lf%lf%lf%d", &(Node[I].x), &(Node[I].y), &(Node[I].z), &(aux));
+		if(aux == 0){//incógnita
+			Node[I].v1Type = 1;
+			Node[I].v2Type = 1;
+			Node[I].v3Type = 1;
+			Node[I].pType = 1;
+		}else{
+			//if(fabs(Node[I].x - 0.5)<1e-15 && fabs(Node[I].y - 0.5)<1e-15 && fabs(Node[I].z - 0.5)<1e-15){
+				Node[I].v1Type = 0;
+				Node[I].v2Type = 0;
+				Node[I].v3Type = 0;
+				Node[I].pType = 0;
+			/*}else{
+				Node[I].v1Type = 0;
+				Node[I].v2Type = 0;
+				Node[I].v3Type = 0;
+				Node[I].pType = 1;
+			}*/
+		}
 	}
-	Fill_ID(&neq, &neqpress, Node, nnodes);
+	Fill_ID(&neq, &neqv1, &neqv2, &neqv3, &neqpress, Node, nnodes);
 	
 	/* **************************************************************************************************************************** */
 
@@ -96,10 +111,17 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	/* **************************************************************************************************************************** */
 	//           				Reading connection mesh
 	/* **************************************************************************************************************************** */
+	int ver1, ver2, ver3, ver4;
 	tag = fscanf(InFile, "%d", &nel);
 	Element = (ElementType*) mycalloc("Element of 'Preprocess'", nel, sizeof(ElementType));
-	for (I = 0; I < nel; I++)
-		tag = fscanf(InFile, "%d%d%d%d", &(Element[I].Vertex[0]), &(Element[I].Vertex[1]), &(Element[I].Vertex[2]), &(Element[I].Type));
+	for (I = 0; I < nel; I++){
+		//tag = fscanf(InFile, "%d%d%d%d%d", &(Element[I].Vertex[0]), &(Element[I].Vertex[1]), &(Element[I].Vertex[2]), &(Element[I].Vertex[3]), &(Element[I].Type));
+		tag = fscanf(InFile, "%d%d%d%d%d", &(ver1), &(ver2), &(ver3), &(ver4), &(Element[I].Type));
+		Element[I].Vertex[0] = ver1 - 1;
+		Element[I].Vertex[1] = ver2 - 1;
+		Element[I].Vertex[2] = ver3 - 1;
+		Element[I].Vertex[3] = ver4 - 1;
+	}
 	fclose(InFile);
 	
 	/* **************************************************************************************************************************** */
@@ -110,47 +132,49 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	/* **************************************************************************************************************************** */
 
 	// Some variable initializations
-	
-
 	Parameters->neq = neq;
 	Parameters->nel = nel;
 	Parameters->nnodes = nnodes; 
+	Parameters->neqv1 = neqv1;
+	Parameters->neqv2 = neqv2;
+	Parameters->neqv3 = neqv3;
 	Parameters->neqpress = neqpress;
 
-	MatrixData = (MatrixDataType *) mycalloc("MatrixData of 'Preprocess'", 1, sizeof(MatrixDataType));
-	F = (double*) mycalloc("F of 'Preprocess'", neq+1, sizeof(double));
-	u = (double*) mycalloc("u of 'Preprocess'", neq+1, sizeof(double));
+	// Structure vector allocation that stores form function data in each element
+	CFF = (CoefFormFuncType *) mycalloc("CFF of 'Preprocess'", nel, sizeof(CoefFormFuncType));
+	FemStructs->CFF = CFF;
+	
+	//Configuring equation according to variables and boundary conditions
 	lm = (int**) mycalloc("lm of 'Preprocess'", nel, sizeof(int*));
 	lmaux = (int*) mycalloc("lmaux of 'Preprocess'", nel*size, sizeof(int));
-	for (I = 0; I < nel; I++)
+	for (I = 0; I < nel; I++){
 		lm[I] = &lmaux[I*size];
-	
-	
-	// Set vector eqpress
-	eqpress = (int*) mycalloc("eqpress of 'Preprocess'", neqpress, sizeof(int));
-	J = 0;
-	for (I = 0; I < nnodes; I++){
-		if(Node[I].id[0] >= 0){ // a pressao é incógnita naquele nó
-			eqpress[J] = Node[I].id[2];
-			J++;
-		}
 	}
-
-
+	
 	//Configuring equation according to variables and boundary conditions
 	Fill_LM(neq, nel, lm, Node, Element);
 	FemStructs->lm = lm;
 	FemStructs->lmaux = lmaux;
 	
+	// Set vector eqpress
+	eqpress = (int*) mycalloc("eqpress of 'Preprocess'", neqpress, sizeof(int));
+	J = 0;
+	for (I = 0; I < nnodes; I++){
+		if(Node[I].id[3] != -1){ // a pressao é incógnita naquele nó
+			eqpress[J] = Node[I].id[3];
+			J++;
+		}
+	}
+	
 	if (strncmp(Parameters->MatrixVectorProductScheme,"EBE",3) == 0){
 	
 		double **M, *Maux;
-		double *Diag, *invDiag;
+		//double *Diag, *invDiag;
 
 		M = (double**) mycalloc("M of 'Preprocess'", nel, sizeof(double*));
 		Maux = (double*) mycalloc("Maux of 'Preprocess'", nel*size2,sizeof(double));
-		Diag = (double*) mycalloc("Diag of 'Preprocess'", neq+1, sizeof(double));
-		invDiag = (double*) mycalloc("invDiag of 'Preprocess'", neq+1, sizeof(double));
+		//Diag = (double*) mycalloc("Diag of 'Preprocess'", neq+1, sizeof(double));
+		//invDiag = (double*) mycalloc("invDiag of 'Preprocess'", neq+1, sizeof(double));
 		
 		for (I = 0; I < nel; I++){
 			M[I] = &Maux[I*size2];
@@ -158,11 +182,11 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 
 		MatrixData->A = M;
 		MatrixData->Aaux = Maux;
-		MatrixData->Diag = Diag;
-		MatrixData->invDiag = invDiag;
+		//MatrixData->Diag = Diag;
+		//MatrixData->invDiag = invDiag;
 	}
 	else if (strcasecmp(Parameters->MatrixVectorProductScheme,"CSR") == 0){
-		int *IA, *JA, *perm, *invperm, **CSR_by_Element;
+	/*	int *IA, *JA, *perm, *invperm, **CSR_by_Element;
 		double *AA, *Diag, *invDiag;
 			
 		csr_Initialization(Parameters, Node, &JA, &IA, &perm, &invperm, &lm, &lmaux, &CSR_by_Element);
@@ -180,7 +204,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 		MatrixData->invDiag = invDiag;
 		MatrixData->Scheme_by_Element = CSR_by_Element;
 		MatrixData->Perm = perm;
-		MatrixData->invPerm = invperm;
+		MatrixData->invPerm = invperm; */
 
 	}
 	else{
@@ -198,7 +222,6 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	
 	*Parameters_out = Parameters;
 	*MatrixData_out = MatrixData;
-	
 	*FemStructs_out = FemStructs;
 	*FemFunctions_out = FemFunctions;
 	*FemOtherFunctions_out = FemOtherFunctions;

@@ -1,5 +1,6 @@
-#include "NavierStokesEquations.h"
+#include "SS_NavierStokesEquations3D.h"
 #include "../../../00_CommonFiles/CPU_Time_Operations/CPU_time.h"
+#include "../../../00_CommonFiles/Allocation_Operations/allocations.h"
 
 int main(int argc, char **argv)
 {
@@ -10,7 +11,6 @@ int main(int argc, char **argv)
 	FemOtherFunctionsType *FemOtherFunctions;
 	struct timespec Start, End;
 	double Preprocess_Time, Process_Time, Postprocess_Time;
-
 
 	/* ******************************************************* Preprocess ****************************************************** */
 	clock_gettime(CLOCK_MONOTONIC, &Start);
@@ -27,19 +27,17 @@ int main(int argc, char **argv)
 	/* ************************************************************************************************************************* */
 	
 	/* ******************************************************* Postprocess ***************************************************** */
-
 	clock_gettime(CLOCK_MONOTONIC, &Start);
 	Postprocess(Parameters, MatrixData, FemStructs, FemFunctions, FemOtherFunctions);
 	clock_gettime(CLOCK_MONOTONIC, &End);
 	Postprocess_Time = End.tv_sec - Start.tv_sec + 1e-9*(End.tv_nsec - Start.tv_nsec);
-
 	/* ************************************************************************************************************************* */
 
 	/* ******************************************************* Total Time ****************************************************** */
 	calculateTime(Preprocess_Time, Process_Time, Postprocess_Time, Parameters);
 	/* ************************************************************************************************************************* */
 
-	free(Parameters);
+	myfree(Parameters);
 	
 	return 0;
 }
