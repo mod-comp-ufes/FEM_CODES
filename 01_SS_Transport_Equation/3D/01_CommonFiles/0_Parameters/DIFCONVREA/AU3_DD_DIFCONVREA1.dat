@@ -1,0 +1,39 @@
+PT-k1		:Experiments
+DIFCONVREA		:Problem title
+0       :Escolha da malha somente para CHANNEL (1,2,3,4,5,6,7)
+GMSH		:Origem de malha - GMSH or FREEFEM
+UNSTRUCTURED      :Tipo de malha - STRUCTURED ou UNSTRUCTURED
+1.0		:constante usada nas aplicações
+YES		:Exact solution of problem- YES or NOT
+NULL		:Initial Solution: NULL for zero and GA for Galerkin
+GMRES		:Solver
+50		:Number of vectors in krylov basis
+100		:Maximum number of cicles
+1e-5		:Solver tolerance
+ILU1		:Preconditioner(ILUp, BlockDiag, Diag, or NOT)
+NOT		:Reordering (Spectral, SYMRCM or NOT)
+CSR		:Matrix vector product scheme (CSR, EBE)
+DD		:Stabilization form
+NOT		:Use Damping - YES or NOT
+Equation		:Compute Residual - Sistem or Equation
+YES		:UsePelcet - YES or NOT
+NSGS2		:TauMacro
+NSGS2		:TauMicro
+1e-6		:tolGradU
+0.5		:w Macro escala
+0.5		:w Micro escala
+0.0		:tetha que será somado no cbtil
+RE		:ErrorType: AE - Erro absoluto, RE - erro relativo
+1e-3		:NonLinear Tolerance
+500		:NonLinear Max Iteration
+3		:tipo H: 1 pra raiz cubica, 2, 3, 4, 5 para diferentes normas
+YES3		:YES to use output flow or NOT to not use output flow
+0.0		:Vmax
+0.0		:xInf
+1.0		:xSup
+0.0		:yInf
+1.0 	:ySup
+0.0		:zInf
+1.0		:zSup
+9117		:number of nodes    
+48977		:number of elements

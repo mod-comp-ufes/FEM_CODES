@@ -1,0 +1,34 @@
+T1conv		:Experiments
+DIFCONV		:Problem title
+GMSH		:Tipo de malha - GMSH or FREEFEM
+1.0		:constante usada nas aplicações
+YES		:Exact solution of problem- YES or NOT
+NULL		:Initial Solution: NULL for zero and GA for Galerkin
+GMRES		:Solver
+50		:Number of vectors in krylov basis
+100		:Maximum number of cicles
+1e-7		:Solver tolerance
+ILU0		:Preconditioner(ILUp, BlockDiag, Diag, or NOT)
+NOT		:Reordering (Spectral, SYMRCM or NOT)
+CSR		:Matrix vector product scheme (CSR, EBE)
+DD256		:Stabilization form
+NOT		:Use Damping - YES or NOT
+NOT		:Compute Residual - Sistem or Equation
+NOT		:UsePelcet - YES or NOT
+NSGS2		:TauMacro
+NSGS2		:TauMicro
+1e-6		:tolGradU
+0.5		:w Macro escala
+0.5		:w Micro escala
+0.0		:tetha que será somado no cbtil
+RE		:ErrorType: AE - Erro absoluto, RE - erro relativo
+1e-5		:NonLinear Tolerance
+100		:NonLinear Max Iteration
+3		:tipo H: 1 pra raiz cubica, 2, 3, 4, 5 para diferentes normas
+YES3		:YES to use output flow or NOT to not use output flow
+0.0		:Vmax
+0.0 		:Lx
+0.0		:Ly
+0.0		:Lz
+1532861		:number of nodes    
+9267734		:number of elements
