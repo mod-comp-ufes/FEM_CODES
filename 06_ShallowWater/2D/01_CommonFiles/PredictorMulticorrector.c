@@ -75,7 +75,7 @@ int PredictorMulticorrector(ParametersType *Parameters, MatrixDataType *MatrixDa
 			FemOtherFunctions->solver(Parameters, MatrixData, FemStructs, FemFunctions, R, Da);
 
 			//fprintf(OutFile, "MULTICORRECAO(%d) | iter GMRES=%d\n", i, Parameters->ContGMRES);
-			printf("MULTICORRECAO(%d) | iter GMRES=%d\n", i, Parameters->ContGMRES);
+			//printf("MULTICORRECAO(%d) | iter GMRES=%d\n", i, Parameters->ContGMRES);
 
 			//FemFunctions->unscaling(Parameters, MatrixData, FemStructs, Da);
 
