@@ -1,8 +1,8 @@
 CC=gcc
 #CC=tau_cc.sh
 IDIR=
-CFLAGS= -DSSTranspEquation2D -c -lm -lrt -Wall -Ofast -march=native
-GCFLAGS= -DSSTranspEquation2D -lm -lrt -Wall -lrt -lm -Wall -Ofast -march=native
+CFLAGS= -DSSTranspEquation2D -Ddebug -c -lm -lrt -Wall -Ofast -march=native
+GCFLAGS= -DSSTranspEquation2D -Ddebug -lm -lrt -Wall -lrt -lm -Wall -Ofast -march=native
 LDFLAGS=
 SOURCES= main.c \
 Preprocess.c \
@@ -13,20 +13,23 @@ ede_Initialization.c \
 csr_Initialization.c \
 eval_U.c \
 F_assembly.c \
+Build_Galerkin.c \
 Build_K_F_SUPG.c \
 Build_K_F_DD.c \
 ebe_assembly.c \
 ede_assembly.c \
 csr_assembly.c \
 Paraview_Output.c \
+Data_Output.c \
+AproximationInEachNode.c \
 CAU_ShockCapture.c \
 CAU_DD_ShockCapture.c \
 YZBeta_ShockCapture.c \
 YZBeta_ShockCapture2.c \
 h_shock_2sqrtArea.c \
+h_shock_sqrtArea.c \
 h_shock_Option1.c \
 h_shock_Option2.c \
-set_h_Shock.c \
 setStabilizationForm.c \
 setSolver.c \
 setPreconditioner.c \
@@ -64,6 +67,22 @@ setzeros.c \
 ../TESTE/TESTE_Reaction.c \
 ../TESTE/TESTE_Velocity.c \
 ../TESTE/TESTE_upresc.c \
+../RAMPA/RAMPA_Condutivity.c \
+../RAMPA/RAMPA_Font.c \
+../RAMPA/RAMPA_Reaction.c \
+../RAMPA/RAMPA_Velocity.c \
+../RAMPA/RAMPA_upresc.c \
+../RAMPA2/RAMPA2_Condutivity.c \
+../RAMPA2/RAMPA2_Font.c \
+../RAMPA2/RAMPA2_Reaction.c \
+../RAMPA2/RAMPA2_Velocity.c \
+../RAMPA2/RAMPA2_upresc.c \
+../VALIDACAO/VALIDACAO_Condutivity.c \
+../VALIDACAO/VALIDACAO_Font.c \
+../VALIDACAO/VALIDACAO_Reaction.c \
+../VALIDACAO/VALIDACAO_Velocity.c \
+../VALIDACAO/VALIDACAO_upresc.c \
+../VALIDACAO/VALIDACAO_hflux.c \
 ../../../00_CommonFiles/Allocation_Operations/mycalloc.c \
 ../../../00_CommonFiles/BLAS_Operations/dtrsvUP.c \
 ../../../00_CommonFiles/BLAS_Operations/daxpy.c \
@@ -71,6 +90,7 @@ setzeros.c \
 ../../../00_CommonFiles/BLAS_Operations/ddot.c \
 ../../../00_CommonFiles/BLAS_Operations/dscal.c \
 ../../../00_CommonFiles/BLAS_Operations/dzero.c \
+../../../00_CommonFiles/BLAS_Operations/dmax.c \
 ../../../00_CommonFiles/CPU_Time_Operations/calculateTime.c \
 ../../../00_CommonFiles/IO_Operations/myfopen.c \
 ../../../00_CommonFiles/MatrixVector_Operations/EBE/ebemv.c \
@@ -79,17 +99,6 @@ setzeros.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/pgmres.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/pcg.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/NO_precond_setup.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/amg_precond.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_dpa.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_dpa_counting.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_fib_heap.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_list.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_matrix.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_solvers.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_util.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/amg_pgmres.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/AMG/bcm_linmatch.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/ILUp_precond_setup.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/Diag_precond_CSR_setup.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/Diag_precond_EBE_setup.c \
@@ -119,8 +128,8 @@ EXECUTABLE=SSTranspEquation2D
 
 all: $(SOURCES) $(EXECUTABLE)
 
-debug: CFLAGS= -DSSTranspEquation2D -Ddebug -Dcheck_memory_leak -c -lm -lrt -Wall -O0 -g
-debug: GCFLAGS= -DSSTransEquation2D -Ddebug -Dcheck_memory_leak -lm -lrt -Wall -g
+debug: CFLAGS= -DSSTranspEquation2D -Ddebug -c -lm -lrt -Wall -O0 -g
+debug: GCFLAGS= -DSSTransEquation2D -Ddebug -lm -lrt -Wall -g
 debug: all
 
 fast: CFLAGS= -DSSTranspEquation2D -c -lm -lrt -Wall -Ofast -march=native

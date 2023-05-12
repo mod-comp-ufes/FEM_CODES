@@ -7,7 +7,6 @@
 #include <math.h>
 #include <time.h>
 #include "../../../00_CommonFiles/Solvers_and_Preconditioners/ilup.h"
-#include "../../../00_CommonFiles/Solvers_and_Preconditioners/amg_precond.h"
 
 #define NDIM 2            // number related to the dimension of the problem (2: two-dimensional, 3: three-dimensional)
 #define NNOEL 3           // number of nodes per element
@@ -23,7 +22,7 @@ typedef struct
 
 typedef struct
 {
-	int Vertex[NDIM+1];
+	int Vertex[NNOEL];
 	int Type;
 }ElementType;
 
@@ -37,15 +36,17 @@ typedef struct Node_List NodeListType;
 
 typedef struct
 {
-	char ProblemTitle[300];
-	char Solver[200];
-	char Preconditioner[200];
-	char Scaling[200];
-	char reordering[200];
-	char MatrixVectorProductScheme[200];
-	char StabilizationForm[200];
-	char ShockCapture[200];
-	char h_Shock[200];
+	char Experiments[50];				  
+	char ProblemTitle[50];
+	char Solver[10];
+	char Preconditioner[50];
+	char Scaling[50];
+	char reordering[50];
+	char MatrixVectorProductScheme[10];
+	char StabilizationForm[50];
+	char ShockCapture[50];
+	char h_Shock[50];
+	char OutputFlow[10];
 	double SolverTolerance, NonLinearTolerance;
 	int KrylovBasisVectorsQuantity;
 	int nnodes;
@@ -53,9 +54,8 @@ typedef struct
 	int neq;
 	int nedge;
 	int nnzero;
-	int iterations;
-	int gmres;
-	int LinearMaxIter;
+	int SolverIterations;
+	int SolverMaxIter;
 	int bandwidth_bef, bandwidth_aft;	// half bandwidth before and after reordering
 }ParametersType;
 
@@ -78,7 +78,6 @@ typedef struct
 	SparMAT *mat;
 	MAT *Ailu;
 	int *Perm;
-    AMG_precond_data *amg_precond_data;
 }MatrixDataType;
 
 
@@ -92,6 +91,7 @@ typedef struct
 	ElementType *Element;
 	double *u;
 	double *F;
+	double *CbOld;
 }FemStructsType;
 
 typedef struct
@@ -101,11 +101,12 @@ typedef struct
 	double (*Reaction)(void);
 	void (*Velocity)(double, double, double []);
 	double (*upresc)(double, double);
-	double (*h_shock)(double, double, double, double, double, double, double, double, double, double, double, double);
-	double (*ShockCapture)(double,  double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double);
+	double (*hflux)(double, double);
+	double (*h_shock)(ParametersType *, ElementType *, int, double, double, double, double, double, double, double, double, double, double, double, double);
+	double (*ShockCapture)(double,  double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double *, int);
 
 	void (*assembly)(ParametersType *, MatrixDataType *, FemStructsType *, int, double (*)[3]);
-	int (*mv)(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
+	int (*ProductMatrixVector)(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 	int (*precond)(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 	int (*precondR)(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 	int (*precond_setup)(ParametersType *, MatrixDataType *, FemStructsType *, int, double *);
@@ -115,7 +116,7 @@ typedef struct
 
 typedef struct
 {
-	int (*solver) (ParametersType *, MatrixDataType *, FemStructsType*, FemFunctionsType *, double *, double *);
+	int (*solver) (ParametersType *, MatrixDataType *, FemStructsType*, FemFunctionsType *);
 	int (*Build)(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *);
 }FemOtherFunctionsType;
 
@@ -125,17 +126,19 @@ int Process(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsTy
 
 int Postprocess(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *, FemOtherFunctionsType *);
 
-double CAU_ShockCapture(double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double);
+double CAU_ShockCapture(double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double *, int);
 
-double CAU_DD_ShockCapture(double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double);
+double CAU_DD_ShockCapture(double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double *, int);
 
-double YZBeta_ShockCapture(double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double);
+double YZBeta_ShockCapture(double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double *, int);
 
-double h_shock_2sqrtArea(double, double, double, double, double, double, double, double, double, double, double, double);
+double h_shock_2sqrtArea(ParametersType *, ElementType *, int, double, double, double, double, double, double, double, double, double, double, double, double);
 
-double h_shock_Option1(double, double, double, double, double, double, double, double, double, double, double, double);
+double h_shock_sqrtArea(ParametersType *, ElementType *, int, double, double, double, double, double, double, double, double, double, double, double, double);
 
-double h_shock_Option2(double, double, double, double, double, double, double, double, double, double, double, double);
+double h_shock_Option1(ParametersType *, ElementType *, int, double, double, double, double, double, double, double, double, double, double, double, double);
+
+double h_shock_Option2(ParametersType *, ElementType *, int, double, double, double, double, double, double, double, double, double, double, double, double);
 
 int Fill_LM(int, int, int **, NodeType *, ElementType *);
 
@@ -148,6 +151,8 @@ void csr_Initialization(ParametersType *, NodeType *, int **, int **, int **, in
 void csr_List_insertA(NodeListType **, int, int, int *);
 
 int csr_search(int, int, NodeListType *);
+
+int Build_Galerkin(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *);
 
 int Build_K_F_SUPG(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *);
 
@@ -162,6 +167,10 @@ void ede_assembly(ParametersType *Parameters, MatrixDataType *MatrixData, FemStr
 void F_assembly(NodeType *, int, int, int, double, double, double, double *, double [3][3],double [3], double [3], FemFunctionsType *);
 
 int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemFunctionsType *FemFunctions);
+
+int Data_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemFunctionsType *FemFunctions);
+
+int AproximationInEachNode(ParametersType *Parameters, FemStructsType *FemStructs, FemFunctionsType *FemFunctions, double *u_out);
 
 int setzeros(ParametersType *, MatrixDataType *);
 

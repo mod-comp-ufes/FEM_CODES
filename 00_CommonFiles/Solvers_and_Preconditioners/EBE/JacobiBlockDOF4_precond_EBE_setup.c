@@ -62,7 +62,7 @@ int JacobiBlockDOF4_precond_EBE_setup (ParametersType *Parameters, MatrixDataTyp
 	}
 
 	/* F preconditioning */
-	double *faux = mycalloc("faux of JacobiBlockDOF4_precond_EBE_setup",(neq + 1), sizeof(double));
+	double *faux = calloc((neq + 1), sizeof(double));
 	for (I = 0; I < neq; I++){
 		faux[I] = F[I];
 	}
@@ -71,7 +71,7 @@ int JacobiBlockDOF4_precond_EBE_setup (ParametersType *Parameters, MatrixDataTyp
 
 	JacobiBlockDOF4_precond_EBE (Parameters, MatrixData, FemStructs, faux, F);
 
-	myfree(faux);
+	free(faux);
 
 	return 0;
 }
